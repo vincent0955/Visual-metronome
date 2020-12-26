@@ -1,27 +1,24 @@
 package net.runelite.client.plugins.visualmetronome;
 
-import com.google.inject.Provides;
 import net.runelite.api.Client;
-import net.runelite.api.WorldType;
-import net.runelite.api.events.GameTick;
-import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.ComponentConstants;
 import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import javax.inject.Inject;
 import java.awt.*;
-import java.util.EnumSet;
 
 public class visualmetronomeOverlay extends Overlay {
     private final Client client;
     private final visualmetronomeConfig config;
     private final PanelComponent panelComponent = new PanelComponent();
+    private Color transparent = new Color(0,0,0,0);
 
     @Inject
     private visualmetronomeOverlay(Client client, visualmetronomeConfig config) {
-        setPosition(OverlayPosition.TOP_CENTER);
+        setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
         this.client = client;
         this.config = config;
     }
@@ -31,8 +28,9 @@ public class visualmetronomeOverlay extends Overlay {
     @Override
     public Dimension render(Graphics2D graphics) {
         panelComponent.getChildren().clear();
+        if (config.toggleBackground()) {panelComponent.setBackgroundColor(transparent);}
+        else {panelComponent.setBackgroundColor(ComponentConstants.STANDARD_BACKGROUND_COLOR);}
         String overlayTitle = plugin.TitleStatus;
-
         // Build overlay title
         if (config.showTitle()) {
             panelComponent.getChildren().add(TitleComponent.builder()
@@ -42,14 +40,13 @@ public class visualmetronomeOverlay extends Overlay {
         }
         // Set the size of the overlay (width)
         panelComponent.setPreferredSize(new Dimension(
-                graphics.getFontMetrics().stringWidth(plugin.TitleLength) + 5,
+                graphics.getFontMetrics().stringWidth(plugin.TitleLength) + 7,
                 0));
 
         // Add a line on the overlay for world number
         panelComponent.getChildren().add(LineComponent.builder()
                 .left(plugin.CurrentTick)
                 .leftColor(plugin.CurrentColor)
-                //.right(Integer.toString(client.getWorld()))
                 .build());
 
         return panelComponent.render(graphics);

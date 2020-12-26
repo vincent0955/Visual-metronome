@@ -1,6 +1,5 @@
 package net.runelite.client.plugins.visualmetronome;
 
-import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -17,22 +16,11 @@ public interface visualmetronomeConfig extends Config
 	)
 	default boolean showTitle()
 	{
-		return true;
+		return false;
 	}
 
 	@ConfigItem(
 			position = 2,
-			keyName = "tickCount",
-			name = "Tick count",
-			description = "Configures the tick on which a sound will be played."
-	)
-	default int tickCount()
-	{
-		return 1;
-	}
-
-	@ConfigItem(
-			position = 3,
 			keyName = "tickSymbol",
 			name = "Symbol used for tick",
 			description = "Configures the symbol displayed on each tick"
@@ -40,29 +28,36 @@ public interface visualmetronomeConfig extends Config
 	default String tickSymbol() { return "⬤";}
 
 	@ConfigItem(
-			position = 4,
+			position = 3,
 			keyName = "tockSymbol",
 			name = "Symbol used for tock",
 			description = "Configures the symbol displayed on each tock"
 	)
 	default String tockSymbol() { return "⬤"; }
 
-	@Alpha
+	@ConfigItem(
+			position = 4,
+			keyName = "tickColor",
+			name = "Color used for tick",
+			description = "Configures the color of tick symbol"
+	)
+	default Color getTickColor() { return Color.WHITE; }
+
 	@ConfigItem(
 			position = 5,
-			keyName = "tickColor",
-			name = "color used for tick",
-			description = "Configures the color displayed on each tick"
+			keyName = "tockColor",
+			name = "Color used for tock",
+			description = "Configures the color of tock symbol"
 	)
-	default Color getTickColor() { return Color.GREEN;}
+	default Color getTockColor() { return Color.BLACK; }
 
-	@Alpha
 	@ConfigItem(
 			position = 6,
-			keyName = "tockColor",
-			name = "color used for tock",
-			description = "Configures the color displayed on each tock"
+			keyName = "toggleBackground",
+			name = "Toggle transparent background",
+			description = "Toggles the transparency of background of the overlay"
 	)
-	default Color getTockColor() { return Color.RED; }
+	default boolean toggleBackground() { return true; }
+
 }
 
