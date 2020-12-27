@@ -14,8 +14,8 @@ public interface visualmetronomeConfig extends Config
 	@ConfigItem(
 			position = 1,
 			keyName = "showTitle",
-			name = "Show the title of plugin on the overlay",
-			description = "Toggle the display of the title"
+			name = "Show title",
+			description = "Toggle display of the title on overlay"
 	)
 	default boolean showTitle()
 	{
@@ -24,6 +24,14 @@ public interface visualmetronomeConfig extends Config
 
 	@ConfigItem(
 			position = 2,
+			keyName = "toggleBackground",
+			name = "Toggle transparent background",
+			description = "Toggles the transparency of background of the overlay"
+	)
+	default boolean toggleBackground() { return true; }
+
+	@ConfigItem(
+			position = 3,
 			keyName = "tickSymbol",
 			name = "Text shown for tick",
 			description = "Configures the symbol displayed on each tick"
@@ -31,7 +39,7 @@ public interface visualmetronomeConfig extends Config
 	default String tickSymbol() { return "⬤";}
 
 	@ConfigItem(
-			position = 3,
+			position = 4,
 			keyName = "tockSymbol",
 			name = "Text shown for tock",
 			description = "Configures the symbol displayed on each tock"
@@ -39,7 +47,7 @@ public interface visualmetronomeConfig extends Config
 	default String tockSymbol() { return "⬤"; }
 
 	@ConfigItem(
-			position = 4,
+			position = 5,
 			keyName = "tickColor",
 			name = "Color used for tick",
 			description = "Configures the color of tick symbol"
@@ -47,20 +55,12 @@ public interface visualmetronomeConfig extends Config
 	default Color getTickColor() { return Color.WHITE; }
 
 	@ConfigItem(
-			position = 5,
+			position = 6,
 			keyName = "tockColor",
 			name = "Color used for tock",
 			description = "Configures the color of tock symbol"
 	)
 	default Color getTockColor() { return Color.BLACK; }
-
-	@ConfigItem(
-			position = 6,
-			keyName = "toggleBackground",
-			name = "Toggle transparent background",
-			description = "Toggles the transparency of background of the overlay"
-	)
-	default boolean toggleBackground() { return true; }
 
 	@Alpha
 	@ConfigItem(
