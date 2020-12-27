@@ -1,8 +1,11 @@
 package net.runelite.client.plugins.visualmetronome;
 
+import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.ui.overlay.components.ComponentConstants;
+
 import java.awt.*;
 
 @ConfigGroup("visualmetronome")
@@ -22,7 +25,7 @@ public interface visualmetronomeConfig extends Config
 	@ConfigItem(
 			position = 2,
 			keyName = "tickSymbol",
-			name = "Symbol used for tick",
+			name = "Text shown for tick",
 			description = "Configures the symbol displayed on each tick"
 	)
 	default String tickSymbol() { return "⬤";}
@@ -30,7 +33,7 @@ public interface visualmetronomeConfig extends Config
 	@ConfigItem(
 			position = 3,
 			keyName = "tockSymbol",
-			name = "Symbol used for tock",
+			name = "Text shown for tock",
 			description = "Configures the symbol displayed on each tock"
 	)
 	default String tockSymbol() { return "⬤"; }
@@ -58,6 +61,15 @@ public interface visualmetronomeConfig extends Config
 			description = "Toggles the transparency of background of the overlay"
 	)
 	default boolean toggleBackground() { return true; }
+
+	@Alpha
+	@ConfigItem(
+			position = 7,
+			keyName = "backgroundColor",
+			name = "Background color/opacity",
+			description = "Select overlay background color and opacity"
+	)
+	default Color backgroundColor() { return ComponentConstants.STANDARD_BACKGROUND_COLOR; }
 
 }
 

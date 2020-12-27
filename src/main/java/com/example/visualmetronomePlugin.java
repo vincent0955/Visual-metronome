@@ -3,6 +3,7 @@ package net.runelite.client.plugins.visualmetronome;
 import com.google.inject.Provides;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -49,25 +50,33 @@ public class visualmetronomePlugin extends Plugin
         // changes color of ticks
         if (CurrentTick == (config.tickSymbol())) {
             CurrentColor = config.getTickColor();
-        }
-        else {
+        } else {
             CurrentColor = config.getTockColor();
         }
+    }
+
+
+    @Subscribe
+    public void onConfigChanged(ConfigChanged event) {
         // hides title if showTitle option is off
         if (!config.showTitle()) {
             TitleStatus = "";
+        } else {
+            TitleStatus = "Metronome";
         }
-        else {TitleStatus = "Metronome";}
 
         // finds the longest string for overlay size
         if ((config.tickSymbol().length() >= TitleStatus.length()) || (config.tockSymbol().length() >= TitleStatus.length())) {
             if (config.tickSymbol().length() >= config.tockSymbol().length()) {
-                TitleLength = config.tickSymbol();
-                }
-            else {TitleLength = config.tockSymbol();}
+                TitleLength = config.tickSymbol(); }
+            else {
+                TitleLength = config.tockSymbol();
             }
-        else {TitleLength = TitleStatus;}
         }
+        else{
+            TitleLength = TitleStatus;
+        }
+    }
 
     @Override
     protected void startUp() throws Exception

@@ -29,7 +29,7 @@ public class visualmetronomeOverlay extends Overlay {
     public Dimension render(Graphics2D graphics) {
         panelComponent.getChildren().clear();
         if (config.toggleBackground()) {panelComponent.setBackgroundColor(transparent);}
-        else {panelComponent.setBackgroundColor(ComponentConstants.STANDARD_BACKGROUND_COLOR);}
+        else {panelComponent.setBackgroundColor(config.backgroundColor());}
         String overlayTitle = plugin.TitleStatus;
         // Build overlay title
         if (config.showTitle()) {
@@ -40,13 +40,13 @@ public class visualmetronomeOverlay extends Overlay {
         }
         // Set the size of the overlay (width)
         panelComponent.setPreferredSize(new Dimension(
-                graphics.getFontMetrics().stringWidth(plugin.TitleLength) + 7,
+                graphics.getFontMetrics().stringWidth(plugin.TitleLength) + 5,
                 0));
 
         // Add a line on the overlay for world number
         panelComponent.getChildren().add(LineComponent.builder()
-                .left(plugin.CurrentTick)
-                .leftColor(plugin.CurrentColor)
+                .right(plugin.CurrentTick)
+                .rightColor(plugin.CurrentColor)
                 .build());
 
         return panelComponent.render(graphics);
