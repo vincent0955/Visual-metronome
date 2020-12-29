@@ -1,11 +1,8 @@
-package net.runelite.client.plugins.visualmetronome;
+package com.visualmetronome;
 
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.components.ComponentConstants;
-import net.runelite.client.ui.overlay.components.ComponentOrientation;
-import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import javax.inject.Inject;
@@ -36,10 +33,6 @@ public class visualmetronomeOverlay extends Overlay {
                 .text(plugin.Title)
                 .color(Color.white)
                 .build());
-
-        if (config.showTitle()) {
-
-        }
 
         return panelComponent.render(graphics);
     }

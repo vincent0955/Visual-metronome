@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.visualmetronome;
+package com.visualmetronome;
 
 import com.google.inject.Provides;
 import net.runelite.client.config.ConfigManager;
