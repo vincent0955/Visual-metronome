@@ -10,7 +10,7 @@ Configure the width and colour of the overlay.
 ![](https://i.imgur.com/T1SMlzT.png)
 
 # Settings
-![](https://imgur.com/kped53G)
+![](https://i.imgur.com/caNFVgp.png)
 
 # Feedback
 Give feedback here or message me on discord, Vincent#7958
