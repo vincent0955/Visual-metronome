@@ -30,11 +30,22 @@ public class visualmetronomeOverlay extends OverlayPanel
     {
         panelComponent.getChildren().clear();
         panelComponent.setBackgroundColor(plugin.CurrentColor);
+        if (config.ResizeOff())
+        {
+            panelComponent.setPreferredSize(new Dimension(config.boxWidth(), 0));
+        }
         panelComponent.getChildren().add(LineComponent.builder()
                 .left(plugin.Title)
                 .leftColor(Color.WHITE)
                 .build());
 
-        return super.render(graphics);
+        if (config.ResizeOff())
+        {
+            return panelComponent.render(graphics);
+        }
+        else
+        {
+            return super.render(graphics);
+        }
     }
 }
