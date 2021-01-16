@@ -1,39 +1,40 @@
 package com.visualmetronome;
 
 import net.runelite.api.Client;
-import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.components.PanelComponent;
-import net.runelite.client.ui.overlay.components.TitleComponent;
+import net.runelite.client.ui.overlay.components.LineComponent;
 import javax.inject.Inject;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 
-public class visualmetronomeOverlay extends Overlay {
+public class visualmetronomeOverlay extends OverlayPanel
+{
     private final Client client;
     private final visualmetronomeConfig config;
-    private final PanelComponent panelComponent = new PanelComponent();
+    private final visualmetronomePlugin plugin;
 
     @Inject
-    private visualmetronomeOverlay(Client client, visualmetronomeConfig config) {
-        setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
+    private visualmetronomeOverlay(Client client, visualmetronomeConfig config, visualmetronomePlugin plugin)
+    {
+        this.plugin = plugin;
         this.client = client;
         this.config = config;
+        setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
+        panelComponent.setPreferredSize(new Dimension(55, 0));
     }
-    @Inject
-    private visualmetronomePlugin plugin;
 
     @Override
-    public Dimension render(Graphics2D graphics) {
+    public Dimension render(Graphics2D graphics)
+    {
         panelComponent.getChildren().clear();
-        // Set the size of the overlay (width)
-        panelComponent.setPreferredSize(new Dimension(config.boxWidth(), 0));
         panelComponent.setBackgroundColor(plugin.CurrentColor);
-        // Build overlay title
-        panelComponent.getChildren().add(TitleComponent.builder()
-                .text(plugin.Title)
-                .color(Color.white)
+        panelComponent.getChildren().add(LineComponent.builder()
+                .left(plugin.Title)
+                .leftColor(Color.WHITE)
                 .build());
 
-        return panelComponent.render(graphics);
+        return super.render(graphics);
     }
 }

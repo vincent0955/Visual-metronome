@@ -8,14 +8,13 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.api.events.GameTick;
-import java.awt.*;
+import java.awt.Color;
 import javax.inject.Inject;
 
 @PluginDescriptor(
         name = "Visual Metronome",
         description = "Shows a visual cue on an overlay every game tick to help timing based activities",
-        tags = {"timers", "overlays", "tick", "skilling"},
-        enabledByDefault = false
+        tags = {"timers", "overlays", "tick", "skilling"}
 )
 public class visualmetronomePlugin extends Plugin
 {
@@ -28,7 +27,6 @@ public class visualmetronomePlugin extends Plugin
     @Inject
     private visualmetronomeConfig config;
 
-    //variables
     public boolean CurrentTick = true;
     public Color CurrentColor = Color.WHITE;
     public String Title = "Metronome";
@@ -40,10 +38,12 @@ public class visualmetronomePlugin extends Plugin
     }
 
     @Subscribe
-    public void onGameTick(GameTick tick) {
+    public void onGameTick(GameTick tick)
+    {
         // changes color every tick
         CurrentTick = !CurrentTick;
-        if (CurrentTick) {
+        if (CurrentTick)
+        {
             CurrentColor = config.getTickColor();
         }
         else {
@@ -51,11 +51,14 @@ public class visualmetronomePlugin extends Plugin
         }
     }
     @Subscribe
-    public void onConfigChanged(ConfigChanged event) {
+    public void onConfigChanged(ConfigChanged event)
+    {
         // hides title
-        if (config.showTitle()) {
+        if (config.showTitle())
+        {
             Title = "Metronome";
-        } else {
+        }
+        else {
             Title = "";
         }
     }
