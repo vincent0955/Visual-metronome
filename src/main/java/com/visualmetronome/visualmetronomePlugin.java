@@ -29,7 +29,7 @@ public class visualmetronomePlugin extends Plugin
 
     public boolean CurrentTick = true;
     public Color CurrentColor = Color.WHITE;
-    public String Title = "Metronome";
+    public String Title;
 
     @Provides
     visualmetronomeConfig provideConfig(ConfigManager configManager)
