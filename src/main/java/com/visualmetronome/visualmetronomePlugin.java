@@ -27,7 +27,8 @@ public class visualmetronomePlugin extends Plugin
     @Inject
     private visualmetronomeConfig config;
 
-    public boolean CurrentTick = true;
+    private boolean CurrentTick = true;
+    private int tickCounter;
     public Color CurrentColor = Color.WHITE;
     public String Title;
 
@@ -41,13 +42,55 @@ public class visualmetronomePlugin extends Plugin
     public void onGameTick(GameTick tick)
     {
         // changes color every tick
-        CurrentTick = !CurrentTick;
-        if (CurrentTick)
+        if (config.colorCycle() == 2)
         {
-            CurrentColor = config.getTickColor();
+            CurrentTick = !CurrentTick;
+            if (CurrentTick)
+            {
+                CurrentColor = config.getTickColor();
+            }
+            else {
+                CurrentColor = config.getTockColor();
+            }
         }
-        else {
-            CurrentColor = config.getTockColor();
+        else if (config.colorCycle() == 3)
+        {
+            if (tickCounter == 0)
+            {
+                CurrentColor = config.getTickColor();
+            }
+            else if (tickCounter == 1)
+            {
+                CurrentColor = config.getTockColor();
+            }
+            else if (tickCounter == 2)
+            {
+                CurrentColor = config.getTick3Color();
+                tickCounter = -1;
+            }
+            tickCounter ++;
+        }
+        else if (config.colorCycle() == 4)
+        {
+            if (tickCounter == 0)
+            {
+                CurrentColor = config.getTickColor();
+            }
+            else if (tickCounter == 1)
+            {
+                CurrentColor = config.getTockColor();
+            }
+            else if (tickCounter == 2)
+            {
+                CurrentColor = config.getTick3Color();
+            }
+            else if (tickCounter == 3)
+            {
+                CurrentColor = config.getTick4Color();
+                tickCounter = -1;
+            }
+            tickCounter ++;
+
         }
     }
     @Subscribe
@@ -73,5 +116,6 @@ public class visualmetronomePlugin extends Plugin
     protected void shutDown() throws Exception
     {
         overlayManager.remove(overlay);
+        tickCounter = 0;
     }
 }

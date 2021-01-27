@@ -9,7 +9,7 @@ Turn on plugin, alt+click to change width and drag overlay to desired location o
 ![](https://i.imgur.com/8Idrquz.gif)
 
 # Settings
-![](https://i.imgur.com/sLeH87q.png)
+![](https://i.imgur.com/vGH8wko.png)
 
 Alt+click and drag on border of overlay to change width (unfortunately cannot change height)
 
@@ -21,6 +21,8 @@ If you want the overlay to be smaller or fixed in size, use the last two setting
     - Default settings change
 - **V1.1.1**
     - Add back option to use fixed size since the overlay minimum size might be too high.
+- **V1.2**
+    - Add support for up to four colors instead of just two
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958.

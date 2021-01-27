@@ -4,6 +4,7 @@ import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.Range;
 import java.awt.Color;
 
 @ConfigGroup("visualmetronome")
@@ -20,9 +21,24 @@ public interface visualmetronomeConfig extends Config
 		return false;
 	}
 
-	@Alpha
+	@Range(
+			min = 2,
+			max = 4
+	)
 	@ConfigItem(
 			position = 2,
+			keyName = "colorCycle",
+			name = "Number of Colors",
+			description = "The number of colors it cycles through (2 for regular)"
+	)
+	default int colorCycle()
+	{
+		return 2;
+	}
+
+	@Alpha
+	@ConfigItem(
+			position = 3,
 			keyName = "tickColor",
 			name = "Color used for tick",
 			description = "Configures the color of tick"
@@ -34,7 +50,7 @@ public interface visualmetronomeConfig extends Config
 
 	@Alpha
 	@ConfigItem(
-			position = 3,
+			position = 4,
 			keyName = "tockColor",
 			name = "Color used for tock",
 			description = "Configures the color of tock"
@@ -44,8 +60,31 @@ public interface visualmetronomeConfig extends Config
 		return Color.GRAY;
 	}
 
+	@Alpha
 	@ConfigItem(
-			position = 4,
+			position = 5,
+			keyName = "tick3Color",
+			name = "Color used for 3rd tick",
+			description = "Configures the color of 3rd tick if enabled"
+	)
+	default Color getTick3Color()
+	{
+		return Color.DARK_GRAY;
+	}
+	@Alpha
+	@ConfigItem(
+			position = 6,
+			keyName = "tick4Color",
+			name = "Color used for 4th tick",
+			description = "Configures the color of the 4th tick if enabled"
+	)
+	default Color getTick4Color()
+	{
+		return Color.BLACK;
+	}
+
+	@ConfigItem(
+			position = 7,
 			keyName = "ResizeOff",
 			name = "Enable fixed size",
 			description = "Uses fixed size specified below instead of drag resizing. This allows the overlay to have a smaller size than previously possible."
@@ -56,9 +95,9 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 5,
+			position = 8,
 			keyName = "boxWidth",
-			name = "Configure width (Drag resizing above must be disabled)",
+			name = "Configure width (fixed sizing above must be enabled)",
 			description = "Sets fixed size for overlay."
 	)
 	default int boxWidth()

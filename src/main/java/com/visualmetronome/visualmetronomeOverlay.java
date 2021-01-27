@@ -38,7 +38,7 @@ public class visualmetronomeOverlay extends OverlayPanel
                 .left(plugin.Title)
                 .leftColor(Color.WHITE)
                 .build());
-
+        
         if (config.ResizeOff())
         {
             return panelComponent.render(graphics);
