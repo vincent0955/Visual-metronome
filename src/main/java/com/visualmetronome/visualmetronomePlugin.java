@@ -28,7 +28,7 @@ public class visualmetronomePlugin extends Plugin
     private visualmetronomeConfig config;
 
     private boolean CurrentTick = true;
-    private int tickCounter;
+    private int tickCounter = 0;
     public Color CurrentColor = Color.WHITE;
     public String Title;
 
@@ -41,57 +41,43 @@ public class visualmetronomePlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick tick)
     {
+        if (config.tickCount() != 1)
+        {
+            if (++tickCounter % config.tickCount() == 0)
+            {
+                CurrentTick = !CurrentTick;
+                if (CurrentTick)
+                {
+                    CurrentColor = config.getTickColor();
+                }
+                else
+                    {
+                    CurrentColor = config.getTockColor();
+                }
+            }
+            return;
+        }
         // changes color every tick
-        if (config.colorCycle() == 2)
+        if (tickCounter == 1)
         {
-            CurrentTick = !CurrentTick;
-            if (CurrentTick)
-            {
-                CurrentColor = config.getTickColor();
-            }
-            else {
-                CurrentColor = config.getTockColor();
-            }
+            CurrentColor = config.getTickColor();
         }
-        else if (config.colorCycle() == 3)
+        else if (tickCounter == 2)
         {
-            if (tickCounter == 0)
-            {
-                CurrentColor = config.getTickColor();
-            }
-            else if (tickCounter == 1)
-            {
-                CurrentColor = config.getTockColor();
-            }
-            else if (tickCounter == 2)
-            {
-                CurrentColor = config.getTick3Color();
-                tickCounter = -1;
-            }
-            tickCounter ++;
+            CurrentColor = config.getTockColor();
         }
-        else if (config.colorCycle() == 4)
+        else if (tickCounter == 3)
         {
-            if (tickCounter == 0)
-            {
-                CurrentColor = config.getTickColor();
-            }
-            else if (tickCounter == 1)
-            {
-                CurrentColor = config.getTockColor();
-            }
-            else if (tickCounter == 2)
-            {
-                CurrentColor = config.getTick3Color();
-            }
-            else if (tickCounter == 3)
-            {
-                CurrentColor = config.getTick4Color();
-                tickCounter = -1;
-            }
-            tickCounter ++;
-
+            CurrentColor = config.getTick3Color();
         }
+        else if (tickCounter == 4)
+        {
+            CurrentColor = config.getTick4Color();
+        }
+        if (tickCounter == config.colorCycle()) {
+            tickCounter = 0;
+        }
+        tickCounter ++;
     }
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
@@ -104,6 +90,7 @@ public class visualmetronomePlugin extends Plugin
         else {
             Title = "";
         }
+        tickCounter = 0;
     }
 
     @Override
