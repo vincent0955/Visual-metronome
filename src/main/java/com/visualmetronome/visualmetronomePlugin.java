@@ -45,6 +45,7 @@ public class visualmetronomePlugin extends Plugin
         {
             if (++tickCounter % config.tickCount() == 0)
             {
+                tickCounter = 0;
                 CurrentTick = !CurrentTick;
                 if (CurrentTick)
                 {
@@ -58,26 +59,42 @@ public class visualmetronomePlugin extends Plugin
             return;
         }
         // changes color every tick
-        if (tickCounter == 1)
+        switch (++tickCounter)
         {
-            CurrentColor = config.getTickColor();
+            case 1:
+                CurrentColor = config.getTickColor();
+                break;
+            case 2:
+                CurrentColor = config.getTockColor();
+                break;
+            case 3:
+                CurrentColor = config.getTick3Color();
+                break;
+            case 4:
+                CurrentColor = config.getTick4Color();
+                break;
+            case 5:
+                CurrentColor = config.getTick5Color();
+                break;
+            case 6:
+                CurrentColor = config.getTick6Color();
+                break;
+            case 7:
+                CurrentColor = config.getTick7Color();
+                break;
+            case 8:
+                CurrentColor = config.getTick8Color();
+                break;
+            case 9:
+                CurrentColor = config.getTick9Color();
+                break;
+            case 10:
+                CurrentColor = config.getTick10Color();
         }
-        else if (tickCounter == 2)
+        if (tickCounter == config.colorCycle())
         {
-            CurrentColor = config.getTockColor();
-        }
-        else if (tickCounter == 3)
-        {
-            CurrentColor = config.getTick3Color();
-        }
-        else if (tickCounter == 4)
-        {
-            CurrentColor = config.getTick4Color();
-        }
-        if (tickCounter == config.colorCycle()) {
             tickCounter = 0;
         }
-        tickCounter ++;
     }
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
@@ -90,7 +107,6 @@ public class visualmetronomePlugin extends Plugin
         else {
             Title = "";
         }
-        tickCounter = 0;
     }
 
     @Override
