@@ -107,6 +107,11 @@ public class visualmetronomePlugin extends Plugin
         else {
             Title = "";
         }
+        if (tickCounter > config.colorCycle())
+        {
+            tickCounter = 0;
+        }
+
     }
 
     @Override
