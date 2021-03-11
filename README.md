@@ -29,7 +29,7 @@ If you want the overlay to be smaller or fixed in size, use the last two setting
 - **V1.2.2**
     - Add support for up to ten colors
 - **V1.2.3**
-    - Fix bug that broke the plugin when certain config settings was changed
+    - Fix bug that broke the plugin when certain config settings were changed
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
