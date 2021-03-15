@@ -46,28 +46,6 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 4,
-			keyName = "ResizeOff",
-			name = "Enable fixed size",
-			description = "Uses fixed size specified below instead of drag resizing. This allows the overlay to have a smaller size than previously possible."
-	)
-	default boolean ResizeOff()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-			position = 5,
-			keyName = "boxWidth",
-			name = "Configure width (fixed sizing above must be enabled)",
-			description = "Sets fixed size for overlay."
-	)
-	default int boxWidth()
-	{
-		return 25;
-	}
-
-	@ConfigItem(
 			position = 6,
 			keyName = "showTitle",
 			name = "Show title",
