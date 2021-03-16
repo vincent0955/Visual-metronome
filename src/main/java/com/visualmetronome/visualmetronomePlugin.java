@@ -1,15 +1,16 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.api.events.GameTick;
-import java.awt.Color;
+
 import javax.inject.Inject;
+import java.awt.*;
 
 @PluginDescriptor(
         name = "Visual Metronome",
@@ -22,7 +23,10 @@ public class visualmetronomePlugin extends Plugin
     private OverlayManager overlayManager;
 
     @Inject
-    private visualmetronomeOverlay overlay;
+    private ConfigManager configManager;
+
+    @Inject
+    private FullResizableVisualMetronomeOverlay overlay;
 
     @Inject
     private visualmetronomeConfig config;
@@ -30,7 +34,9 @@ public class visualmetronomePlugin extends Plugin
     private boolean CurrentTick = true;
     private int tickCounter = 0;
     public Color CurrentColor = Color.WHITE;
-    public String Title;
+
+    final String Title = "Metronome";
+    final Dimension DEFAULT_SIZE = new Dimension(25, 25);
 
     @Provides
     visualmetronomeConfig provideConfig(ConfigManager configManager)
@@ -99,25 +105,17 @@ public class visualmetronomePlugin extends Plugin
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
-        // hides title
-        if (config.showTitle())
-        {
-            Title = "Metronome";
-        }
-        else {
-            Title = "";
-        }
         if (tickCounter > config.colorCycle())
         {
             tickCounter = 0;
         }
-
     }
 
     @Override
     protected void startUp() throws Exception
     {
         overlayManager.add(overlay);
+        overlay.setPreferredSize(DEFAULT_SIZE);
     }
 
     @Override
