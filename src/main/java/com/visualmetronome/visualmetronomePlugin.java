@@ -35,8 +35,7 @@ public class visualmetronomePlugin extends Plugin
     private int tickCounter = 0;
     public Color CurrentColor = Color.WHITE;
 
-    final String Title = "Metronome";
-    final Dimension DEFAULT_SIZE = new Dimension(25, 25);
+    public Dimension DEFAULT_SIZE = new Dimension(25, 25);
 
     @Provides
     visualmetronomeConfig provideConfig(ConfigManager configManager)
@@ -109,6 +108,7 @@ public class visualmetronomePlugin extends Plugin
         {
             tickCounter = 0;
         }
+        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
     }
 
     @Override

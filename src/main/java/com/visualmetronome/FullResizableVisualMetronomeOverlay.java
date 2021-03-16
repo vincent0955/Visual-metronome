@@ -11,7 +11,6 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
     private final visualmetronomeConfig config;
     private final visualmetronomePlugin plugin;
 
-    private static final int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
 
     @Inject
@@ -36,11 +35,6 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
 
         graphics.setColor(plugin.CurrentColor);
         graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
-
-        if (config.showTitle()) {
-            graphics.setColor(Color.WHITE);
-            graphics.drawString(plugin.Title, TITLE_PADDING, preferredSize.height - TITLE_PADDING);
-        }
 
         return preferredSize;
     }

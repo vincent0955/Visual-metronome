@@ -2,18 +2,14 @@
 A simple overlay that displays a box that changes color every game tick. Used for the same purposes as the regular metronome, timing based activities such as PvM or 3-tick fishing. Helpful for if you don't have sound, are listening to music, or just prefer a visual cue.
 
 # Usage
-Turn on plugin, alt+click to change width and drag overlay to desired location on your screen. 
+Alt+click on the border of the overlay to change the size
 
-- If you need the size to be smaller, use the fixed size option.
+Alt+right click on the overlay to reset to default size
 
-![](https://i.imgur.com/8Idrquz.gif)
+![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/ZJ00TAy.png)
-
-Alt+click and drag on border of overlay to change width (unfortunately cannot change height)
-
-If you want the overlay to be smaller or fixed in size, use the last two settings.
+![](https://i.imgur.com/nMYSD2T.png)
 
 # Changelog
 - **V1.1**
@@ -30,6 +26,11 @@ If you want the overlay to be smaller or fixed in size, use the last two setting
     - Add support for up to ten colors
 - **V1.2.3**
     - Fix bug that broke the plugin when certain config settings were changed
+- **V1.3** *(Developed by [m0bilebtw](https://github.com/m0bilebtw))*
+    - Rewrite overlay render so that you can now change both height and width
+        - Remove title option
+        - Remove set width option and fixed sizing as they now should be unnessecary
+        - Add default size option for overlay
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
