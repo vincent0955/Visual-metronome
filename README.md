@@ -9,7 +9,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/nMYSD2T.png)
+![](https://i.imgur.com/xbO0H4a.png)
 
 # Changelog
 - **V1.1**
@@ -31,6 +31,8 @@ Alt+right click on the overlay to reset to default size
         - Remove title option
         - Remove set width option and fixed sizing as they now should be unnessecary
         - Add default size option for overlay
+- **V1.3.1**
+    - Add option to show the current tick number on the overlay
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

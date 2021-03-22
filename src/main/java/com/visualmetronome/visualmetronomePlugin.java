@@ -32,7 +32,7 @@ public class visualmetronomePlugin extends Plugin
     private visualmetronomeConfig config;
 
     private boolean CurrentTick = true;
-    private int tickCounter = 0;
+    public int tickCounter = 0;
     public Color CurrentColor = Color.WHITE;
 
     public Dimension DEFAULT_SIZE = new Dimension(25, 25);
