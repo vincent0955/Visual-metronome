@@ -11,7 +11,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
     private final visualmetronomeConfig config;
     private final visualmetronomePlugin plugin;
 
-    private static final int TITLE_PADDING = 10;
+    private static int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
 
     @Inject
@@ -28,7 +28,8 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
     public Dimension render(Graphics2D graphics) {
         Dimension preferredSize = getPreferredSize();
 
-        if (preferredSize == null) {
+        if (preferredSize == null)
+        {
             // if this happens, reset to default - should be rare, but eg. alt+rightclick will cause this
             preferredSize = plugin.DEFAULT_SIZE;
             setPreferredSize(preferredSize);
@@ -36,9 +37,11 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
 
         graphics.setColor(plugin.CurrentColor);
         graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+        TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height)/2-4); // scales tick number position with box size
 
-        if (config.showTick()) {
-            graphics.setColor(Color.WHITE);
+        if (config.showTick())
+        {
+            graphics.setColor(config.NumberColor());
             graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
         }
 

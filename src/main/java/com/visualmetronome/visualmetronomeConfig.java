@@ -60,11 +60,22 @@ public interface visualmetronomeConfig extends Config
 		return false;
 	}
 
+	@ConfigItem(
+			position = 5,
+			keyName = "countColor",
+			name = "Tick Number Color",
+			description = "Configures the color of tick number, if enabled"
+	)
+	default Color NumberColor()
+	{
+		return Color.BLACK;
+	}
+
 	@Range(
 			min = 16
 	)
 	@ConfigItem(
-			position = 5,
+			position = 1,
 			keyName = "boxWidth",
 			name = "Default Box Size (Alt + Right Click Box)",
 			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
@@ -86,7 +97,7 @@ public interface visualmetronomeConfig extends Config
 			max = 10
 	)
 	@ConfigItem(
-			position = 6,
+			position = 1,
 			keyName = "colorCycle",
 			name = "Number of Colors",
 			description = "The number of colors it cycles through",
@@ -99,7 +110,7 @@ public interface visualmetronomeConfig extends Config
 	
 	@Alpha
 	@ConfigItem(
-			position = 7,
+			position = 2,
 			keyName = "tick3Color",
 			name = "3rd Tick Color",
 			description = "Configures the color of 3rd tick if enabled",
@@ -111,7 +122,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 8,
+			position = 3,
 			keyName = "tick4Color",
 			name = "4th Tick Color",
 			description = "Configures the color of the 4th tick if enabled",
@@ -123,7 +134,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 9,
+			position = 4,
 			keyName = "tick5Color",
 			name = "5th Tick Color",
 			description = "Configures the color of the 5th tick if enabled",
@@ -135,7 +146,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 10,
+			position = 5,
 			keyName = "tick6Color",
 			name = "6th Tick Color",
 			description = "Configures the color of the 6th tick if enabled",
@@ -147,7 +158,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 11,
+			position = 6,
 			keyName = "tick7Color",
 			name = "7th Tick Color",
 			description = "Configures the color of the 7th tick if enabled",
@@ -159,7 +170,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 12,
+			position = 7,
 			keyName = "tick8Color",
 			name = "8th Tick Color",
 			description = "Configures the color of the 8th tick if enabled",
@@ -171,7 +182,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 13,
+			position = 8,
 			keyName = "tick9Color",
 			name = "9th Tick Color",
 			description = "Configures the color of the 9th tick if enabled",
@@ -183,7 +194,7 @@ public interface visualmetronomeConfig extends Config
 	}
 	@Alpha
 	@ConfigItem(
-			position = 14,
+			position = 9,
 			keyName = "tick10Color",
 			name = "10th Tick Color",
 			description = "Configures the color of the 10th tick if enabled",
