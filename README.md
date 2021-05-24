@@ -36,6 +36,8 @@ Alt+right click on the overlay to reset to default size
 - **V1.3.2**
     - Add option to change color of tick number
     - Tick number position now centers itself on the overlay 
+- **V1.3.3**
+    - Fix tick number to show the correct tick number instead of being one tick off
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

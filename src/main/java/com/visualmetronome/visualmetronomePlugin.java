@@ -64,6 +64,10 @@ public class visualmetronomePlugin extends Plugin
             return;
         }
         // changes color every tick
+        if (tickCounter == config.colorCycle())
+        {
+            tickCounter = 0;
+        }
         switch (++tickCounter)
         {
             case 1:
@@ -96,10 +100,7 @@ public class visualmetronomePlugin extends Plugin
             case 10:
                 CurrentColor = config.getTick10Color();
         }
-        if (tickCounter == config.colorCycle())
-        {
-            tickCounter = 0;
-        }
+
     }
     @Subscribe
     public void onConfigChanged(ConfigChanged event)

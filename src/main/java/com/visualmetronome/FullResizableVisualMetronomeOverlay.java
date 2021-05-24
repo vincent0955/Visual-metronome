@@ -42,7 +42,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
         if (config.showTick())
         {
             graphics.setColor(config.NumberColor());
-            graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+            graphics.drawString(String.valueOf(plugin.tickCounter-1), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
         }
 
         return preferredSize;
