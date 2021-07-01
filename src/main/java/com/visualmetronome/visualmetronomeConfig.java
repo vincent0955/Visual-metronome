@@ -36,10 +36,24 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@Range(
-			min = 1
+			min = 16
 	)
 	@ConfigItem(
 			position = 3,
+			keyName = "boxWidth",
+			name = "Default Box Size (Alt + Right Click Box)",
+			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
+	)
+	default int boxWidth()
+	{
+		return 25;
+	}
+
+	@Range(
+			min = 1
+	)
+	@ConfigItem(
+			position = 4,
 			keyName = "tickCount",
 			name = "Tick Count",
 			description = "The tick on which the color changes (Only supports two colors)"
@@ -50,7 +64,7 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 4,
+			position = 5,
 			keyName = "showTick",
 			name = "Show Tick Number",
 			description = "Shows current tick number on the overlay"
@@ -61,7 +75,7 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 5,
+			position = 6,
 			keyName = "countColor",
 			name = "Tick Number Color",
 			description = "Configures the color of tick number, if enabled"
@@ -71,26 +85,24 @@ public interface visualmetronomeConfig extends Config
 		return Color.BLACK;
 	}
 
-	@Range(
-			min = 16
-	)
 	@ConfigItem(
-			position = 1,
-			keyName = "boxWidth",
-			name = "Default Box Size (Alt + Right Click Box)",
-			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
+			position = 7,
+			keyName = "highlightCurrentTile",
+			name = "Enable True Tile Overlay",
+			description = "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)"
 	)
-	default int boxWidth()
+	default boolean highlightCurrentTile()
 	{
-		return 25;
+		return false;
 	}
 
 	@ConfigSection(
 			name = "Additional Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 6
+			position = 8
 	)
 	String ColorSettings = "Additional Color Settings";
+
 
 	@Range(
 			min = 2,

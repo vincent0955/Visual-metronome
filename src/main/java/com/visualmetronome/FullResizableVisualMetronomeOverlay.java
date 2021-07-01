@@ -2,11 +2,12 @@ package com.visualmetronome;
 
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
-
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import javax.inject.Inject;
-import java.awt.*;
 
-public class FullResizableVisualMetronomeOverlay extends Overlay {
+public class FullResizableVisualMetronomeOverlay extends Overlay
+{
 
     private final visualmetronomeConfig config;
     private final visualmetronomePlugin plugin;
@@ -15,7 +16,8 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
 
     @Inject
-    public FullResizableVisualMetronomeOverlay(visualmetronomeConfig config, visualmetronomePlugin plugin) {
+    public FullResizableVisualMetronomeOverlay(visualmetronomeConfig config, visualmetronomePlugin plugin)
+    {
         super(plugin);
         this.config = config;
         this.plugin = plugin;
@@ -25,7 +27,8 @@ public class FullResizableVisualMetronomeOverlay extends Overlay {
     }
 
     @Override
-    public Dimension render(Graphics2D graphics) {
+    public Dimension render(Graphics2D graphics)
+    {
         Dimension preferredSize = getPreferredSize();
 
         if (preferredSize == null)

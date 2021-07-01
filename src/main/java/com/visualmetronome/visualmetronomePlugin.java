@@ -26,6 +26,9 @@ public class visualmetronomePlugin extends Plugin
     private ConfigManager configManager;
 
     @Inject
+    private visualmetronomeTileOverlay tileOverlay;
+
+    @Inject
     private FullResizableVisualMetronomeOverlay overlay;
 
     @Inject
@@ -116,6 +119,7 @@ public class visualmetronomePlugin extends Plugin
     protected void startUp() throws Exception
     {
         overlayManager.add(overlay);
+        overlayManager.add(tileOverlay);
         overlay.setPreferredSize(DEFAULT_SIZE);
     }
 
@@ -123,6 +127,7 @@ public class visualmetronomePlugin extends Plugin
     protected void shutDown() throws Exception
     {
         overlayManager.remove(overlay);
+        overlayManager.remove(tileOverlay);
         tickCounter = 0;
     }
 }

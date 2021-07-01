@@ -9,7 +9,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/FEQ5ikp.png)
+![](https://i.imgur.com/l4wvuHp.png)
 
 # Changelog
 - **V1.1**
@@ -38,6 +38,8 @@ Alt+right click on the overlay to reset to default size
     - Tick number position now centers itself on the overlay 
 - **V1.3.3**
     - Fix tick number to show the correct tick number instead of being one tick off
+- **V1.3.4**
+    - Add setting to highlight the player's true current tile with the metronome colors
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
