@@ -119,8 +119,8 @@ public class visualmetronomePlugin extends Plugin
     protected void startUp() throws Exception
     {
         overlayManager.add(overlay);
-        overlayManager.add(tileOverlay);
         overlay.setPreferredSize(DEFAULT_SIZE);
+        overlayManager.add(tileOverlay);
     }
 
     @Override

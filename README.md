@@ -1,5 +1,9 @@
 # Visual Metronome ![Total installs](https://img.shields.io/endpoint?url=https://i.pluginhub.info/shields/installs/plugin/visual-metronome)
-A simple overlay that displays a box that changes color every game tick. Used for the same purposes as the regular metronome, timing based activities such as PvM or 3-tick fishing. Helpful for if you don't have sound, are listening to music, or just prefer a visual cue.
+A simple overlay that displays a box on your screen, or displays your true tile that changes color every game tick. 
+
+Used for the same purposes as the regular metronome, timing based activities such as PvM or 3-tick fishing. Helpful for if you don't have sound, are listening to music, or just prefer a visual cue.
+
+![](https://i.imgur.com/drcQDOn.gif) ![](https://i.imgur.com/2qUetFH.gif)
 
 # Usage
 Alt+click on the border of the overlay to change the size
@@ -9,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/l4wvuHp.png)
+![](https://i.imgur.com/nCUjDpu.png)
 
 # Changelog
 - **V1.1**
@@ -40,6 +44,9 @@ Alt+right click on the overlay to reset to default size
     - Fix tick number to show the correct tick number instead of being one tick off
 - **V1.3.4**
     - Add setting to highlight the player's true current tile with the metronome colors
+- **V1.3.5**
+    - Add option to remove the visual metronome overlay
+    - Add icon.png
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

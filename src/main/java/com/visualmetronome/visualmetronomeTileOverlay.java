@@ -39,7 +39,7 @@ public class visualmetronomeTileOverlay extends Overlay
     public Dimension render(Graphics2D graphics) {
 
         if (config.highlightCurrentTile())
-            {
+        {
             final WorldPoint playerPos = client.getLocalPlayer().getWorldLocation();
             if (playerPos == null)
             {
@@ -53,7 +53,7 @@ public class visualmetronomeTileOverlay extends Overlay
             }
 
             renderTile(graphics, playerPosLocal, plugin.CurrentColor);
-        }
+            }
 
         return null;
 

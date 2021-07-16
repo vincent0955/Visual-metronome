@@ -38,14 +38,16 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
             setPreferredSize(preferredSize);
         }
 
-        graphics.setColor(plugin.CurrentColor);
-        graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
-        TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height)/2-4); // scales tick number position with box size
-
-        if (config.showTick())
+        if (config.enableMetronome())
         {
-            graphics.setColor(config.NumberColor());
-            graphics.drawString(String.valueOf(plugin.tickCounter-1), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+            graphics.setColor(plugin.CurrentColor);
+            graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+            TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4); // scales tick number position with box size
+
+            if (config.showTick()) {
+                graphics.setColor(config.NumberColor());
+                graphics.drawString(String.valueOf(plugin.tickCounter - 1), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+            }
         }
 
         return preferredSize;

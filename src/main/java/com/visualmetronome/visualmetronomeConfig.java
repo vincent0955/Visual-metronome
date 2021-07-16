@@ -11,9 +11,31 @@ import java.awt.Color;
 @ConfigGroup("visualmetronome")
 public interface visualmetronomeConfig extends Config
 {
-	@Alpha
 	@ConfigItem(
 			position = 1,
+			keyName = "enableMetronome",
+			name = "Visual Metronome",
+			description = "Enable visual metronome"
+	)
+	default boolean enableMetronome()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			position = 2,
+			keyName = "highlightCurrentTile",
+			name = "Enable True Tile Overlay",
+			description = "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)"
+	)
+	default boolean highlightCurrentTile()
+	{
+		return false;
+	}
+
+	@Alpha
+	@ConfigItem(
+			position = 3,
 			keyName = "tickColor",
 			name = "Tick Color",
 			description = "Configures the color of tick"
@@ -25,7 +47,7 @@ public interface visualmetronomeConfig extends Config
 
 	@Alpha
 	@ConfigItem(
-			position = 2,
+			position = 4,
 			keyName = "tockColor",
 			name = "Tock Color",
 			description = "Configures the color of tock"
@@ -39,7 +61,7 @@ public interface visualmetronomeConfig extends Config
 			min = 16
 	)
 	@ConfigItem(
-			position = 3,
+			position = 5,
 			keyName = "boxWidth",
 			name = "Default Box Size (Alt + Right Click Box)",
 			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
@@ -53,7 +75,7 @@ public interface visualmetronomeConfig extends Config
 			min = 1
 	)
 	@ConfigItem(
-			position = 4,
+			position = 6,
 			keyName = "tickCount",
 			name = "Tick Count",
 			description = "The tick on which the color changes (Only supports two colors)"
@@ -64,7 +86,7 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 5,
+			position = 7,
 			keyName = "showTick",
 			name = "Show Tick Number",
 			description = "Shows current tick number on the overlay"
@@ -75,7 +97,7 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 6,
+			position = 8,
 			keyName = "countColor",
 			name = "Tick Number Color",
 			description = "Configures the color of tick number, if enabled"
@@ -85,21 +107,10 @@ public interface visualmetronomeConfig extends Config
 		return Color.BLACK;
 	}
 
-	@ConfigItem(
-			position = 7,
-			keyName = "highlightCurrentTile",
-			name = "Enable True Tile Overlay",
-			description = "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)"
-	)
-	default boolean highlightCurrentTile()
-	{
-		return false;
-	}
-
 	@ConfigSection(
 			name = "Additional Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 8
+			position = 9
 	)
 	String ColorSettings = "Additional Color Settings";
 
