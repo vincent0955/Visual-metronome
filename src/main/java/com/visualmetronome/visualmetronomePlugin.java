@@ -51,7 +51,7 @@ public class visualmetronomePlugin extends Plugin
     {
         if (config.tickCount() != 1)
         {
-            if (++tickCounter % config.tickCount() == 0)
+            if (tickCounter % config.tickCount() == 0)
             {
                 tickCounter = 0;
                 CurrentTick = !CurrentTick;
@@ -64,6 +64,7 @@ public class visualmetronomePlugin extends Plugin
                     CurrentColor = config.getTockColor();
                 }
             }
+            tickCounter++;
             return;
         }
         // changes color every tick
