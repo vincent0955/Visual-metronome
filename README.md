@@ -55,3 +55,5 @@ Alt+right click on the overlay to reset to default size
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
 
 Thank you to everyone who has left feedback so far, it is appreciated.
+
+Oct 28, 2021 - 10,000 Total installs!
