@@ -107,10 +107,21 @@ public interface visualmetronomeConfig extends Config
 		return Color.BLACK;
 	}
 
+	@ConfigItem(
+			position = 9,
+			keyName = "enableCycle",
+			name = "Cycle",
+			description = "Enable cycle"
+	)
+	default boolean enableCycle()
+	{
+		return false;
+	}
+
 	@ConfigSection(
 			name = "Additional Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 9
+			position = 10
 	)
 	String ColorSettings = "Additional Color Settings";
 

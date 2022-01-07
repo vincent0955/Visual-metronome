@@ -68,7 +68,7 @@ public class visualmetronomePlugin extends Plugin
             return;
         }
         // changes color every tick
-        if (tickCounter == config.colorCycle())
+        if (tickCounter == config.colorCycle() || (tickCounter == 4 && config.enableCycle()))
         {
             tickCounter = 0;
         }
