@@ -7,6 +7,7 @@ import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
 import javax.inject.Inject;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -52,14 +53,15 @@ public class visualmetronomeTileOverlay extends Overlay
                 return null;
             }
 
-            renderTile(graphics, playerPosLocal, plugin.CurrentColor);
+            //renderTile(graphics, playerPosLocal, plugin.CurrentColor, config.currentTileFillColor(), 2);
+            renderTile(graphics, playerPosLocal, plugin.CurrentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
             }
 
         return null;
 
     }
 
-    private void renderTile(final Graphics2D graphics, final LocalPoint dest, final Color color)
+    private void renderTile(final Graphics2D graphics, final LocalPoint dest, final Color color, final Color fillColor, final double borderWidth)
     {
         if (dest == null)
         {
@@ -73,7 +75,7 @@ public class visualmetronomeTileOverlay extends Overlay
             return;
         }
 
-        OverlayUtil.renderPolygon(graphics, poly, color);
+        OverlayUtil.renderPolygon(graphics, poly, color, fillColor, new BasicStroke((float) borderWidth));
     }
 }
 

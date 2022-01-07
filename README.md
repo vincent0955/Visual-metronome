@@ -13,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/nCUjDpu.png)
+![](https://i.imgur.com/kZ17qQv.png)
 
 # Changelog
 - **V1.1**
@@ -50,6 +50,10 @@ Alt+right click on the overlay to reset to default size
 - **V1.3.6**
     - Show Tick Number now starts at 1 instead of 0
     - Fix bug with Tick Count and Show Tick Number that makes it start from -1
+- **V1.3.7**
+    - Add true tile overlay settings
+        - Add true tile border width option
+        - Add true tile fill color
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

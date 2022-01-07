@@ -108,9 +108,42 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigSection(
+			name = "True Tile Overlay Settings",
+			description = "Settings only applied to True Tile Overlay",
+			position = 9
+	)
+	String TileSettings = "True Tile Overlay Settings";
+
+	@Alpha
+	@ConfigItem(
+			position = 1,
+			keyName = "currentTileFillColor",
+			name = "True Tile Fill Color",
+			description = "Fill color of the true tile overlay",
+			section = TileSettings
+	)
+	default Color currentTileFillColor()
+	{
+		return new Color(0, 0, 0, 50);
+	}
+
+	@ConfigItem(
+			position = 2,
+			keyName = "currentTileBorderWidth",
+			name = "True Tile Border Width",
+			description = "Border size of the true tile overlay",
+			section = TileSettings
+	)
+	default double currentTileBorderWidth()
+	{
+		return 2;
+	}
+
+
+	@ConfigSection(
 			name = "Additional Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 9
+			position = 10
 	)
 	String ColorSettings = "Additional Color Settings";
 
@@ -130,7 +163,7 @@ public interface visualmetronomeConfig extends Config
 	{
 		return 2;
 	}
-	
+
 	@Alpha
 	@ConfigItem(
 			position = 2,
