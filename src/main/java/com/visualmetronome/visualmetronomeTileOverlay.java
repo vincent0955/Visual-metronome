@@ -2,6 +2,7 @@ package com.visualmetronome;
 
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
+import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -32,13 +33,13 @@ public class visualmetronomeTileOverlay extends Overlay
         this.config = config;
         this.plugin = plugin;
         setPosition(OverlayPosition.DYNAMIC);
-        setLayer(OverlayLayer.ABOVE_SCENE);
+        setLayer(OverlayLayer.ALWAYS_ON_TOP);
         setPriority(OverlayPriority.MED);
     }
 
     @Override
-    public Dimension render(Graphics2D graphics) {
-
+    public Dimension render(Graphics2D graphics)
+    {
         if (config.highlightCurrentTile())
         {
             final WorldPoint playerPos = client.getLocalPlayer().getWorldLocation();
@@ -53,12 +54,18 @@ public class visualmetronomeTileOverlay extends Overlay
                 return null;
             }
 
-            //renderTile(graphics, playerPosLocal, plugin.CurrentColor, config.currentTileFillColor(), 2);
             renderTile(graphics, playerPosLocal, plugin.CurrentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
-            }
+        }
+
+        if (config.showPlayerTick())
+        {
+            final int height = client.getLocalPlayer().getLogicalHeight()+20;
+            final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
+            final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getPlane(), height);
+            OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+        }
 
         return null;
-
     }
 
     private void renderTile(final Graphics2D graphics, final LocalPoint dest, final Color color, final Color fillColor, final double borderWidth)

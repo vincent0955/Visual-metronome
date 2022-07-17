@@ -13,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/kZ17qQv.png)
+![](https://i.imgur.com/QRe8B7l.png)
 
 # Changelog
 - **V1.1**
@@ -54,6 +54,9 @@ Alt+right click on the overlay to reset to default size
     - Add true tile overlay settings
         - Add true tile border width option
         - Add true tile fill color
+- **V1.3.8**
+    - Add option to display tick number above player model
+    - Rearrange config options
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
