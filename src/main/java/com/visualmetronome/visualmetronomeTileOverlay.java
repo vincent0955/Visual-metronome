@@ -33,7 +33,7 @@ public class visualmetronomeTileOverlay extends Overlay
         this.config = config;
         this.plugin = plugin;
         setPosition(OverlayPosition.DYNAMIC);
-        setLayer(OverlayLayer.ALWAYS_ON_TOP);
+        setLayer(OverlayLayer.UNDER_WIDGETS);
         setPriority(OverlayPriority.MED);
     }
 

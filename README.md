@@ -57,6 +57,8 @@ Alt+right click on the overlay to reset to default size
 - **V1.3.8**
     - Add option to display tick number above player model
     - Rearrange config options
+- **V1.3.8.1**
+    - fix overlay showeing above interfaces
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
