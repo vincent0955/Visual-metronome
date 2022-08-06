@@ -13,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/QRe8B7l.png)
+![](https://i.imgur.com/x3FhFRG.png)
 
 # Changelog
 - **V1.1**
@@ -58,7 +58,15 @@ Alt+right click on the overlay to reset to default size
     - Add option to display tick number above player model
     - Rearrange config options
 - **V1.3.8.1**
-    - fix overlay showeing above interfaces
+    - Fix overlay showing above interfaces
+- **V1.4**
+    - Add new section for Tick Number Settings
+    - Add option to change font size of overhead Tick Number
+    - Add option to change the font
+        - Add FontTypes.Java 
+        - RS Regular, Arial, Cambria, Rockwell, Segoe Ui, Times New Roman, and Verdana
+    - Add automatic font size scaling for the Metronome Tick Number
+        - removed TITLE_PADDING and change the way it scales
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

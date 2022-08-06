@@ -6,6 +6,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.FontType;
 import java.awt.Color;
 
 @ConfigGroup("visualmetronome")
@@ -62,11 +63,19 @@ public interface visualmetronomeConfig extends Config
 		return 1;
 	}
 
+	@ConfigSection(
+			name = "Tick Number Settings",
+			description = "Change Tick Number settings",
+			position = 5
+	)
+	String TickNumberSettings = "Tick Number Settings";
+
 	@ConfigItem(
-			position = 5,
+			position = 1,
 			keyName = "showTick",
-			name = "Show Tick Number",
-			description = "Shows current tick number on the overlay"
+			name = "Show Metronome Tick Number",
+			description = "Shows current tick number on the metronome",
+			section = TickNumberSettings
 	)
 	default boolean showTick()
 	{
@@ -74,31 +83,59 @@ public interface visualmetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 6,
+			position = 2,
 			keyName = "showPlayerTick",
 			name = "Show Tick Number Above Player",
-			description = "Shows current tick number above the player"
+			description = "Shows current tick number above the player",
+			section = TickNumberSettings
 	)
 	default boolean showPlayerTick()
 	{
 		return false;
 	}
 
+
 	@ConfigItem(
-			position = 7,
+			position = 3,
 			keyName = "countColor",
 			name = "Tick Number Color",
-			description = "Configures the color of tick number, if enabled"
+			description = "Configures the color of tick number, if enabled",
+			section = TickNumberSettings
 	)
 	default Color NumberColor()
 	{
-		return Color.BLACK;
+		return Color.CYAN;
 	}
+
+	@Range(
+			min = 8,
+			max = 50
+	)
+	@ConfigItem(
+			position = 4,
+			keyName = "fontSize",
+			name = "Font Size",
+			description = "The font size of the overhead Tick Number",
+			section = TickNumberSettings
+	)
+	default int fontSize()
+	{
+		return 15;
+	}
+
+	@ConfigItem(
+			position = 5,
+			keyName = "fontType",
+			name = "Font Type",
+			description = "Change the font of the Tick Number",
+			section = TickNumberSettings
+	)
+	default FontTypes fontType() { return FontTypes.REGULAR; }
 
 	@ConfigSection(
 			name = "True Tile Overlay Settings",
 			description = "Settings only applied to True Tile Overlay",
-			position = 8
+			position = 6
 	)
 	String TileSettings = "True Tile Overlay Settings";
 
@@ -131,7 +168,7 @@ public interface visualmetronomeConfig extends Config
 	@ConfigSection(
 			name = "Additional Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 9
+			position = 7
 	)
 	String ColorSettings = "Additional Color Settings";
 
