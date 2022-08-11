@@ -13,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/x3FhFRG.png)
+![](https://i.imgur.com/ZCcqyXP.png)
 
 # Changelog
 - **V1.1**
@@ -67,6 +67,8 @@ Alt+right click on the overlay to reset to default size
         - RS Regular, Arial, Cambria, Rockwell, Segoe Ui, Times New Roman, and Verdana
     - Add automatic font size scaling for the Metronome Tick Number
         - removed TITLE_PADDING and change the way it scales
+- **V1.4.1**  
+    - Add option to change metronome tick number scaling back to how it previously worked
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

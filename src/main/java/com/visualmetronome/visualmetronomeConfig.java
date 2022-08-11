@@ -94,17 +94,16 @@ public interface visualmetronomeConfig extends Config
 		return false;
 	}
 
-
 	@ConfigItem(
 			position = 3,
-			keyName = "countColor",
-			name = "Tick Number Color",
-			description = "Configures the color of tick number, if enabled",
+			keyName = "disableFontScaling",
+			name = "Disable Font Size Scaling (Metronome Tick Only)",
+			description = "Disables font size scaling for metronome tick number",
 			section = TickNumberSettings
 	)
-	default Color NumberColor()
+	default boolean disableFontScaling()
 	{
-		return Color.CYAN;
+		return false;
 	}
 
 	@Range(
@@ -114,8 +113,8 @@ public interface visualmetronomeConfig extends Config
 	@ConfigItem(
 			position = 4,
 			keyName = "fontSize",
-			name = "Font Size",
-			description = "The font size of the overhead Tick Number",
+			name = "Font Size (Overhead Tick Only)",
+			description = "Change the font size of the overhead Tick Number",
 			section = TickNumberSettings
 	)
 	default int fontSize()
@@ -125,6 +124,18 @@ public interface visualmetronomeConfig extends Config
 
 	@ConfigItem(
 			position = 5,
+			keyName = "countColor",
+			name = "Tick Number Color",
+			description = "Configures the color of tick number",
+			section = TickNumberSettings
+	)
+	default Color NumberColor()
+	{
+		return Color.CYAN;
+	}
+
+	@ConfigItem(
+			position = 6,
 			keyName = "fontType",
 			name = "Font Type",
 			description = "Change the font of the Tick Number",
@@ -166,11 +177,11 @@ public interface visualmetronomeConfig extends Config
 
 
 	@ConfigSection(
-			name = "Additional Color Settings",
+			name = "Color Settings",
 			description = "Change the colors and number of colors to cycle through",
 			position = 7
 	)
-	String ColorSettings = "Additional Color Settings";
+	String ColorSettings = "Color Settings";
 
 
 	@Range(

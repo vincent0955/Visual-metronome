@@ -15,6 +15,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
     private final visualmetronomeConfig config;
     private final visualmetronomePlugin plugin;
 
+    private static int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
 
     @Inject
@@ -44,19 +45,29 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
         {
             graphics.setColor(plugin.CurrentColor);
             graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+            TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4); // scales tick number position with box size
 
-            if (config.showTick()) {
-                if (config.fontType() == FontTypes.REGULAR)
+            if (config.showTick())
+            {
+                if (config.disableFontScaling())
                 {
-                    graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, Math.min(preferredSize.width, preferredSize.height))); //scales font size based on the size of the metronome
+                    graphics.setColor(config.NumberColor());
+                    graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
                 }
                 else
-                {
-                    graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, Math.min(preferredSize.width, Math.min(preferredSize.width, preferredSize.height))));
-                }
+                    {
+                    if (config.fontType() == FontTypes.REGULAR)
+                    {
+                        graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, Math.min(preferredSize.width, preferredSize.height))); //scales font size based on the size of the metronome
+                    }
+                    else
+                        {
+                        graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, Math.min(preferredSize.width, Math.min(preferredSize.width, preferredSize.height))));
+                    }
 
-                final Point tickCounterPoint = new Point(preferredSize.width/3, preferredSize.height);
-                OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                    final Point tickCounterPoint = new Point(preferredSize.width / 3, preferredSize.height);
+                    OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                }
             }
         }
 
