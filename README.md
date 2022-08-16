@@ -13,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/ZCcqyXP.png)
+![](https://i.imgur.com/KE3xI1B.png)
 
 # Changelog
 - **V1.1**
@@ -69,6 +69,8 @@ Alt+right click on the overlay to reset to default size
         - removed TITLE_PADDING and change the way it scales
 - **V1.4.1**  
     - Add option to change metronome tick number scaling back to how it previously worked
+- **V1.4.2**  
+    - Add option to reset the tick cycle with a hotkey
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

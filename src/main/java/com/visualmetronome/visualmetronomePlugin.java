@@ -8,8 +8,10 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-
 import javax.inject.Inject;
+import java.awt.event.KeyEvent;
+import net.runelite.client.input.KeyListener;
+import net.runelite.client.input.KeyManager;
 import java.awt.*;
 
 @PluginDescriptor(
@@ -17,7 +19,7 @@ import java.awt.*;
         description = "Shows a visual cue on an overlay every game tick to help timing based activities",
         tags = {"timers", "overlays", "tick", "skilling"}
 )
-public class visualmetronomePlugin extends Plugin
+public class visualmetronomePlugin extends Plugin implements KeyListener
 {
     @Inject
     private OverlayManager overlayManager;
@@ -33,6 +35,9 @@ public class visualmetronomePlugin extends Plugin
 
     @Inject
     private visualmetronomeConfig config;
+
+    @Inject
+    private KeyManager keyManager;
 
     private boolean CurrentTick = true;
     public int tickCounter = 0;
@@ -122,6 +127,7 @@ public class visualmetronomePlugin extends Plugin
         overlayManager.add(overlay);
         overlay.setPreferredSize(DEFAULT_SIZE);
         overlayManager.add(tileOverlay);
+        keyManager.registerKeyListener(this);
     }
 
     @Override
@@ -130,5 +136,24 @@ public class visualmetronomePlugin extends Plugin
         overlayManager.remove(overlay);
         overlayManager.remove(tileOverlay);
         tickCounter = 0;
+        keyManager.unregisterKeyListener(this);
+    }
+
+    //hotkey settings
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e)
+    {
+        if (config.tickResetHotkey().matches(e))
+        {
+            tickCounter = 0;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

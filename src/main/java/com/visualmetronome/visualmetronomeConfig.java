@@ -6,7 +6,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.ConfigSection;
-import net.runelite.client.config.FontType;
+import net.runelite.client.config.Keybind;
 import java.awt.Color;
 
 @ConfigGroup("visualmetronome")
@@ -321,6 +321,24 @@ public interface visualmetronomeConfig extends Config
 	default Color getTick10Color()
 	{
 		return new Color(255, 17, 0);
+	}
+
+	@ConfigSection(
+			name = "Hotkey Settings",
+			description = "Settings that use hotkeys",
+			position = 8
+	)
+	String HotkeySettings = "Hotkey Settings";
+
+	@ConfigItem(
+			position = 1,
+			keyName = "tickResetHotkey",
+			name = "Tick Cycle Reset Hotkey",
+			description = "Hotkey to reset the tick cycle back to 0",
+			section = HotkeySettings
+	)
+	default Keybind tickResetHotkey() {
+		return Keybind.NOT_SET;
 	}
 
 }
