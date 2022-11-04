@@ -78,3 +78,5 @@ I'm open to all feedback on bugs or features you want to see in this plugin. Giv
 Thank you to everyone who has left feedback so far, it is appreciated.
 
 Oct 28, 2021 - 10,000 Total installs!
+
+Oct 23, 2022 - 30,000 Total installs!
