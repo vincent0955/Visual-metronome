@@ -80,3 +80,6 @@ Thank you to everyone who has left feedback so far, it is appreciated.
 Oct 28, 2021 - 10,000 Total installs!
 
 Oct 23, 2022 - 30,000 Total installs!
+
+# Bugs
+There's currently a known bug where the metronome seems to randomly reset or reset on certain actions, usually when ToB or the scythe is involved. The cause is still unknown, so please let me know if you find anything that fixes it. Some people have said disabling "Weapon Charges" plugin or the "ToB Light Up" plugin fixes it, so you can try that, but it still isn't sure if that's the actual cause of the bug. 
