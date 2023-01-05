@@ -10,7 +10,7 @@ import net.runelite.client.config.Keybind;
 import java.awt.Color;
 
 @ConfigGroup("visualmetronome")
-public interface visualmetronomeConfig extends Config
+public interface VisualMetronomeConfig extends Config
 {
 	@ConfigItem(
 			position = 1,

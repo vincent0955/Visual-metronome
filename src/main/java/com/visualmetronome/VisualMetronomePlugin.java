@@ -10,16 +10,17 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 import java.awt.event.KeyEvent;
+import java.awt.Color;
+import java.awt.Dimension;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
-import java.awt.*;
 
 @PluginDescriptor(
         name = "Visual Metronome",
         description = "Shows a visual cue on an overlay every game tick to help timing based activities",
         tags = {"timers", "overlays", "tick", "skilling"}
 )
-public class visualmetronomePlugin extends Plugin implements KeyListener
+public class VisualMetronomePlugin extends Plugin implements KeyListener
 {
     @Inject
     private OverlayManager overlayManager;
@@ -28,13 +29,13 @@ public class visualmetronomePlugin extends Plugin implements KeyListener
     private ConfigManager configManager;
 
     @Inject
-    private visualmetronomeTileOverlay tileOverlay;
+    private VisualMetronomeTileOverlay tileOverlay;
 
     @Inject
     private FullResizableVisualMetronomeOverlay overlay;
 
     @Inject
-    private visualmetronomeConfig config;
+    private VisualMetronomeConfig config;
 
     @Inject
     private KeyManager keyManager;
@@ -46,9 +47,9 @@ public class visualmetronomePlugin extends Plugin implements KeyListener
     public Dimension DEFAULT_SIZE = new Dimension(25, 25);
 
     @Provides
-    visualmetronomeConfig provideConfig(ConfigManager configManager)
+    VisualMetronomeConfig provideConfig(ConfigManager configManager)
     {
-        return configManager.getConfig(visualmetronomeConfig.class);
+        return configManager.getConfig(VisualMetronomeConfig.class);
     }
 
     @Subscribe
@@ -141,7 +142,8 @@ public class visualmetronomePlugin extends Plugin implements KeyListener
 
     //hotkey settings
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e)
+    {
     }
 
     @Override
@@ -154,6 +156,7 @@ public class visualmetronomePlugin extends Plugin implements KeyListener
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e)
+    {
     }
 }

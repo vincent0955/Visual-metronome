@@ -20,15 +20,15 @@ import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPriority;
 
 
-public class visualmetronomeTileOverlay extends Overlay
+public class VisualMetronomeTileOverlay extends Overlay
 {
 
     private final Client client;
-    private final visualmetronomeConfig config;
-    private final visualmetronomePlugin plugin;
+    private final VisualMetronomeConfig config;
+    private final VisualMetronomePlugin plugin;
 
     @Inject
-    public visualmetronomeTileOverlay(Client client, visualmetronomeConfig config, visualmetronomePlugin plugin)
+    public VisualMetronomeTileOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin)
     {
         super(plugin);
         this.client = client;

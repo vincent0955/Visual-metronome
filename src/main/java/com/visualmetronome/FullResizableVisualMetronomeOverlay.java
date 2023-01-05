@@ -3,8 +3,9 @@ package com.visualmetronome;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
-
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Font;
 import javax.inject.Inject;
 import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.OverlayUtil;
@@ -12,14 +13,14 @@ import net.runelite.client.ui.overlay.OverlayUtil;
 public class FullResizableVisualMetronomeOverlay extends Overlay
 {
 
-    private final visualmetronomeConfig config;
-    private final visualmetronomePlugin plugin;
+    private final VisualMetronomeConfig config;
+    private final VisualMetronomePlugin plugin;
 
     private static int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
 
     @Inject
-    public FullResizableVisualMetronomeOverlay(visualmetronomeConfig config, visualmetronomePlugin plugin)
+    public FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
     {
         super(plugin);
         this.config = config;
@@ -55,13 +56,13 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                     graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
                 }
                 else
-                    {
+                {
                     if (config.fontType() == FontTypes.REGULAR)
                     {
                         graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, Math.min(preferredSize.width, preferredSize.height))); //scales font size based on the size of the metronome
                     }
                     else
-                        {
+                    {
                         graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, Math.min(preferredSize.width, Math.min(preferredSize.width, preferredSize.height))));
                     }
 
