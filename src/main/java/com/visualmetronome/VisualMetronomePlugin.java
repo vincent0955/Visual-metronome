@@ -40,11 +40,11 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private KeyManager keyManager;
 
-    private boolean CurrentTick = true;
-    public int tickCounter = 0;
-    public Color CurrentColor = Color.WHITE;
+    private int CurrentTick = 0;
+    protected int tickCounter = 0;
+    protected Color CurrentColor = Color.WHITE;
 
-    public Dimension DEFAULT_SIZE = new Dimension(25, 25);
+    protected Dimension DEFAULT_SIZE = new Dimension(25, 25);
 
     @Provides
     VisualMetronomeConfig provideConfig(ConfigManager configManager)
@@ -60,14 +60,41 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             if (tickCounter % config.tickCount() == 0)
             {
                 tickCounter = 0;
-                CurrentTick = !CurrentTick;
-                if (CurrentTick)
+                if (CurrentTick == config.colorCycle())
                 {
-                    CurrentColor = config.getTickColor();
+                    CurrentTick = 0;
                 }
-                else
-                    {
-                    CurrentColor = config.getTockColor();
+                switch (++CurrentTick)
+                {
+                    case 1:
+                        CurrentColor = config.getTickColor();
+                        break;
+                    case 2:
+                        CurrentColor = config.getTockColor();
+                        break;
+                    case 3:
+                        CurrentColor = config.getTick3Color();
+                        break;
+                    case 4:
+                        CurrentColor = config.getTick4Color();
+                        break;
+                    case 5:
+                        CurrentColor = config.getTick5Color();
+                        break;
+                    case 6:
+                        CurrentColor = config.getTick6Color();
+                        break;
+                    case 7:
+                        CurrentColor = config.getTick7Color();
+                        break;
+                    case 8:
+                        CurrentColor = config.getTick8Color();
+                        break;
+                    case 9:
+                        CurrentColor = config.getTick9Color();
+                        break;
+                    case 10:
+                        CurrentColor = config.getTick10Color();
                 }
             }
             tickCounter++;

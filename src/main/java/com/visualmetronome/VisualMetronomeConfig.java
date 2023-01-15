@@ -56,7 +56,7 @@ public interface VisualMetronomeConfig extends Config
 			position = 4,
 			keyName = "tickCount",
 			name = "Tick Count",
-			description = "The tick on which the color changes (Only supports two colors)"
+			description = "The tick on which the color changes"
 	)
 	default int tickCount()
 	{
