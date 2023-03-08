@@ -44,7 +44,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
 
         if (config.enableMetronome())
         {
-            graphics.setColor(plugin.CurrentColor);
+            graphics.setColor(plugin.currentColor);
             graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
             TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4); // scales tick number position with box size
 
@@ -53,7 +53,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                 if (config.disableFontScaling())
                 {
                     graphics.setColor(config.NumberColor());
-                    graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+                    graphics.drawString(String.valueOf(plugin.currentTick), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
                 }
                 else
                 {
@@ -67,7 +67,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                     }
 
                     final Point tickCounterPoint = new Point(preferredSize.width / 3, preferredSize.height);
-                    OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                    OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.currentTick), config.NumberColor());
                 }
             }
         }

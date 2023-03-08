@@ -57,7 +57,7 @@ public class VisualMetronomeTileOverlay extends Overlay
                 return null;
             }
 
-            renderTile(graphics, playerPosLocal, plugin.CurrentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
+            renderTile(graphics, playerPosLocal, plugin.currentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
         }
 
         if (config.showPlayerTick())
@@ -74,7 +74,7 @@ public class VisualMetronomeTileOverlay extends Overlay
             final int height = client.getLocalPlayer().getLogicalHeight()+20;
             final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
             final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getPlane(), height);
-            OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+            OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.currentTick), config.NumberColor());
         }
 
         return null;
