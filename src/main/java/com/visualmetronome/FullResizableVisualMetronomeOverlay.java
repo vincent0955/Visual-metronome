@@ -44,7 +44,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
 
         if (config.enableMetronome())
         {
-            graphics.setColor(plugin.CurrentColor);
+            graphics.setColor(plugin.currentColor);
             graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
             TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4); // scales tick number position with box size
 

@@ -73,6 +73,8 @@ Alt+right click on the overlay to reset to default size
     - Add option to reset the tick cycle with a hotkey
 - **V1.4.3**
     - Allow up to 10 colors if Tick Count is higher than 1 (previously if Tick Count was higher than 1 then it would only support 2 colors)
+- **V1.4.4**
+    - Fix bug that causes metronome to randomly reset and not properly cycle colors if tick count is higher than 1
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
@@ -82,6 +84,3 @@ Thank you to everyone who has left feedback so far, it is appreciated.
 Oct 28, 2021 - 10,000 Total installs!
 
 Oct 23, 2022 - 30,000 Total installs!
-
-# Bugs
-There's currently a known bug where the metronome seems to randomly reset or reset on certain actions, usually when ToB or the scythe is involved. The cause is still unknown, so please let me know if you find anything that fixes it. Some people have said disabling "Weapon Charges" plugin, "Item Charges", or the "ToB Light Up" plugin fixes it, so you can try that, but it still isn't sure if that's the actual cause of the bug. 
