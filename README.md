@@ -73,7 +73,7 @@ Alt+right click on the overlay to reset to default size
     - Add option to reset the tick cycle with a hotkey
 - **V1.4.3**
     - Allow up to 10 colors if Tick Count is higher than 1 (previously if Tick Count was higher than 1 then it would only support 2 colors)
-- **V1.4.4**
+- **V1.4.4** *(Thanks [Thource](https://github.com/Thource))*
     - Fix bug that causes metronome to randomly reset and not properly cycle colors if tick count is higher than 1
     
 # Feedback
