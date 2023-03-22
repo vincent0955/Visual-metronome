@@ -40,7 +40,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private KeyManager keyManager;
 
-    private int currentColorIndex = 0;
+    protected int currentColorIndex = 0;
     protected int tickCounter = 0;
     protected Color currentColor = Color.WHITE;
 
@@ -55,89 +55,47 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onGameTick(GameTick tick)
     {
-        if (config.tickCount() != 1)
-        {
-            if (tickCounter % config.tickCount() == 0)
-            {
-                tickCounter = 0;
-                if (currentColorIndex == config.colorCycle())
-                {
-                    currentColorIndex = 0;
-                }
-                switch (++currentColorIndex)
-                {
-                    case 1:
-                        currentColor = config.getTickColor();
-                        break;
-                    case 2:
-                        currentColor = config.getTockColor();
-                        break;
-                    case 3:
-                        currentColor = config.getTick3Color();
-                        break;
-                    case 4:
-                        currentColor = config.getTick4Color();
-                        break;
-                    case 5:
-                        currentColor = config.getTick5Color();
-                        break;
-                    case 6:
-                        currentColor = config.getTick6Color();
-                        break;
-                    case 7:
-                        currentColor = config.getTick7Color();
-                        break;
-                    case 8:
-                        currentColor = config.getTick8Color();
-                        break;
-                    case 9:
-                        currentColor = config.getTick9Color();
-                        break;
-                    case 10:
-                        currentColor = config.getTick10Color();
-                }
-            }
-            tickCounter++;
-            return;
-        }
-        // changes color every tick
-        if (tickCounter == config.colorCycle())
+        if (tickCounter % config.tickCount() == 0)
         {
             tickCounter = 0;
+            if (currentColorIndex == config.colorCycle())
+            {
+                currentColorIndex = 0;
+            }
+            switch (++currentColorIndex)
+            {
+                case 1:
+                    currentColor = config.getTickColor();
+                    break;
+                case 2:
+                    currentColor = config.getTockColor();
+                    break;
+                case 3:
+                    currentColor = config.getTick3Color();
+                    break;
+                case 4:
+                    currentColor = config.getTick4Color();
+                    break;
+                case 5:
+                    currentColor = config.getTick5Color();
+                    break;
+                case 6:
+                    currentColor = config.getTick6Color();
+                    break;
+                case 7:
+                    currentColor = config.getTick7Color();
+                    break;
+                case 8:
+                    currentColor = config.getTick8Color();
+                    break;
+                case 9:
+                    currentColor = config.getTick9Color();
+                    break;
+                case 10:
+                    currentColor = config.getTick10Color();
+            }
         }
-        switch (++tickCounter)
-        {
-            case 1:
-                currentColor = config.getTickColor();
-                break;
-            case 2:
-                currentColor = config.getTockColor();
-                break;
-            case 3:
-                currentColor = config.getTick3Color();
-                break;
-            case 4:
-                currentColor = config.getTick4Color();
-                break;
-            case 5:
-                currentColor = config.getTick5Color();
-                break;
-            case 6:
-                currentColor = config.getTick6Color();
-                break;
-            case 7:
-                currentColor = config.getTick7Color();
-                break;
-            case 8:
-                currentColor = config.getTick8Color();
-                break;
-            case 9:
-                currentColor = config.getTick9Color();
-                break;
-            case 10:
-                currentColor = config.getTick10Color();
-        }
-
+        tickCounter++;
     }
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
@@ -147,24 +105,16 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             return;
         }
 
-        if (config.tickCount() == 1)
+        if (currentColorIndex > config.colorCycle())
         {
-            if (tickCounter > config.colorCycle())
-            {
-                tickCounter = 0;
-            }
+            currentColorIndex = 0;
         }
-        else
+
+        if (tickCounter > config.tickCount())
         {
-            if (currentColorIndex > config.colorCycle())
-            {
-                currentColorIndex = 0;
-            }
-            if (tickCounter > config.tickCount())
-            {
-                tickCounter = 0;
-            }
+            tickCounter = 0;
         }
+
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
     }
 

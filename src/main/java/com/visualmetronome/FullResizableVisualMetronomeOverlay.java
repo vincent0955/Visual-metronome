@@ -53,7 +53,15 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                 if (config.disableFontScaling())
                 {
                     graphics.setColor(config.NumberColor());
-                    graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+                    if (config.tickCount() == 1)
+                    {
+                        graphics.drawString(String.valueOf(plugin.currentColorIndex), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+                    }
+                    else
+                    {
+                        graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+                    }
+
                 }
                 else
                 {
@@ -67,7 +75,14 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                     }
 
                     final Point tickCounterPoint = new Point(preferredSize.width / 3, preferredSize.height);
-                    OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                    if (config.tickCount() == 1)
+                    {
+                        OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.currentColorIndex), config.NumberColor());
+                    }
+                    else
+                    {
+                        OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                    }
                 }
             }
         }
