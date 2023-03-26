@@ -57,7 +57,15 @@ public class VisualMetronomeTileOverlay extends Overlay
                 return null;
             }
 
-            renderTile(graphics, playerPosLocal, plugin.currentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
+            if (config.changeFillColor())
+            {
+                final Color fillColor = new Color(plugin.currentColor.getRed(), plugin.currentColor.getGreen(), plugin.currentColor.getBlue(), config.changeFillColorOpacity());
+                renderTile(graphics, playerPosLocal, plugin.currentColor, fillColor, config.currentTileBorderWidth());
+            }
+            else
+            {
+                renderTile(graphics, playerPosLocal, plugin.currentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
+            }
         }
 
         if (config.showPlayerTick())

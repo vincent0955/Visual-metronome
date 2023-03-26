@@ -175,6 +175,33 @@ public interface VisualMetronomeConfig extends Config
 		return 2;
 	}
 
+	@ConfigItem(
+			position = 3,
+			keyName = "changeFillColor",
+			name = "Enable Tile Fill Color Metronome",
+			description = "Makes the tile fill color change with the metronome",
+			section = TileSettings
+	)
+	default boolean changeFillColor()
+	{
+		return false;
+	}
+
+	@Range(
+			min = 0,
+			max = 255
+	)
+	@ConfigItem(
+			position = 4,
+			keyName = "changeFillColorOpacity",
+			name = "Fill Color Metronome Opacity",
+			description = "Opacity of the tile fill metronome color if the option above is enabled. Otherwise, the opacity is determined by the True Tile Fill Color setting",
+			section = TileSettings
+	)
+	default int changeFillColorOpacity()
+	{
+		return 50;
+	}
 
 	@ConfigSection(
 			name = "Color Settings",

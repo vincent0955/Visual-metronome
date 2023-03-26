@@ -13,7 +13,7 @@ Alt+right click on the overlay to reset to default size
 ![](https://i.imgur.com/SWQKf9i.gif)
 
 # Settings
-![](https://i.imgur.com/KE3xI1B.png)
+![](https://i.imgur.com/BI94Xd1.png)
 
 # Changelog
 - **V1.1**
@@ -75,6 +75,8 @@ Alt+right click on the overlay to reset to default size
     - Allow up to 10 colors if Tick Count is higher than 1 (previously if Tick Count was higher than 1 then it would only support 2 colors)
 - **V1.4.4** *(Thanks [Thource](https://github.com/Thource))*
     - Fix bug that causes metronome to randomly reset and not properly cycle colors if tick count is higher than 1
+- **V1.4.5**
+    - Add option to enable tile fill color to change with metronome
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
