@@ -77,6 +77,8 @@ Alt+right click on the overlay to reset to default size
     - Fix bug that causes metronome to randomly reset and not properly cycle colors if tick count is higher than 1
 - **V1.4.5**
     - Add option to enable tile fill color to change with metronome
+- **V1.4.5.1**
+    - Fixed minor bug that caused the metronome to reset to default size on startup
     
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 

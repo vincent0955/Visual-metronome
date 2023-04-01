@@ -121,8 +121,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     protected void startUp() throws Exception
     {
-        overlayManager.add(overlay);
         overlay.setPreferredSize(DEFAULT_SIZE);
+        overlayManager.add(overlay);
         overlayManager.add(tileOverlay);
         keyManager.registerKeyListener(this);
     }
