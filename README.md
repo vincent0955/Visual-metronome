@@ -79,9 +79,12 @@ Alt+right click on the overlay to reset to default size
     - Add option to enable tile fill color to change with metronome
 - **V1.4.5.1**
     - Fixed minor bug that caused the metronome to reset to default size on startup
-    
+- **V1.4.5.2**
+    - Fixed bug where Default Box Size setting was not set correctly on startup
+
+
 # Feedback
-I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, Vincent#7958. 
+I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
 
 Thank you to everyone who has left feedback so far, it is appreciated.
 

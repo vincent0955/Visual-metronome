@@ -121,6 +121,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     protected void startUp() throws Exception
     {
+        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
         overlayManager.add(overlay);
         overlayManager.add(tileOverlay);
