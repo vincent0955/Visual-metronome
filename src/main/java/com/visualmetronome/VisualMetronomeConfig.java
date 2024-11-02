@@ -63,10 +63,32 @@ public interface VisualMetronomeConfig extends Config
 		return 1;
 	}
 
+	@ConfigItem(
+			position = 5,
+			keyName = "tickCount2",
+			name = "Tick Count2",
+			description = "The tick on which the color changes"
+	)
+	default int tickCount2()
+	{
+		return 1;
+	}
+
+	@ConfigItem(
+			position = 6,
+			keyName = "tickCount3",
+			name = "Tick Count3",
+			description = "The tick on which the color changes"
+	)
+	default int tickCount3()
+	{
+		return 1;
+	}
+
 	@ConfigSection(
 			name = "Tick Number Settings",
 			description = "Change Tick Number settings",
-			position = 5
+			position = 6
 	)
 	String TickNumberSettings = "Tick Number Settings";
 

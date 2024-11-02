@@ -45,6 +45,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     protected int currentColorIndex = 0;
     protected int tickCounter = 0;
+    protected int tickCounter2 = 0;
+    protected int tickCounter3 = 0;
     protected Color currentColor = Color.WHITE;
 
     protected Dimension DEFAULT_SIZE = new Dimension(25, 25);
@@ -61,12 +63,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         if (tickCounter % config.tickCount() == 0)
         {
             tickCounter = 0;
-            if (currentColorIndex == config.colorCycle())
-            {
+            if (currentColorIndex == config.colorCycle()) {
                 currentColorIndex = 0;
             }
-            switch (++currentColorIndex)
-            {
+            switch (++currentColorIndex) {
                 case 1:
                     currentColor = config.getTickColor();
                     break;
@@ -98,10 +98,17 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                     currentColor = config.getTick10Color();
             }
         }
+        if (tickCounter2 % config.tickCount2() == 0) {
+            tickCounter2 = 0;
+        }
+        if (tickCounter3 % config.tickCount3() == 0) {
+            tickCounter3 = 0;
+        }
         tickCounter++;
+        tickCounter2++;
+        tickCounter3++;
     }
-    @Subscribe
-    public void onConfigChanged(ConfigChanged event)
+        public void onConfigChanged(ConfigChanged event)
     {
         if (!event.getGroup().equals("visualmetronome"))
         {
@@ -117,6 +124,15 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         {
             tickCounter = 0;
         }
+        if (tickCounter2 > config.tickCount2())
+        {
+            tickCounter2 = 0;
+        }
+        if (tickCounter3 > config.tickCount2())
+        {
+            tickCounter3 = 0;
+        }
+
 
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
     }
@@ -139,6 +155,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         overlayManager.remove(tileOverlay);
         overlayManager.remove(numberOverlay);
         tickCounter = 0;
+        tickCounter2 = 0;
+        tickCounter3 = 0;
         currentColorIndex = 0;
         currentColor = config.getTickColor();
         keyManager.unregisterKeyListener(this);
@@ -156,6 +174,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         if (config.tickResetHotkey().matches(e))
         {
             tickCounter = 0;
+            tickCounter2 = 0;
+            tickCounter3 = 0;
             currentColorIndex = 0;
         }
     }

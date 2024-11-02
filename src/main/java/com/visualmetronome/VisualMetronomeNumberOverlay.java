@@ -52,14 +52,15 @@ public class VisualMetronomeNumberOverlay extends Overlay
 
             final int height = client.getLocalPlayer().getLogicalHeight()+20;
             final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
-            final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getPlane(), height);
+            final Point playerPoint = Perspective.localToCanvas(client, localLocation , client.getPlane(), height);
             if (config.tickCount() == 1)
             {
                 OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.currentColorIndex), config.NumberColor());
             }
             else
             {
-                OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                String OverheadText = String.valueOf(plugin.tickCounter) + " " + String.valueOf(plugin.tickCounter2) + " " + String.valueOf(plugin.tickCounter3);
+                OverlayUtil.renderTextLocation(graphics, playerPoint, OverheadText, config.NumberColor());
             }
         }
 
