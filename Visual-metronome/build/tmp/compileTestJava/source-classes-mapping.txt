@@ -1,0 +1,2 @@
+com/visualmetronome/VisualMetronomePluginTest.java
+ com.visualmetronome.VisualMetronomePluginTest

@@ -1,0 +1,12 @@
+com/visualmetronome/FontTypes.java
+ com.visualmetronome.FontTypes
+com/visualmetronome/FullResizableVisualMetronomeOverlay.java
+ com.visualmetronome.FullResizableVisualMetronomeOverlay
+com/visualmetronome/VisualMetronomeConfig.java
+ com.visualmetronome.VisualMetronomeConfig
+com/visualmetronome/VisualMetronomeTileOverlay.java
+ com.visualmetronome.VisualMetronomeTileOverlay
+com/visualmetronome/VisualMetronomeNumberOverlay.java
+ com.visualmetronome.VisualMetronomeNumberOverlay
+com/visualmetronome/VisualMetronomePlugin.java
+ com.visualmetronome.VisualMetronomePlugin
