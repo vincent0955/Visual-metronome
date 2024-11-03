@@ -39,8 +39,6 @@ public class VisualMetronomeNumberOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (config.showPlayerTick())
-        {
             if (config.fontType() == FontTypes.REGULAR)
             {
                 graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, config.fontSize()));
@@ -53,16 +51,14 @@ public class VisualMetronomeNumberOverlay extends Overlay
             final int height = client.getLocalPlayer().getLogicalHeight()+20;
             final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
             final Point playerPoint = Perspective.localToCanvas(client, localLocation , client.getPlane(), height);
-            if (config.tickCount() == 1)
-            {
-                OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.currentColorIndex), config.NumberColor());
-            }
-            else
-            {
-                String OverheadText = String.valueOf(plugin.tickCounter) + " " + String.valueOf(plugin.tickCounter2) + " " + String.valueOf(plugin.tickCounter3);
-                OverlayUtil.renderTextLocation(graphics, playerPoint, OverheadText, config.NumberColor());
-            }
-        }
+
+            String OverheadText = String.valueOf(plugin.tickCounter);
+            if( config.metronomeCount() >= 2) OverheadText += " " + String.valueOf(plugin.tickCounter2);
+        if( config.metronomeCount() >= 3) OverheadText += " " + String.valueOf(plugin.tickCounter3);
+        if( config.metronomeCount() >= 4) OverheadText += " " + String.valueOf(plugin.tickCounter4);
+        if( config.metronomeCount() >= 5) OverheadText += " " + String.valueOf(plugin.tickCounter5);
+            OverlayUtil.renderTextLocation(graphics, playerPoint, OverheadText, config.NumberColor());
+
 
         return null;
     }
