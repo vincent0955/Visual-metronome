@@ -1,4 +1,4 @@
-package com.visualmetronome;
+package com.polyrhythmmetronome;
 
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
@@ -16,15 +16,15 @@ import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPriority;
 
 
-public class VisualMetronomeNumberOverlay extends Overlay
+public class PolyRhythmMetronomeNumberOverlay extends Overlay
 {
 
     private final Client client;
-    private final VisualMetronomeConfig config;
-    private final VisualMetronomePlugin plugin;
+    private final PolyRhythmMetronomeConfig config;
+    private final PolyRhythmMetronomePlugin plugin;
 
     @Inject
-    public VisualMetronomeNumberOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    public PolyRhythmMetronomeNumberOverlay(Client client, PolyRhythmMetronomeConfig config, PolyRhythmMetronomePlugin plugin)
     {
         super(plugin);
         this.client = client;
@@ -39,8 +39,6 @@ public class VisualMetronomeNumberOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (config.showPlayerTick())
-        {
             if (config.fontType() == FontTypes.REGULAR)
             {
                 graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, config.fontSize()));
@@ -52,16 +50,15 @@ public class VisualMetronomeNumberOverlay extends Overlay
 
             final int height = client.getLocalPlayer().getLogicalHeight()+20;
             final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
-            final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getPlane(), height);
-            if (config.tickCount() == 1)
-            {
-                OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.currentColorIndex), config.NumberColor());
-            }
-            else
-            {
-                OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
-            }
-        }
+            final Point playerPoint = Perspective.localToCanvas(client, localLocation , client.getPlane(), height);
+
+            String OverheadText = String.valueOf(plugin.tickCounter);
+            if( config.metronomeCount() >= 2) OverheadText += " " + String.valueOf(plugin.tickCounter2);
+        if( config.metronomeCount() >= 3) OverheadText += " " + String.valueOf(plugin.tickCounter3);
+        if( config.metronomeCount() >= 4) OverheadText += " " + String.valueOf(plugin.tickCounter4);
+        if( config.metronomeCount() >= 5) OverheadText += " " + String.valueOf(plugin.tickCounter5);
+            OverlayUtil.renderTextLocation(graphics, playerPoint, OverheadText, config.NumberColor());
+
 
         return null;
     }
