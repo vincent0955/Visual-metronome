@@ -1,4 +1,4 @@
-package com.visualmetronome;
+package com.polyrhythmmetronome;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

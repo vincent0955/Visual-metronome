@@ -1,4 +1,4 @@
-package com.visualmetronome;
+package com.polyrhythmmetronome;
 
 import com.google.inject.Provides;
 import net.runelite.api.events.GameTick;
@@ -16,11 +16,11 @@ import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
 
 @PluginDescriptor(
-        name = "Visual Metronome",
-        description = "Shows a visual cue on an overlay every game tick to help timing based activities",
+        name = "Poly Rhythm Metronome",
+        description = "Shows visual cues on an overlay every game tick to help track different cycle lengths",
         tags = {"timers", "overlays", "tick", "skilling"}
 )
-public class VisualMetronomePlugin extends Plugin implements KeyListener {
+public class PolyRhythmMetronomePlugin extends Plugin implements KeyListener {
     @Inject
     private OverlayManager overlayManager;
 
@@ -28,10 +28,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener {
     private ConfigManager configManager;
 
     @Inject
-    private VisualMetronomeNumberOverlay numberOverlay;
+    private PolyRhythmMetronomeNumberOverlay numberOverlay;
 
     @Inject
-    private VisualMetronomeConfig config;
+    private PolyRhythmMetronomeConfig config;
 
     @Inject
     private KeyManager keyManager;
@@ -47,8 +47,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener {
     protected Dimension DEFAULT_SIZE = new Dimension(25, 25);
 
     @Provides
-    VisualMetronomeConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(VisualMetronomeConfig.class);
+    PolyRhythmMetronomeConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(PolyRhythmMetronomeConfig.class);
     }
 
     @Subscribe
@@ -76,7 +76,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener {
     }
 
     public void onConfigChanged(ConfigChanged event) {
-        if (!event.getGroup().equals("visualmetronome")) {
+        if (!event.getGroup().equals("polyrhythmmetronome")) {
             return;
         }
 
