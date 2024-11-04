@@ -1,2 +1,2 @@
 # PolyRhythm Metronome ![Total installs](https://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/installs/plugin/polyrhythm-metronome)
-Displays various numbers over player to track various cycles.
+Displays various numbers over player to track various cycles. Number of cycles and cycle lengths can be customized.
