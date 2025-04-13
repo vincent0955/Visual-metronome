@@ -12,6 +12,9 @@ import net.runelite.client.util.Text;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
+import net.runelite.api.ChatMessageType;
 import javax.inject.Inject;
 import java.awt.event.KeyEvent;
 import java.awt.Color;
@@ -29,10 +32,23 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     // Region IDs
     private static final int VERZIK_REGION = 12613;
     private static final int OLM_REGION = 12889;
-    private static final int FORTIS_REGION = 14595;
+    private static final int FORTIS_REGION = 7316;
+    
+    // Fortis Colosseum varbit
+    private static final int FORTIS_COLOSSEUM_VARBIT = 13942; // This is a placeholder - we need to find the actual varbit
+    
+    // Fortis Colosseum world coordinates bounds
+    private static final int FORTIS_MIN_X = 1760;
+    private static final int FORTIS_MAX_X = 1850;
+    private static final int FORTIS_MIN_Y = 6080;
+    private static final int FORTIS_MAX_Y = 6150;
+    private static final int FORTIS_PLANE = 0;
 
     @Inject
     private Client client;
+
+    @Inject
+    private ChatMessageManager chatMessageManager;
 
     @Inject
     private OverlayManager overlayManager;
@@ -79,6 +95,35 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         return client.getLocalPlayer().getWorldLocation().getRegionID() == regionId;
     }
 
+    private boolean isInFortisColosseum()
+    {
+        if (client.getLocalPlayer() == null)
+        {
+            return false;
+        }
+        
+        // Check varbit first (if available)
+        int varbitValue = client.getVarbitValue(FORTIS_COLOSSEUM_VARBIT);
+        if (varbitValue == 1)
+        {
+            return true;
+        }
+        
+        // Check world coordinates as fallback
+        int playerX = client.getLocalPlayer().getLocalLocation().getX();
+        int playerY = client.getLocalPlayer().getLocalLocation().getY();
+        
+        // Debug message to show current coordinates
+        chatMessageManager.queue(QueuedMessage.builder()
+            .type(ChatMessageType.GAMEMESSAGE)
+            .runeLiteFormattedMessage("Player location: X=" + playerX + ", Y=" + playerY)
+            .build());
+        
+        // Check if player is within the Fortis Colosseum bounds
+        return playerX >= FORTIS_MIN_X && playerX <= FORTIS_MAX_X &&
+               playerY >= FORTIS_MIN_Y && playerY <= FORTIS_MAX_Y;
+    }
+
     private void checkRegionChange()
     {
         if (!config.enableRegionBased())
@@ -90,50 +135,136 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         boolean inOlm = isInRegion(OLM_REGION);
         boolean inFortis = isInRegion(FORTIS_REGION);
 
+        // Debug message to show current region
+        if (client.getLocalPlayer() != null)
+        {
+            int currentRegionId = client.getLocalPlayer().getWorldLocation().getRegionID();
+            chatMessageManager.queue(QueuedMessage.builder()
+                .type(ChatMessageType.GAMEMESSAGE)
+                .runeLiteFormattedMessage("Current region ID: " + currentRegionId)
+                .build());
+        }
+
         if (inVerzik && config.enableVerzik())
         {
             if (!wasInRegion)
             {
-                client.addChatMessage(Text.fromMarkdown("Visual Metronome activated in Verzik's room with " + config.verzikTickCount() + " tick cycle"));
+                chatMessageManager.queue(QueuedMessage.builder()
+                    .type(ChatMessageType.GAMEMESSAGE)
+                    .runeLiteFormattedMessage("Visual Metronome activated in Verzik's room with " + config.verzikTickCount() + " tick cycle")
+                    .build());
                 tickCounter = 0;
                 currentColorIndex = 0;
                 setCurrentColorByColorIndex(1);
             }
             currentRegion = VERZIK_REGION;
             wasInRegion = true;
+            showOverlays();
         }
         else if (inOlm && config.enableOlm())
         {
             if (!wasInRegion)
             {
-                client.addChatMessage(Text.fromMarkdown("Visual Metronome activated in Olm's room with " + config.olmTickCount() + " tick cycle"));
+                chatMessageManager.queue(QueuedMessage.builder()
+                    .type(ChatMessageType.GAMEMESSAGE)
+                    .runeLiteFormattedMessage("Visual Metronome activated in Olm's room with " + config.olmTickCount() + " tick cycle")
+                    .build());
                 tickCounter = 0;
                 currentColorIndex = 0;
                 setCurrentColorByColorIndex(1);
             }
             currentRegion = OLM_REGION;
             wasInRegion = true;
+            showOverlays();
         }
         else if (inFortis && config.enableFortis())
         {
             if (!wasInRegion)
             {
-                client.addChatMessage(Text.fromMarkdown("Visual Metronome activated in Fortis Colosseum with " + config.fortisTickCount() + " tick cycle"));
+                chatMessageManager.queue(QueuedMessage.builder()
+                    .type(ChatMessageType.GAMEMESSAGE)
+                    .runeLiteFormattedMessage("Visual Metronome activated in Fortis Colosseum with " + config.fortisTickCount() + " tick cycle")
+                    .build());
                 tickCounter = 0;
                 currentColorIndex = 0;
                 setCurrentColorByColorIndex(1);
             }
             currentRegion = FORTIS_REGION;
             wasInRegion = true;
+            showOverlays();
         }
         else
         {
             if (wasInRegion)
             {
-                client.addChatMessage(Text.fromMarkdown("Visual Metronome deactivated - left region"));
+                chatMessageManager.queue(QueuedMessage.builder()
+                    .type(ChatMessageType.GAMEMESSAGE)
+                    .runeLiteFormattedMessage("Visual Metronome deactivated - left region")
+                    .build());
             }
             currentRegion = -1;
             wasInRegion = false;
+            hideOverlays();
+        }
+    }
+
+    private void showOverlays()
+    {
+        try
+        {
+            overlayManager.add(overlay);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Overlay already added
+        }
+
+        try
+        {
+            overlayManager.add(tileOverlay);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Overlay already added
+        }
+
+        try
+        {
+            overlayManager.add(numberOverlay);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Overlay already added
+        }
+    }
+
+    private void hideOverlays()
+    {
+        try
+        {
+            overlayManager.remove(overlay);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Overlay not found
+        }
+
+        try
+        {
+            overlayManager.remove(tileOverlay);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Overlay not found
+        }
+
+        try
+        {
+            overlayManager.remove(numberOverlay);
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Overlay not found
         }
     }
 
@@ -156,6 +287,15 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             else if (currentRegion == FORTIS_REGION)
             {
                 currentTickCount = config.fortisTickCount();
+            }
+
+            // Debug message to show current tick count
+            if (currentRegion != -1 && tickCounter == 0)
+            {
+                chatMessageManager.queue(QueuedMessage.builder()
+                    .type(ChatMessageType.GAMEMESSAGE)
+                    .runeLiteFormattedMessage("Current tick count: " + currentTickCount)
+                    .build());
             }
 
             if (tickCounter % currentTickCount == 0)
@@ -226,18 +366,20 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     {
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
-        overlayManager.add(overlay);
-        overlayManager.add(tileOverlay);
-        overlayManager.add(numberOverlay);
+        
+        // Only add overlays if region-based is disabled or we're in a valid region
+        if (!config.enableRegionBased())
+        {
+            showOverlays();
+        }
+        
         keyManager.registerKeyListener(this);
     }
 
     @Override
     protected void shutDown() throws Exception
     {
-        overlayManager.remove(overlay);
-        overlayManager.remove(tileOverlay);
-        overlayManager.remove(numberOverlay);
+        hideOverlays();
         tickCounter = 0;
         tickCounter2 = 0;
         tickCounter3 = 0;
