@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
+import org.apache.commons.lang3.ArrayUtils;
 
 @PluginDescriptor(
         name = "Visual Metronome",
@@ -30,20 +31,10 @@ import net.runelite.client.input.KeyManager;
 public class VisualMetronomePlugin extends Plugin implements KeyListener
 {
     // Region IDs
-    private static final int VERZIK_REGION = 12613;
-    private static final int OLM_REGION = 12889;
-    private static final int FORTIS_REGION = 7316;
+    private static final int VERZIK_REGION = 12611;
+    private static final int OLM_REGION = 13139;
+    private static final int FORTIS_REGION = 7216;
     
-    // Fortis Colosseum varbit
-    private static final int FORTIS_COLOSSEUM_VARBIT = 13942; // This is a placeholder - we need to find the actual varbit
-    
-    // Fortis Colosseum world coordinates bounds
-    private static final int FORTIS_MIN_X = 1760;
-    private static final int FORTIS_MAX_X = 1850;
-    private static final int FORTIS_MIN_Y = 6080;
-    private static final int FORTIS_MAX_Y = 6150;
-    private static final int FORTIS_PLANE = 0;
-
     @Inject
     private Client client;
 
@@ -92,36 +83,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         {
             return false;
         }
-        return client.getLocalPlayer().getWorldLocation().getRegionID() == regionId;
-    }
-
-    private boolean isInFortisColosseum()
-    {
-        if (client.getLocalPlayer() == null)
-        {
-            return false;
-        }
-        
-        // Check varbit first (if available)
-        int varbitValue = client.getVarbitValue(FORTIS_COLOSSEUM_VARBIT);
-        if (varbitValue == 1)
-        {
-            return true;
-        }
-        
-        // Check world coordinates as fallback
-        int playerX = client.getLocalPlayer().getLocalLocation().getX();
-        int playerY = client.getLocalPlayer().getLocalLocation().getY();
-        
-        // Debug message to show current coordinates
-        chatMessageManager.queue(QueuedMessage.builder()
-            .type(ChatMessageType.GAMEMESSAGE)
-            .runeLiteFormattedMessage("Player location: X=" + playerX + ", Y=" + playerY)
-            .build());
-        
-        // Check if player is within the Fortis Colosseum bounds
-        return playerX >= FORTIS_MIN_X && playerX <= FORTIS_MAX_X &&
-               playerY >= FORTIS_MIN_Y && playerY <= FORTIS_MAX_Y;
+        return ArrayUtils.contains(client.getMapRegions(), regionId);
     }
 
     private void checkRegionChange()
@@ -135,16 +97,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         boolean inOlm = isInRegion(OLM_REGION);
         boolean inFortis = isInRegion(FORTIS_REGION);
 
-        // Debug message to show current region
-        if (client.getLocalPlayer() != null)
-        {
-            int currentRegionId = client.getLocalPlayer().getWorldLocation().getRegionID();
-            chatMessageManager.queue(QueuedMessage.builder()
-                .type(ChatMessageType.GAMEMESSAGE)
-                .runeLiteFormattedMessage("Current region ID: " + currentRegionId)
-                .build());
-        }
-
         if (inVerzik && config.enableVerzik())
         {
             if (!wasInRegion)
@@ -156,10 +108,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 tickCounter = 0;
                 currentColorIndex = 0;
                 setCurrentColorByColorIndex(1);
+                showOverlays();
             }
             currentRegion = VERZIK_REGION;
             wasInRegion = true;
-            showOverlays();
         }
         else if (inOlm && config.enableOlm())
         {
@@ -172,10 +124,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 tickCounter = 0;
                 currentColorIndex = 0;
                 setCurrentColorByColorIndex(1);
+                showOverlays();
             }
             currentRegion = OLM_REGION;
             wasInRegion = true;
-            showOverlays();
         }
         else if (inFortis && config.enableFortis())
         {
@@ -188,10 +140,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 tickCounter = 0;
                 currentColorIndex = 0;
                 setCurrentColorByColorIndex(1);
+                showOverlays();
             }
             currentRegion = FORTIS_REGION;
             wasInRegion = true;
-            showOverlays();
         }
         else
         {
@@ -201,10 +153,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                     .type(ChatMessageType.GAMEMESSAGE)
                     .runeLiteFormattedMessage("Visual Metronome deactivated - left region")
                     .build());
+                hideOverlays();
             }
             currentRegion = -1;
             wasInRegion = false;
-            hideOverlays();
         }
     }
 
@@ -271,45 +223,16 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onGameTick(GameTick tick)
     {
-        checkRegionChange();
-
-        if (!config.enableRegionBased() || currentRegion != -1)
+        if (tickCounter % config.tickCount() == 0)
         {
-            int currentTickCount = config.tickCount();
-            if (currentRegion == VERZIK_REGION)
+            tickCounter = 0;
+            if (currentColorIndex == config.colorCycle())
             {
-                currentTickCount = config.verzikTickCount();
+                currentColorIndex = 0;
             }
-            else if (currentRegion == OLM_REGION)
-            {
-                currentTickCount = config.olmTickCount();
-            }
-            else if (currentRegion == FORTIS_REGION)
-            {
-                currentTickCount = config.fortisTickCount();
-            }
-
-            // Debug message to show current tick count
-            if (currentRegion != -1 && tickCounter == 0)
-            {
-                chatMessageManager.queue(QueuedMessage.builder()
-                    .type(ChatMessageType.GAMEMESSAGE)
-                    .runeLiteFormattedMessage("Current tick count: " + currentTickCount)
-                    .build());
-            }
-
-            if (tickCounter % currentTickCount == 0)
-            {
-                tickCounter = 0;
-                if (currentColorIndex == config.colorCycle())
-                {
-                    currentColorIndex = 0;
-                }
-                setCurrentColorByColorIndex(++currentColorIndex);
-            }
-            tickCounter++;
+            setCurrentColorByColorIndex(++currentColorIndex);
         }
-
+        tickCounter++;
         if (tickCounter2 % config.tickCount2() == 0){
             tickCounter2 = 0;
         }
@@ -357,8 +280,27 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
         
-        // Check region on config change
-        checkRegionChange();
+        // Handle region-based activation toggle
+        if (event.getKey().equals("enableRegionBased"))
+        {
+            if (config.enableRegionBased())
+            {
+                // If enabling region-based, hide overlays by default
+                hideOverlays();
+                // Then check if we're in a valid region
+                checkRegionChange();
+            }
+            else
+            {
+                // If disabling region-based, show overlays
+                showOverlays();
+            }
+        }
+        else
+        {
+            // Check region on other config changes
+            checkRegionChange();
+        }
     }
 
     @Override
@@ -367,7 +309,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
         
-        // Only add overlays if region-based is disabled or we're in a valid region
+        // Only add overlays if region-based is disabled
         if (!config.enableRegionBased())
         {
             showOverlays();
