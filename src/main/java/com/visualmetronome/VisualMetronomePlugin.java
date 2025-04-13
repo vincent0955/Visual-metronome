@@ -8,6 +8,12 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.Text;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.events.GameStateChanged;
 import javax.inject.Inject;
 import java.awt.event.KeyEvent;
 import java.awt.Color;
@@ -22,6 +28,14 @@ import net.runelite.client.input.KeyManager;
 )
 public class VisualMetronomePlugin extends Plugin implements KeyListener
 {
+    // Region IDs
+    private static final int VERZIK_REGION = 12613;
+    private static final int OLM_REGION = 12889;
+    private static final int FORTIS_REGION = 14595;
+
+    @Inject
+    private Client client;
+
     @Inject
     private OverlayManager overlayManager;
 
@@ -49,6 +63,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     protected int tickCounter3 = 0;
     protected Color currentColor = Color.WHITE;
     protected Dimension DEFAULT_SIZE = new Dimension(25, 25);
+    private int currentRegion = -1;
+    private boolean wasInRegion = false;
 
     @Provides
     VisualMetronomeConfig provideConfig(ConfigManager configManager)
@@ -56,19 +72,106 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         return configManager.getConfig(VisualMetronomeConfig.class);
     }
 
+    private boolean isInRegion(int regionId)
+    {
+        if (client.getLocalPlayer() == null)
+        {
+            return false;
+        }
+        return client.getLocalPlayer().getWorldLocation().getRegionID() == regionId;
+    }
+
+    private void checkRegionChange()
+    {
+        if (!config.enableRegionBased())
+        {
+            return;
+        }
+
+        boolean inVerzik = isInRegion(VERZIK_REGION);
+        boolean inOlm = isInRegion(OLM_REGION);
+        boolean inFortis = isInRegion(FORTIS_REGION);
+
+        if (inVerzik && config.enableVerzik())
+        {
+            if (!wasInRegion)
+            {
+                client.addChatMessage(Text.fromMarkdown("Visual Metronome activated in Verzik's room with " + config.verzikTickCount() + " tick cycle"));
+                tickCounter = 0;
+                currentColorIndex = 0;
+                setCurrentColorByColorIndex(1);
+            }
+            currentRegion = VERZIK_REGION;
+            wasInRegion = true;
+        }
+        else if (inOlm && config.enableOlm())
+        {
+            if (!wasInRegion)
+            {
+                client.addChatMessage(Text.fromMarkdown("Visual Metronome activated in Olm's room with " + config.olmTickCount() + " tick cycle"));
+                tickCounter = 0;
+                currentColorIndex = 0;
+                setCurrentColorByColorIndex(1);
+            }
+            currentRegion = OLM_REGION;
+            wasInRegion = true;
+        }
+        else if (inFortis && config.enableFortis())
+        {
+            if (!wasInRegion)
+            {
+                client.addChatMessage(Text.fromMarkdown("Visual Metronome activated in Fortis Colosseum with " + config.fortisTickCount() + " tick cycle"));
+                tickCounter = 0;
+                currentColorIndex = 0;
+                setCurrentColorByColorIndex(1);
+            }
+            currentRegion = FORTIS_REGION;
+            wasInRegion = true;
+        }
+        else
+        {
+            if (wasInRegion)
+            {
+                client.addChatMessage(Text.fromMarkdown("Visual Metronome deactivated - left region"));
+            }
+            currentRegion = -1;
+            wasInRegion = false;
+        }
+    }
+
     @Subscribe
     public void onGameTick(GameTick tick)
     {
-        if (tickCounter % config.tickCount() == 0)
+        checkRegionChange();
+
+        if (!config.enableRegionBased() || currentRegion != -1)
         {
-            tickCounter = 0;
-            if (currentColorIndex == config.colorCycle())
+            int currentTickCount = config.tickCount();
+            if (currentRegion == VERZIK_REGION)
             {
-                currentColorIndex = 0;
+                currentTickCount = config.verzikTickCount();
             }
-            setCurrentColorByColorIndex(++currentColorIndex);
+            else if (currentRegion == OLM_REGION)
+            {
+                currentTickCount = config.olmTickCount();
+            }
+            else if (currentRegion == FORTIS_REGION)
+            {
+                currentTickCount = config.fortisTickCount();
+            }
+
+            if (tickCounter % currentTickCount == 0)
+            {
+                tickCounter = 0;
+                if (currentColorIndex == config.colorCycle())
+                {
+                    currentColorIndex = 0;
+                }
+                setCurrentColorByColorIndex(++currentColorIndex);
+            }
+            tickCounter++;
         }
-        tickCounter++;
+
         if (tickCounter2 % config.tickCount2() == 0){
             tickCounter2 = 0;
         }
@@ -77,6 +180,15 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             tickCounter3 = 0;
         }
         tickCounter3++;
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged event)
+    {
+        if (event.getGameState() == GameState.LOGGED_IN)
+        {
+            checkRegionChange();
+        }
     }
 
     @Subscribe
@@ -106,6 +218,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         }
 
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
+        
+        // Check region on config change
+        checkRegionChange();
     }
 
     @Override

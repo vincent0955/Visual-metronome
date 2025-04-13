@@ -384,6 +384,106 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigSection(
+			name = "Region-Based Settings",
+			description = "Settings for region-based metronome activation",
+			position = 9
+	)
+	String RegionSettings = "Region Settings";
+
+	@ConfigItem(
+			position = 1,
+			keyName = "enableRegionBased",
+			name = "Enable Region-Based Activation",
+			description = "Only show metronome in specified regions",
+			section = RegionSettings
+	)
+	default boolean enableRegionBased()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 2,
+			keyName = "enableVerzik",
+			name = "Enable in Verzik's Room",
+			description = "Show metronome in Verzik's room (ToB)",
+			section = RegionSettings
+	)
+	default boolean enableVerzik()
+	{
+		return false;
+	}
+
+	@Range(
+			min = 1
+	)
+	@ConfigItem(
+			position = 3,
+			keyName = "verzikTickCount",
+			name = "Verzik Tick Count",
+			description = "Tick count for Verzik's room (default: 7)",
+			section = RegionSettings
+	)
+	default int verzikTickCount()
+	{
+		return 7;
+	}
+
+	@ConfigItem(
+			position = 4,
+			keyName = "enableOlm",
+			name = "Enable in Olm Room",
+			description = "Show metronome in Olm's room (CoX)",
+			section = RegionSettings
+	)
+	default boolean enableOlm()
+	{
+		return false;
+	}
+
+	@Range(
+			min = 1
+	)
+	@ConfigItem(
+			position = 5,
+			keyName = "olmTickCount",
+			name = "Olm Tick Count",
+			description = "Tick count for Olm's room (default: 4)",
+			section = RegionSettings
+	)
+	default int olmTickCount()
+	{
+		return 4;
+	}
+
+	@ConfigItem(
+			position = 6,
+			keyName = "enableFortis",
+			name = "Enable in Fortis Colosseum",
+			description = "Show metronome in Fortis Colosseum",
+			section = RegionSettings
+	)
+	default boolean enableFortis()
+	{
+		return false;
+	}
+
+	@Range(
+			min = 1
+	)
+	@ConfigItem(
+			position = 7,
+			keyName = "fortisTickCount",
+			name = "Fortis Tick Count",
+			description = "Tick count for Fortis Colosseum (default: 6)",
+			section = RegionSettings
+	)
+	default int fortisTickCount()
+	{
+		return 6;
+	}
+
+	@ConfigSection(
 			name = "Additional Overhead Cycle Settings",
 			description = "Enable additional tick cycles to track",
 			position = 9,
