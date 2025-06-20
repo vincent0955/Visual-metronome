@@ -6,10 +6,8 @@ import net.runelite.api.Perspective;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.client.ui.FontManager;
-import net.runelite.client.ui.overlay.Overlay;
-import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
-import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.client.ui.overlay.*;
+
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.Dimension;
@@ -27,6 +25,7 @@ public class MouseFollowingOverlay extends Overlay {
         this.config = config;
         this.plugin = plugin;
         setPosition(OverlayPosition.DYNAMIC);
+        setLayer(OverlayLayer.ALWAYS_ON_TOP);
         setPriority(OverlayPriority.HIGH);
     }
 

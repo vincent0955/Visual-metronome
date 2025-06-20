@@ -20,8 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 @PluginDescriptor(
-        name = "Mouse Tracker",
-        description = "Tracks the mouse, innit?",
+        name = "Visual Metronome",
+        description = "Shows a visual cue on an overlay every game tick to help timing based activities",
         tags = {"timers", "overlays", "tick", "skilling"}
 )
 public class VisualMetronomePlugin extends Plugin implements KeyListener
