@@ -1,6 +1,8 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
+import net.runelite.api.Point;
+import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -14,10 +16,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 @PluginDescriptor(
-        name = "Visual Metronome",
-        description = "Shows a visual cue on an overlay every game tick to help timing based activities",
+        name = "Mouse Tracker",
+        description = "Tracks the mouse, innit?",
         tags = {"timers", "overlays", "tick", "skilling"}
 )
 public class VisualMetronomePlugin extends Plugin implements KeyListener
@@ -42,6 +46,12 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     @Inject
     private KeyManager keyManager;
+
+    @Inject
+    private Client client;
+
+    @Inject
+    private MouseFollowingOverlay mouseFollowingOverlay;
 
     protected int currentColorIndex = 0;
     protected int tickCounter = 0;
@@ -87,6 +97,19 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             return;
         }
 
+        if (event.getGroup().equals("visualmetronome")) {
+
+            switch (event.getKey()) {
+                case "mouseFollowingTick":
+                    setMouseTrackingEnabled(config.mouseFollowingTick());
+                    break;
+                case "mouseOffsetX":
+                case "mouseOffsetY":
+                    // No special handling needed - overlay will pick up new values automatically
+                    break;
+                // ... rest of your config handling ...
+            }
+        }
         if (currentColorIndex > config.colorCycle())
         {
             currentColorIndex = 0;
@@ -117,6 +140,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         overlayManager.add(tileOverlay);
         overlayManager.add(numberOverlay);
         keyManager.registerKeyListener(this);
+        overlayManager.add(mouseFollowingOverlay);
+        client.getCanvas().addMouseListener(mouseAdapter);
+        client.getCanvas().addMouseMotionListener(mouseAdapter);
+
     }
 
     @Override
@@ -131,6 +158,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         currentColorIndex = 0;
         currentColor = config.getTickColor();
         keyManager.unregisterKeyListener(this);
+        overlayManager.remove(mouseFollowingOverlay);
+        client.getCanvas().removeMouseListener(mouseAdapter);
+        client.getCanvas().removeMouseMotionListener(mouseAdapter);
+
     }
 
     //hotkey settings
@@ -208,4 +239,27 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 currentColor = config.getTick10Color();
         }
     }
+    // Add these fields
+    private Point mousePosition = new Point(0, 0);
+    private boolean mouseTrackingEnabled = false;
+
+    // Add these methods
+    public Point getMousePosition() {
+        return mousePosition;
+    }
+
+    public void setMouseTrackingEnabled(boolean enabled) {
+        this.mouseTrackingEnabled = enabled;
+    }
+
+    // Add this as an inner class
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if (mouseTrackingEnabled) {
+                mousePosition = new Point(e.getX(), e.getY());
+            }
+        }
+    };
+
 }
