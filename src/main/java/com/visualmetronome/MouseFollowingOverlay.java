@@ -1,6 +1,5 @@
 package com.visualmetronome;
 
-
 import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.client.ui.FontManager;
@@ -21,7 +20,8 @@ public class MouseFollowingOverlay extends Overlay {
     private final VisualMetronomePlugin plugin;
 
     @Inject
-    public MouseFollowingOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin) {
+    public MouseFollowingOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    {
         super(plugin);
         this.config = config;
         this.plugin = plugin;
@@ -31,10 +31,13 @@ public class MouseFollowingOverlay extends Overlay {
     }
 
     @Override
-    public Dimension render(Graphics2D graphics) {
-        if (config.mouseFollowingTick()) {
+    public Dimension render(Graphics2D graphics)
+    {
+        if (config.mouseFollowingTick())
+        {
             Point mousePos = plugin.getMousePosition();
-            if (mousePos != null) {
+            if (mousePos != null)
+            {
                 // Set font
                 Font font = config.fontType() == FontTypes.REGULAR
                         ? FontManager.getRunescapeFont().deriveFont(Font.PLAIN, config.fontSize())

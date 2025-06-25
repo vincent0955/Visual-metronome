@@ -59,6 +59,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     protected int tickCounter3 = 0;
     protected Color currentColor = Color.WHITE;
     protected Dimension DEFAULT_SIZE = new Dimension(25, 25);
+    private Point mousePosition = new Point(0, 0);
+    private boolean mouseTrackingEnabled = false;
 
     @Provides
     VisualMetronomeConfig provideConfig(ConfigManager configManager)
@@ -97,17 +99,16 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             return;
         }
 
-        if (event.getGroup().equals("visualmetronome")) {
-
-            switch (event.getKey()) {
+        if (event.getGroup().equals("visualmetronome"))
+        {
+            switch (event.getKey())
+            {
                 case "mouseFollowingTick":
                     setMouseTrackingEnabled(config.mouseFollowingTick());
                     break;
                 case "mouseOffsetX":
                 case "mouseOffsetY":
-                    // No special handling needed - overlay will pick up new values automatically
                     break;
-                // ... rest of your config handling ...
             }
         }
         if (currentColorIndex > config.colorCycle())
@@ -239,21 +240,19 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 currentColor = config.getTick10Color();
         }
     }
-    // Add these fields
-    private Point mousePosition = new Point(0, 0);
-    private boolean mouseTrackingEnabled = false;
 
-    // Add these methods
-    public Point getMousePosition() {
+    public Point getMousePosition()
+    {
         return mousePosition;
     }
 
-    public void setMouseTrackingEnabled(boolean enabled) {
+    public void setMouseTrackingEnabled(boolean enabled)
+    {
         this.mouseTrackingEnabled = enabled;
     }
 
-    // Add this as an inner class
-    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+    private final MouseAdapter mouseAdapter = new MouseAdapter()
+    {
         @Override
         public void mouseMoved(MouseEvent e) {
             updateMousePosition(e);
