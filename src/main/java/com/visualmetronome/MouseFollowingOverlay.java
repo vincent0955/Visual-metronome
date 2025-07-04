@@ -52,6 +52,7 @@ public class MouseFollowingOverlay extends Overlay {
                         (int)mousePos.getY() + config.mouseOffsetY()
                 );
 
+
                 // Set which color to use
 
                 Color numberColor;
