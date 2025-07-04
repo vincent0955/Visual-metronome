@@ -107,7 +107,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 case "mouseOffsetY":
                     // No special handling needed - overlay will pick up new values automatically
                     break;
-
+                // ... rest of your config handling ...
             }
         }
         if (currentColorIndex > config.colorCycle())
@@ -139,11 +139,11 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         overlayManager.add(overlay);
         overlayManager.add(tileOverlay);
         overlayManager.add(numberOverlay);
+        keyManager.registerKeyListener(this);
+        overlayManager.add(mouseFollowingOverlay);
         client.getCanvas().addMouseListener(mouseAdapter);
         client.getCanvas().addMouseMotionListener(mouseAdapter);
-        overlayManager.add(mouseFollowingOverlay);
-        setMouseTrackingEnabled(config.mouseFollowingTick());
-        keyManager.registerKeyListener(this);
+
     }
 
     @Override
@@ -157,10 +157,11 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         tickCounter3 = 0;
         currentColorIndex = 0;
         currentColor = config.getTickColor();
+        keyManager.unregisterKeyListener(this);
         overlayManager.remove(mouseFollowingOverlay);
         client.getCanvas().removeMouseListener(mouseAdapter);
         client.getCanvas().removeMouseMotionListener(mouseAdapter);
-        keyManager.unregisterKeyListener(this);
+
     }
 
     //hotkey settings

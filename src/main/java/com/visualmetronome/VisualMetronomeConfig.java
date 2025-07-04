@@ -24,49 +24,6 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 0,
-			keyName = "mouseFollowingTick",
-			name = "Tick Counter Follows Mouse",
-			description = "Makes the tick counter follow your mouse cursor",
-			section = mouseFollowingSettings
-	)
-	default boolean mouseFollowingTick()
-	{
-		return false;
-	}
-	@ConfigItem(
-			position = 1,
-			keyName = "mouseOffsetX",
-			name = "Mouse X Offset",
-			description = "X offset from mouse cursor for tick counter",
-			section = mouseFollowingSettings
-	)
-	@Range(
-			min = -100,
-			max = 100
-	)
-	default int mouseOffsetX()
-	{
-		return 10;
-	}
-
-	@ConfigItem(
-			position = 2,
-			keyName = "mouseOffsetY",
-			name = "Mouse Y Offset",
-			description = "Y offset from mouse cursor for tick counter",
-			section = mouseFollowingSettings
-	)
-	@Range(
-			min = -100,
-			max = 100
-	)
-	default int mouseOffsetY()
-	{
-		return -10;
-	}
-
-	@ConfigItem(
 			position = 2,
 			keyName = "highlightCurrentTile",
 			name = "Enable True Tile Overlay",
@@ -185,14 +142,6 @@ public interface VisualMetronomeConfig extends Config
 			section = TickNumberSettings
 	)
 	default FontTypes fontType() { return FontTypes.REGULAR; }
-
-	@ConfigSection(
-			name = "Mouse Following Settings",
-			description = "Settings for mouse-following tick counter",
-			position = 9,
-			closedByDefault = true
-	)
-	String mouseFollowingSettings = "Mouse Following Settings";
 
 	@ConfigSection(
 			name = "True Tile Overlay Settings",
@@ -432,6 +381,56 @@ public interface VisualMetronomeConfig extends Config
 	default int tickResetStartTick()
 	{
 		return 0;
+	}
+	@ConfigSection(
+			name = "Mouse Following Settings",
+			description = "Settings for mouse-following tick counter",
+			position = 9,
+			closedByDefault = true
+	)
+	String mouseFollowingSettings = "Mouse Following Settings";
+	@ConfigItem(
+			position = 0,
+			keyName = "mouseFollowingTick",
+			name = "Tick Counter Follows Mouse",
+			description = "Makes the tick counter follow your mouse cursor",
+			section = mouseFollowingSettings
+	)
+	default boolean mouseFollowingTick()
+	{
+		return false;
+	}
+
+	@Range(
+			min = -100,
+			max = 100
+	)
+	@ConfigItem(
+			position = 1,
+			keyName = "mouseOffsetX",
+			name = "Mouse X Offset",
+			description = "X offset from mouse cursor for tick counter",
+			section = mouseFollowingSettings
+	)
+	default int mouseOffsetX()
+	{
+		return 10;
+	}
+
+	@Range(
+			min = -100,
+			max = 100
+	)
+	@ConfigItem(
+			position = 2,
+			keyName = "mouseOffsetY",
+			name = "Mouse Y Offset",
+			description = "Y offset from mouse cursor for tick counter",
+			section = mouseFollowingSettings
+	)
+	default int mouseOffsetY()
+	{
+		return -10;
 	}
 
 	@ConfigSection(
