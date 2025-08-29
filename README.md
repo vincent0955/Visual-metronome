@@ -113,9 +113,10 @@ Tick Counts will be sync'd to the target player
 - **V1.5**
     - Added Party Sync functionality *(Thanks [Stromboli](https://github.com/ShadowTimGit))*
 
-
-# Feedback
+# Feedback & Contributing
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
+
+Pull requests are welcome as well. Please create an issue if there isn't already one before submitting a Pull Request. Keep the formatting of new code consistent with the existing code.
 
 Thank you to everyone who has left feedback so far, it is appreciated.
 
