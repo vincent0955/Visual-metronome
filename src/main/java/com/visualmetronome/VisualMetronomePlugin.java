@@ -91,8 +91,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onGameTick(GameTick tick)
     {
-        hasRespondedThisTick = false;
-
         if (tickCounter % config.tickCount() == 0)
         {
             tickCounter = 0;
@@ -112,9 +110,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         }
         tickCounter3++;
 
-        members = partyService.getMembers();
-
         //party sync
+        hasRespondedThisTick = false;
         if (config.enablePartySync())
         {
             if (!members.isEmpty())

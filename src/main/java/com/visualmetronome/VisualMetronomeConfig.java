@@ -207,7 +207,7 @@ public interface VisualMetronomeConfig extends Config
 
     @ConfigSection(
             name = "Party Sync Settings",
-            description = "Settings for syncing your metronome to a member of your party, this will modify certain config settings",
+            description = "Settings for syncing your metronome to a member of your party, this may modify the Tick Count and Number of Colors config settings",
             position = 7
     )
 
