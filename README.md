@@ -14,10 +14,19 @@ Alt+right click on the overlay to reset to default size
 
 ![](https://i.imgur.com/SWQKf9i.gif)
 
-# Settings
-![](https://i.imgur.com/tmT2v2l.png)
+# Party Sync Functionality
+Type the name of a player in your party
 
-![](https://i.imgur.com/iFk0lsj.png)
+![](https://i.imgur.com/vuRrLJ9.png)
+
+Tick Counts will be sync'd to the target player
+![](https://i.imgur.com/LEwh5RJ.gif)
+
+
+# Settings
+![](https://i.imgur.com/3d8DRoq.png)
+
+![](https://i.imgur.com/jLls9zb.png)
 
 # Changelog
 - **V1.1**
@@ -101,6 +110,9 @@ Alt+right click on the overlay to reset to default size
     - Fixed bug for Reset to Specific Tick feature *(Thanks [Slug-Man](https://github.com/Slug-Man))*
 - **V1.4.8**
     - Added Tick Counter Follows Mouse *(Thanks [Manlet008](https://github.com/Manlet008))*
+- **V1.5**
+    - Added Party Sync functionality *(Thanks [Stromboli](https://github.com/ShadowTimGit))*
+
 
 # Feedback
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 

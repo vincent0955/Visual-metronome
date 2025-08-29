@@ -7,6 +7,7 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Keybind;
+
 import java.awt.Color;
 
 @ConfigGroup("visualmetronome")
@@ -203,10 +204,45 @@ public interface VisualMetronomeConfig extends Config
 		return 50;
 	}
 
-	@ConfigSection(
+
+    @ConfigSection(
+            name = "Party Sync Settings",
+            description = "Settings for syncing your metronome to a member of your party, this will modify certain config settings",
+            position = 7
+    )
+
+    String PartySyncSettings = "Party Sync Settings";
+
+    @ConfigItem(
+            position = 1,
+            keyName = "enablePartySync",
+            name = "Sync with Target",
+            description = "Synchronize tick counters with a selected party member",
+            section = PartySyncSettings
+    )
+
+    default boolean enablePartySync()
+    {
+        return false;
+    }
+
+    @ConfigItem(
+            position = 2,
+            keyName = "syncTarget",
+            name = "Sync Target",
+            description = "Choose which party member to sync ticks with",
+            section = PartySyncSettings
+    )
+    default String syncTarget()
+    {
+        return "";
+    }
+
+
+    @ConfigSection(
 			name = "Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 7
+			position = 8
 	)
 	String ColorSettings = "Color Settings";
 
@@ -353,7 +389,7 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigSection(
 			name = "Hotkey Settings",
 			description = "Settings that use hotkeys",
-			position = 8
+			position = 9
 	)
 	String HotkeySettings = "Hotkey Settings";
 
@@ -385,7 +421,7 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigSection(
 			name = "Mouse Following Settings",
 			description = "Settings for mouse-following tick counter",
-			position = 9,
+			position = 10,
 			closedByDefault = true
 	)
 	String mouseFollowingSettings = "Mouse Following Settings";
@@ -436,7 +472,7 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigSection(
 			name = "Additional Overhead Cycle Settings",
 			description = "Enable additional tick cycles to track",
-			position = 10,
+			position = 11,
 			closedByDefault = true
 	)
 	String additionalOverheadSettings = "Additional Overhead Tick Settings";
@@ -573,5 +609,6 @@ public interface VisualMetronomeConfig extends Config
 	{
 		return false;
 	}
+
 }
 

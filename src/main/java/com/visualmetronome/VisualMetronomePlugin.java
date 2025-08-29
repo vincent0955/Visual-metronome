@@ -18,6 +18,17 @@ import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import net.runelite.client.party.PartyService;
+import net.runelite.client.party.WSClient;
+import net.runelite.client.party.events.UserJoin;
+import net.runelite.client.party.events.UserPart;
+import com.visualmetronome.messages.TickSyncMessage;
+import com.visualmetronome.messages.TickRequestMessage;
+import net.runelite.client.party.PartyMember;
+
+import java.util.Collections;
+import java.util.List;
+
 
 @PluginDescriptor(
         name = "Visual Metronome",
@@ -26,6 +37,7 @@ import java.awt.event.MouseEvent;
 )
 public class VisualMetronomePlugin extends Plugin implements KeyListener
 {
+
     @Inject
     private OverlayManager overlayManager;
 
@@ -53,6 +65,16 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private MouseFollowingOverlay mouseFollowingOverlay;
 
+    @Inject
+    private PartyService partyService;
+
+    @Inject
+    private WSClient wsClient;
+
+    List<PartyMember> members = Collections.emptyList();
+    private boolean hasRespondedThisTick = false;
+
+    private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
     protected int tickCounter = 0;
     protected int tickCounter2 = 0;
@@ -69,6 +91,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onGameTick(GameTick tick)
     {
+        hasRespondedThisTick = false;
+
         if (tickCounter % config.tickCount() == 0)
         {
             tickCounter = 0;
@@ -87,7 +111,111 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             tickCounter3 = 0;
         }
         tickCounter3++;
+
+        members = partyService.getMembers();
+
+        //party sync
+        if (config.enablePartySync())
+        {
+            if (!members.isEmpty())
+            {
+                String targetName = config.syncTarget();
+                partyService.send(new TickRequestMessage(targetName));
+            }
+        }
+
     }
+
+    @Subscribe
+    public void onTickRequestMessage(TickRequestMessage target)
+    {
+        String syncTarget = target.getTarget();
+        PartyMember localPlayer = partyService.getLocalMember();
+
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(syncTarget))
+        {
+            return;
+        }
+
+        if (hasRespondedThisTick)
+        {
+            return;
+        }
+        hasRespondedThisTick = true;
+
+        TickSyncMessage msg = new TickSyncMessage(
+                tickCounter,
+                tickCounter2,
+                tickCounter3,
+                currentColorIndex,
+                config.colorCycle(),
+                config.tickCount(),
+                config.tickCount2(),
+                config.tickCount3(),
+                localPlayer.getDisplayName()
+        );
+        partyService.send(msg);
+    }
+
+    @Subscribe
+    public void onTickSyncMessage(TickSyncMessage msg)
+    {
+        if (!config.enablePartySync())
+        {
+            return;
+        }
+
+        String Sender = msg.getlocalSender();
+        String targetName = config.syncTarget();
+
+        if (!Sender.equalsIgnoreCase(targetName))
+        {
+            return;
+        }
+
+        //  Apply received counters
+        this.tickCounter = msg.getTickCounter();
+        this.tickCounter2 = msg.getTickCounter2();
+        this.tickCounter3 = msg.getTickCounter3();
+
+        this.currentColorIndex = msg.getColorIndex();
+        setCurrentColorByColorIndex(this.currentColorIndex);
+
+        //  Update config so UI reflects remote tickCount
+        configManager.setConfiguration(
+                CONFIG_GROUP,
+                "tickCount",
+                msg.getTickCount()
+        );
+        configManager.setConfiguration(
+                CONFIG_GROUP,
+                "tickCount2",
+                msg.getTickCount2()
+        );
+        configManager.setConfiguration(
+                CONFIG_GROUP,
+                "tickCount3",
+                msg.getTickCount3()
+        );
+        configManager.setConfiguration(
+                CONFIG_GROUP,
+                "colorCycle",
+                msg.getConfigColorIndex()
+        );
+    }
+
+    @Subscribe
+    public void onUserJoin(UserJoin event)
+    {
+        members = partyService.getMembers();
+    }
+
+    @Subscribe
+    public void onUserPart(UserPart event)
+    {
+        members = partyService.getMembers();
+    }
+
 
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
@@ -123,6 +251,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         overlayManager.add(numberOverlay);
         overlayManager.add(mouseFollowingOverlay);
         keyManager.registerKeyListener(this);
+        wsClient.registerMessage(TickSyncMessage.class);
+        wsClient.registerMessage(TickRequestMessage.class);
+
     }
 
     @Override
@@ -138,6 +269,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         currentColor = config.getTickColor();
         overlayManager.remove(mouseFollowingOverlay);
         keyManager.unregisterKeyListener(this);
+        wsClient.unregisterMessage(TickSyncMessage.class);
+        wsClient.unregisterMessage(TickRequestMessage.class);
 
     }
 
