@@ -71,8 +71,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private WSClient wsClient;
 
-    List<PartyMember> members = Collections.emptyList();
+    private List<PartyMember> members = Collections.emptyList();
     private boolean hasRespondedThisTick = false;
+    private PartyMember localPlayer;
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
@@ -124,23 +125,28 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     }
 
     @Subscribe
-    public void onTickRequestMessage(TickRequestMessage target)
+    public void onTickRequestMessage(TickRequestMessage reqMsg)
     {
-        String syncTarget = target.getTarget();
-        PartyMember localPlayer = partyService.getLocalMember();
-
-        if (!localPlayer.getDisplayName().equalsIgnoreCase(syncTarget))
+        if (localPlayer == null)
         {
-            return;
+            localPlayer = partyService.getLocalMember();
         }
 
         if (hasRespondedThisTick)
         {
             return;
         }
+
+        String syncTarget = reqMsg.getTarget();
+
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(syncTarget))
+        {
+            return;
+        }
+
         hasRespondedThisTick = true;
 
-        TickSyncMessage msg = new TickSyncMessage(
+        TickSyncMessage syncMsg = new TickSyncMessage(
                 tickCounter,
                 tickCounter2,
                 tickCounter3,
@@ -151,18 +157,18 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 config.tickCount3(),
                 localPlayer.getDisplayName()
         );
-        partyService.send(msg);
+        partyService.send(syncMsg);
     }
 
     @Subscribe
-    public void onTickSyncMessage(TickSyncMessage msg)
+    public void onTickSyncMessage(TickSyncMessage syncMsg)
     {
         if (!config.enablePartySync())
         {
             return;
         }
 
-        String Sender = msg.getlocalSender();
+        String Sender = syncMsg.getlocalSender();
         String targetName = config.syncTarget();
 
         if (!Sender.equalsIgnoreCase(targetName))
@@ -171,33 +177,33 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         }
 
         //  Apply received counters
-        this.tickCounter = msg.getTickCounter();
-        this.tickCounter2 = msg.getTickCounter2();
-        this.tickCounter3 = msg.getTickCounter3();
+        this.tickCounter = syncMsg.getTickCounter();
+        this.tickCounter2 = syncMsg.getTickCounter2();
+        this.tickCounter3 = syncMsg.getTickCounter3();
 
-        this.currentColorIndex = msg.getColorIndex();
+        this.currentColorIndex = syncMsg.getColorIndex();
         setCurrentColorByColorIndex(this.currentColorIndex);
 
         //  Update config so UI reflects remote tickCount
         configManager.setConfiguration(
                 CONFIG_GROUP,
                 "tickCount",
-                msg.getTickCount()
+                syncMsg.getTickCount()
         );
         configManager.setConfiguration(
                 CONFIG_GROUP,
                 "tickCount2",
-                msg.getTickCount2()
+                syncMsg.getTickCount2()
         );
         configManager.setConfiguration(
                 CONFIG_GROUP,
                 "tickCount3",
-                msg.getTickCount3()
+                syncMsg.getTickCount3()
         );
         configManager.setConfiguration(
                 CONFIG_GROUP,
                 "colorCycle",
-                msg.getConfigColorIndex()
+                syncMsg.getConfigColorIndex()
         );
     }
 
@@ -205,6 +211,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     public void onUserJoin(UserJoin event)
     {
         members = partyService.getMembers();
+        localPlayer = partyService.getLocalMember();
     }
 
     @Subscribe
@@ -268,6 +275,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         keyManager.unregisterKeyListener(this);
         wsClient.unregisterMessage(TickSyncMessage.class);
         wsClient.unregisterMessage(TickRequestMessage.class);
+        members = Collections.emptyList();
+        localPlayer = null;
 
     }
 

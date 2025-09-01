@@ -216,8 +216,8 @@ public interface VisualMetronomeConfig extends Config
     @ConfigItem(
             position = 1,
             keyName = "enablePartySync",
-            name = "Sync with Target",
-            description = "Synchronize tick counters with a selected party member",
+            name = "Enable Tick Sync",
+            description = "Synchronize tick counters with a designated party member",
             section = PartySyncSettings
     )
 
@@ -229,8 +229,8 @@ public interface VisualMetronomeConfig extends Config
     @ConfigItem(
             position = 2,
             keyName = "syncTarget",
-            name = "Sync Target",
-            description = "Choose which party member to sync ticks with",
+            name = "Party member to sync with",
+            description = "Type the name of a party member to sync with their tick counters",
             section = PartySyncSettings
     )
     default String syncTarget()
