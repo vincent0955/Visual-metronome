@@ -1,7 +1,7 @@
 # Visual Metronome [![Total installs](https://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/installs/plugin/visual-metronome)](https://runelite.net/plugin-hub/show/visual-metronome) [![Plugin Rank](http://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/rank/plugin/visual-metronome)](https://runelite.net/plugin-hub)
 #### A plugin for [Runelite](https://runelite.net/)
 
-A simple overlay that changes every tick. It displays a box on your screen, displays a number, or displays your true tile that changes every game tick. 
+A simple overlay that changes every tick. It displays a box on your screen, displays a number, or displays your true tile that changes every game tick.
 
 Used for the same purposes as the regular metronome, timing based activities such as PvM or 3-tick fishing. Helpful for if you don't have sound, are listening to music, or just prefer a visual cue.
 
@@ -17,7 +17,7 @@ Alt+right click on the overlay to reset to default size
 # Party Sync Functionality
 Type the name of a player in your party
 
-![](https://i.imgur.com/vuRrLJ9.png)
+![](https://i.imgur.com/rtpopcl.png)
 
 Tick Counts will be sync'd to the target player
 ![](https://i.imgur.com/LEwh5RJ.gif)
@@ -46,13 +46,13 @@ Tick Counts will be sync'd to the target player
 - **V1.3** *(Developed by [m0bilebtw](https://github.com/m0bilebtw))*
     - Rewrite overlay render so that you can now change both height and width
         - Remove title option
-        - Remove set width option and fixed sizing as they now should be unnessecary
+        - Remove set width option and fixed sizing as they now should be unnecessary
         - Add default size option for overlay
 - **V1.3.1**
     - Add option to show the current tick number on the overlay
 - **V1.3.2**
     - Add option to change color of tick number
-    - Tick number position now centers itself on the overlay 
+    - Tick number position now centers itself on the overlay
 - **V1.3.3**
     - Fix tick number to show the correct tick number instead of being one tick off
 - **V1.3.4**
@@ -76,13 +76,13 @@ Tick Counts will be sync'd to the target player
     - Add new section for Tick Number Settings
     - Add option to change font size of overhead Tick Number
     - Add option to change the font
-        - Add FontTypes.Java 
+        - Add FontTypes.Java
         - RS Regular, Arial, Cambria, Rockwell, Segoe Ui, Times New Roman, and Verdana
     - Add automatic font size scaling for the Metronome Tick Number
         - removed TITLE_PADDING and change the way it scales
-- **V1.4.1**  
+- **V1.4.1**
     - Add option to change metronome tick number scaling back to how it previously worked
-- **V1.4.2**  
+- **V1.4.2**
     - Add option to reset the tick cycle with a hotkey
 - **V1.4.3**
     - Allow up to 10 colors if Tick Count is higher than 1 (previously if Tick Count was higher than 1 then it would only support 2 colors)
@@ -114,7 +114,7 @@ Tick Counts will be sync'd to the target player
     - Added Party Sync functionality *(Thanks [Stromboli](https://github.com/ShadowTimGit))*
 
 # Feedback & Contributing
-I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
+I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58.
 
 Pull requests are welcome as well. Please create an issue if there isn't already one before submitting a Pull Request. Keep the formatting of new code consistent with the existing code.
 
