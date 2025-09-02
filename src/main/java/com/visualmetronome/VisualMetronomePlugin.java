@@ -276,6 +276,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         wsClient.registerMessage(TickRequestMessage.class);
 
         partySyncPanel = new PartySyncPanel();
+        partySyncPanel.loadFromConfig(config);
 
         navButton = NavigationButton.builder()
                 .tooltip("Visual Metronome")
