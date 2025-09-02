@@ -20,11 +20,11 @@ public class PartySyncPanel extends PluginPanel
     private final JCheckBox showPlayerTick;
     private final JCheckBox disableFontScaling;
     private final JSpinner fontSize;
-    private final JButton numberColorBtn;
+    private final JPanel numberColorBtn;
     private final JComboBox<String> fontType;
 
     // True Tile Overlay
-    private final JButton currentTileFillColorBtn;
+    private final JPanel currentTileFillColorBtn;
     private final JSpinner currentTileBorderWidth;
     private final JCheckBox changeFillColor;
     private final JSpinner changeFillColorOpacity;
@@ -34,12 +34,12 @@ public class PartySyncPanel extends PluginPanel
     private final JComboBox<String> memberDropdown;
 
     // Colors
-    private final JSpinner colorCycleSpinner;
-    private final JButton[] tickColorBtns = new JButton[10];
+    private JSpinner colorCycleSpinner;
+    private final JPanel[] tickColorBtns = new JPanel[10];
 
     // Hotkeys
-    private final JButton tickResetHotkeyBtn; // Placeholder (actual keybind integration is separate)
-    private final JSpinner tickResetStartTick;
+    private JButton tickResetHotkeyBtn; // Placeholder (actual keybind integration is separate)
+    private JSpinner tickResetStartTick;
 
     // Mouse Following
     private final JCheckBox mouseFollowingTick;
@@ -49,10 +49,10 @@ public class PartySyncPanel extends PluginPanel
     // Additional Overhead Cycles
     private final JCheckBox enableCycle2;
     private final JSpinner tickCount2;
-    private final JButton cycle2ColorBtn;
+    private final JPanel cycle2ColorBtn;
     private final JCheckBox enableCycle3;
     private final JSpinner tickCount3;
-    private final JButton cycle3ColorBtn;
+    private final JPanel cycle3ColorBtn;
     private final JSpinner overheadCyclesGapDistance;
     private final JSpinner overheadHeight;
     private final JSpinner overheadXCenterOffset;
@@ -66,12 +66,12 @@ public class PartySyncPanel extends PluginPanel
         // --- General Metronome Section ---
         JPanel generalPanel = new JPanel();
         generalPanel.setLayout(new BoxLayout(generalPanel, BoxLayout.Y_AXIS));
-        enableMetronome = new JCheckBox("Enable Visual Metronome");
-        highlightCurrentTile = new JCheckBox("Enable True Tile Overlay");
+        enableMetronome = new JCheckBox();
+        generalPanel.add(labeledCheckbox("Enable Visual Metronome", enableMetronome));
+        highlightCurrentTile = new JCheckBox();
+        generalPanel.add(labeledCheckbox("Enable True Tile Overlay", highlightCurrentTile));
         boxWidth = spinner(25, 16, 200, 1);
         tickCount = spinner(1, 1, 10, 1);
-        generalPanel.add(enableMetronome);
-        generalPanel.add(highlightCurrentTile);
         generalPanel.add(labeled("Box Width:", boxWidth));
         generalPanel.add(labeled("Tick Count:", tickCount));
         add(new CollapsibleSection("General Metronome", generalPanel));
@@ -79,15 +79,15 @@ public class PartySyncPanel extends PluginPanel
         // --- Tick Number Section ---
         JPanel tickNumberPanel = new JPanel();
         tickNumberPanel.setLayout(new BoxLayout(tickNumberPanel, BoxLayout.Y_AXIS));
-        showTick = new JCheckBox("Show Metronome Tick Number");
-        showPlayerTick = new JCheckBox("Show Tick Above Player");
-        disableFontScaling = new JCheckBox("Disable Font Scaling");
+        showTick = new JCheckBox();
+        tickNumberPanel.add(labeledCheckbox("Show Metronome Tick Number", showTick));
+        showPlayerTick = new JCheckBox();
+        tickNumberPanel.add(labeledCheckbox("Show Tick Above Player", showPlayerTick));
+        disableFontScaling = new JCheckBox();
+        tickNumberPanel.add(labeledCheckbox("Disable Font Scaling", disableFontScaling));
         fontSize = spinner(15, 8, 50, 1);
         numberColorBtn = colorButton("Tick Number Color", Color.CYAN);
         fontType = new JComboBox<>(new String[]{"REGULAR", "BOLD", "ITALIC"});
-        tickNumberPanel.add(showTick);
-        tickNumberPanel.add(showPlayerTick);
-        tickNumberPanel.add(disableFontScaling);
         tickNumberPanel.add(labeled("Font Size:", fontSize));
         tickNumberPanel.add(numberColorBtn);
         tickNumberPanel.add(labeled("Font Type:", fontType));
@@ -98,51 +98,57 @@ public class PartySyncPanel extends PluginPanel
         tilePanel.setLayout(new BoxLayout(tilePanel, BoxLayout.Y_AXIS));
         currentTileFillColorBtn = colorButton("Tile Fill Color", new Color(0, 0, 0, 50));
         currentTileBorderWidth = spinner(2, 0, 10, 0.5);
-        changeFillColor = new JCheckBox("Enable Tile Fill Metronome");
+        changeFillColor = new JCheckBox();
+        tilePanel.add(labeledCheckbox("Enable Tile Fill Metronome", changeFillColor));
         changeFillColorOpacity = spinner(50, 0, 255, 1);
         tilePanel.add(currentTileFillColorBtn);
         tilePanel.add(labeled("Tile Border Width:", currentTileBorderWidth));
-        tilePanel.add(changeFillColor);
         tilePanel.add(labeled("Fill Color Opacity:", changeFillColorOpacity));
         add(new CollapsibleSection("True Tile Overlay Settings", tilePanel));
 
         // --- Party Sync Section ---
         JPanel partySyncPanel = new JPanel();
         partySyncPanel.setLayout(new BoxLayout(partySyncPanel, BoxLayout.Y_AXIS));
-        enablePartySync = new JCheckBox("Enable Tick Sync");
+        enablePartySync = new JCheckBox();
+        partySyncPanel.add(labeledCheckbox("Enable Tick Sync", enablePartySync));
         memberDropdown = new JComboBox<>();
-        partySyncPanel.add(enablePartySync);
         partySyncPanel.add(labeled("Sync Target:", memberDropdown));
         add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
 
         // --- Color Settings Section ---
         JPanel colorPanel = new JPanel();
         colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.Y_AXIS));
+
         colorCycleSpinner = spinner(2, 2, 10, 1);
         colorPanel.add(labeled("Number of Colors:", colorCycleSpinner));
-        for (int i = 0; i < 10; i++)
-        {
+
+        for (int i = 0; i < 10; i++) {
             tickColorBtns[i] = colorButton((i + 1) + " Tick Color", Color.LIGHT_GRAY);
             colorPanel.add(tickColorBtns[i]);
         }
+
         add(new CollapsibleSection("Color Settings", colorPanel));
+
 
         // --- Hotkeys Section ---
         JPanel hotkeyPanel = new JPanel();
         hotkeyPanel.setLayout(new BoxLayout(hotkeyPanel, BoxLayout.Y_AXIS));
+
         tickResetHotkeyBtn = new JButton("Set Reset Hotkey"); // placeholder
         tickResetStartTick = spinner(0, 0, 10, 1);
+
         hotkeyPanel.add(tickResetHotkeyBtn);
         hotkeyPanel.add(labeled("Reset to Tick:", tickResetStartTick));
+
         add(new CollapsibleSection("Hotkey Settings", hotkeyPanel));
 
         // --- Mouse Following Section ---
         JPanel mousePanel = new JPanel();
         mousePanel.setLayout(new BoxLayout(mousePanel, BoxLayout.Y_AXIS));
-        mouseFollowingTick = new JCheckBox("Tick Counter Follows Mouse");
+        mouseFollowingTick = new JCheckBox();
+        mousePanel.add(labeledCheckbox("Tick Counter Follows Mouse", mouseFollowingTick));
         mouseOffsetX = spinner(10, -100, 100, 1);
         mouseOffsetY = spinner(-10, -100, 100, 1);
-        mousePanel.add(mouseFollowingTick);
         mousePanel.add(labeled("Mouse Offset X:", mouseOffsetX));
         mousePanel.add(labeled("Mouse Offset Y:", mouseOffsetY));
         add(new CollapsibleSection("Mouse Following Settings", mousePanel));
@@ -150,27 +156,28 @@ public class PartySyncPanel extends PluginPanel
         // --- Additional Overhead Cycles Section ---
         JPanel overheadPanel = new JPanel();
         overheadPanel.setLayout(new BoxLayout(overheadPanel, BoxLayout.Y_AXIS));
-        enableCycle2 = new JCheckBox("Enable Second Cycle");
+        enableCycle2 = new JCheckBox();
+        overheadPanel.add(labeledCheckbox("Enable Second Cycle", enableCycle2));
         tickCount2 = spinner(2, 2, 20, 1);
         cycle2ColorBtn = colorButton("Second Cycle Color", Color.CYAN);
-        enableCycle3 = new JCheckBox("Enable Third Cycle");
+        overheadPanel.add(labeled("Second Cycle Length:", tickCount2));
+        overheadPanel.add(cycle2ColorBtn);
+        enableCycle3 = new JCheckBox();
+        overheadPanel.add(labeledCheckbox("Enable Third Cycle", enableCycle3));
         tickCount3 = spinner(2, 2, 20, 1);
         cycle3ColorBtn = colorButton("Third Cycle Color", Color.CYAN);
+        overheadPanel.add(labeled("Third Cycle Length:", tickCount3));
+        overheadPanel.add(cycle3ColorBtn);
         overheadCyclesGapDistance = spinner(20, 0, 100, 1);
         overheadHeight = spinner(20, -500, 500, 1);
         overheadXCenterOffset = spinner(0, -50, 50, 1);
-        overheadUseCurrentColor = new JCheckBox("Use Metronome Color for Overhead");
-        overheadPanel.add(enableCycle2);
-        overheadPanel.add(labeled("Second Cycle Length:", tickCount2));
-        overheadPanel.add(cycle2ColorBtn);
-        overheadPanel.add(enableCycle3);
-        overheadPanel.add(labeled("Third Cycle Length:", tickCount3));
-        overheadPanel.add(cycle3ColorBtn);
+        overheadUseCurrentColor = new JCheckBox();
+        overheadPanel.add(labeledCheckbox("Use Metronome Color for Overhead", overheadUseCurrentColor));
         overheadPanel.add(labeled("Gap Distance:", overheadCyclesGapDistance));
         overheadPanel.add(labeled("Overhead Height:", overheadHeight));
         overheadPanel.add(labeled("X Center Offset:", overheadXCenterOffset));
-        overheadPanel.add(overheadUseCurrentColor);
         add(new CollapsibleSection("Additional Overhead Cycles", overheadPanel));
+
     }
 
 
@@ -186,12 +193,29 @@ public class PartySyncPanel extends PluginPanel
     private JPanel labeled(String text, JComponent comp)
     {
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         JLabel label = new JLabel(text);
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         comp.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(label);
         panel.add(comp);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
+        return panel;
+    }
+
+    private JPanel labeledCheckbox(String text, JCheckBox checkBox)
+    {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JLabel label = new JLabel(text);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5)); // optional spacing
+        panel.add(label, BorderLayout.WEST);
+
+        checkBox.setHorizontalAlignment(SwingConstants.RIGHT);
+        panel.add(checkBox, BorderLayout.EAST);
+
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
         return panel;
@@ -203,18 +227,47 @@ public class PartySyncPanel extends PluginPanel
         return new JSpinner(new SpinnerNumberModel(value.doubleValue(), min.doubleValue(), max.doubleValue(), step.doubleValue()));
     }
 
-    private JButton colorButton(String label, Color initial)
+    private JPanel colorButton(String labelText, Color initial)
     {
-        JButton btn = new JButton(label);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
+        // Create a boxed label
+        JLabel label = new JLabel(labelText);
+        label.setBorder(BorderFactory.createLineBorder(Color.GRAY)); // box border
+        label.setOpaque(true);
+        label.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        // Set min, preferred, and max sizes
+        Dimension minSize = new Dimension(80, 20);  // minimum width & height
+        Dimension prefSize = new Dimension(100, 20); // preferred width & height
+        Dimension maxSize = new Dimension(120, 20);  // maximum width & height
+        label.setMinimumSize(minSize);
+        label.setPreferredSize(prefSize);
+        label.setMaximumSize(maxSize);
+
+        JButton btn = new JButton("             ");
+        btn.setBackground(initial);
+        btn.setPreferredSize(new Dimension(40, 20)); // small preview box
+        btn.setAlignmentY(Component.CENTER_ALIGNMENT);
         btn.addActionListener(e -> {
-            Color chosen = JColorChooser.showDialog(this, "Choose " + label, initial);
+            Color chosen = JColorChooser.showDialog(this, "Choose " + labelText, initial);
             if (chosen != null)
             {
                 btn.setBackground(chosen);
             }
         });
-        return btn;
+
+        panel.add(label);
+        panel.add(Box.createRigidArea(new Dimension(5, 0))); // small gap
+        panel.add(btn);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
+
+        return panel;
     }
+
+
 
     // --- Party Sync member list ---
     public void updateMembers(List<String> members)
@@ -297,7 +350,7 @@ public class PartySyncPanel extends PluginPanel
 
             // Optional: add a border around content
             contentPanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(Color.GRAY),       // outer line border
+                    BorderFactory.createLineBorder(Color.BLACK),       // outer line border
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)      // inner padding
             ));
 
@@ -315,7 +368,4 @@ public class PartySyncPanel extends PluginPanel
             add(contentPanel, BorderLayout.CENTER);
         }
     }
-
-
-
 }
