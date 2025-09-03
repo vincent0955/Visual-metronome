@@ -57,6 +57,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     private VisualMetronomeConfig config;
 
     @Inject
+    private VisualMetronomePrunedConfig prunedConfig;
+
+    @Inject
     private KeyManager keyManager;
 
     @Inject
@@ -74,14 +77,14 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private ClientToolbar clientToolbar;
 
-    private PartySyncPanel partySyncPanel;
+    private VisualMetronomePanel visualMetronomePanel;
     private NavigationButton navButton;
 
     private List<PartyMember> members = Collections.emptyList();
     private boolean hasRespondedThisTick = false;
     private PartyMember localPlayer;
     private String syncTarget;
-    private static final BufferedImage ICON = ImageUtil.loadImageResource(PartySyncPanel.class,"/com.visualmetronome/Ice.png");
+    private static final BufferedImage ICON = ImageUtil.loadImageResource(VisualMetronomePanel.class,"/com.visualmetronome/Ice.png");
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
@@ -128,9 +131,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         if (syncTarget != null && !syncTarget.isEmpty())
         {
             //filter the local player and party members who have left
-            if (partySyncPanel != null)
+            if (visualMetronomePanel != null)
             {
-                partySyncPanel.updateMembers(
+                visualMetronomePanel.updateMembers(
                         members.stream()
                                 .map(PartyMember::getDisplayName)
                                 .filter(name -> name != null && !name.equalsIgnoreCase("<unknown>"))
@@ -214,9 +217,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     {
         members = partyService.getMembers();
         localPlayer = partyService.getLocalMember();
-        if (partySyncPanel != null)
+        if (visualMetronomePanel != null)
         {
-            partySyncPanel.updateMembers(
+            visualMetronomePanel.updateMembers(
                     members.stream()
                             .map(PartyMember::getDisplayName)
                             .collect(Collectors.toList())
@@ -228,9 +231,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     public void onUserPart(UserPart event)
     {
         members = partyService.getMembers();
-        if (partySyncPanel != null)
+        if (visualMetronomePanel != null)
         {
-            partySyncPanel.updateMembers(
+            visualMetronomePanel.updateMembers(
                     members.stream()
                             .map(PartyMember::getDisplayName)
                             .collect(Collectors.toList())
@@ -275,14 +278,14 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
 
-        partySyncPanel = new PartySyncPanel();
-        partySyncPanel.loadFromConfig(config);
+        visualMetronomePanel = new VisualMetronomePanel();
+        visualMetronomePanel.loadFromConfig(config);
 
         navButton = NavigationButton.builder()
                 .tooltip("Visual Metronome")
                 .icon(ICON)
                 .priority(10)
-                .panel(partySyncPanel)
+                .panel(visualMetronomePanel)
                 .build();
 
         clientToolbar.addNavigation(navButton)
@@ -307,7 +310,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         members = Collections.emptyList();
         localPlayer = null;
         clientToolbar.removeNavigation(navButton);
-        partySyncPanel = null;
+        visualMetronomePanel = null;
         navButton = null;
         syncTarget = null;
     }

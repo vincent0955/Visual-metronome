@@ -6,9 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class PartySyncPanel extends PluginPanel
+public class VisualMetronomePanel extends PluginPanel
 {
     // General Metronome
     private final JCheckBox enableMetronome;
@@ -61,7 +60,7 @@ public class PartySyncPanel extends PluginPanel
 
     private boolean updatingFromConfig = false;
 
-    public PartySyncPanel()
+    public VisualMetronomePanel()
     {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
