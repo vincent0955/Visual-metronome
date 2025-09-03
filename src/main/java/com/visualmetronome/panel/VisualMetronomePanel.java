@@ -24,7 +24,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.BorderFactory;
 
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Insets;
 
 
 import java.awt.event.ActionListener;
@@ -189,7 +193,6 @@ public class VisualMetronomePanel extends PluginPanel
             }
         });
         resetHotkeyBtn = new JButton("Reset Hotkey");
-        //resetHotkeyBtn.setHorizontalAlignment(SwingConstants.LEFT);
         resetHotkeyBtn.setMargin(new Insets(3, 8, 3, 8));
 
         resetHotkeyBtn.addActionListener(e -> {
