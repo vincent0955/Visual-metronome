@@ -32,9 +32,10 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class VisualMetronomePanel extends PluginPanel
@@ -110,9 +111,9 @@ public class VisualMetronomePanel extends PluginPanel
         enablePartySync = new JCheckBox();
         partySyncPanel.add(labeledCheckbox("Enable Tick Sync", enablePartySync));
         memberDropdown = new JComboBox<>();
-        partySyncPanel.add(labeled("Sync Target:", memberDropdown));
+        partySyncPanel.add(labeled("Party Member:", memberDropdown));
         JButton refreshMembersBtn = getRefreshMembersBtn(configManager, config, partyService);
-        partySyncPanel.add(refreshMembersBtn);  // add the button to your Party Sync panel
+        partySyncPanel.add(refreshMembersBtn);
         add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
 
         // --- General Metronome Section ---
@@ -188,7 +189,7 @@ public class VisualMetronomePanel extends PluginPanel
             if (newKeybind != null) {
                 tickResetHotkey = newKeybind;
                 tickResetHotkeyBtn.setText("Hotkey: " + newKeybind.toString());
-                updateConfigThrottled(); // update directly
+                updateConfigThrottled();
             }
         });
         resetHotkeyBtn = new JButton("Reset Hotkey");
@@ -344,7 +345,7 @@ public class VisualMetronomePanel extends PluginPanel
                 memberDropdown.setSelectedIndex(0);
             }
 
-            if (lastSelectedMember != config.syncTarget())
+            if (!Objects.equals(lastSelectedMember, config.syncTarget()))
             {
                 configManager.setConfiguration("visualmetronome", "syncTarget", lastSelectedMember);
             }
