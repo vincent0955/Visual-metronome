@@ -22,16 +22,15 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.BorderFactory;
-
 import javax.swing.event.ChangeListener;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
-
-
 import java.awt.event.ActionListener;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
