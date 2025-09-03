@@ -275,7 +275,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
 
-        visualMetronomePanel = new VisualMetronomePanel();
+        visualMetronomePanel = new VisualMetronomePanel(configManager,config);
         visualMetronomePanel.loadFromConfig(config);
 
         navButton = NavigationButton.builder()

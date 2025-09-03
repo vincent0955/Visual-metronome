@@ -2,9 +2,12 @@ package com.visualmetronome;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ColorButtonPanel extends JPanel {
     private final JButton btn;
+    private final List<ColorChangeListener> listeners = new ArrayList<>();
 
     public ColorButtonPanel(String labelText, Color initial) {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -23,7 +26,7 @@ public class ColorButtonPanel extends JPanel {
 
         btn = new JButton("             ");
         btn.setBackground(initial);
-        btn.setPreferredSize(new Dimension(40, 20));
+        btn.setPreferredSize(new Dimension(50, 20));
         btn.setAlignmentY(Component.CENTER_ALIGNMENT);
         btn.addActionListener(e -> {
             Color chosen = JColorChooser.showDialog(this, "Choose " + labelText, initial);
@@ -42,9 +45,29 @@ public class ColorButtonPanel extends JPanel {
     public void setColor(Color c) {
         btn.setBackground(c);
         btn.repaint();
+        notifyListeners(c);
     }
 
     public Color getColor() {
         return btn.getBackground();
+    }
+
+    // --- Listener support ---
+    public void addColorChangeListener(ColorChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeColorChangeListener(ColorChangeListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void notifyListeners(Color newColor) {
+        for (ColorChangeListener listener : listeners) {
+            listener.colorChanged(newColor);
+        }
+    }
+
+    public interface ColorChangeListener {
+        void colorChanged(Color newColor);
     }
 }
