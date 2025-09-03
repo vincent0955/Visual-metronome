@@ -258,10 +258,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         if (visualMetronomePanel == null)
             return;
 
-        long startTime = System.currentTimeMillis(); // Debug: track how long this takes
-
         SwingUtilities.invokeLater(() -> {
-            long swingStart = System.currentTimeMillis();
             visualMetronomePanel.updatingFromConfig = true;
             visualMetronomePanel.loadFromConfig(config);
             visualMetronomePanel.updatingFromConfig = false;
