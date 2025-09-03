@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @PluginDescriptor(
         name = "Visual Metronome",
         description = "Shows a visual cue on an overlay every game tick to help timing based activities",
-        tags = {"timers", "overlays", "tick", "skilling"}
+        tags = {"timers", "overlays", "tick", "skilling", "party"}
 )
 public class VisualMetronomePlugin extends Plugin implements KeyListener
 {
@@ -55,9 +55,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     @Inject
     private VisualMetronomeConfig config;
-
-    @Inject
-    private VisualMetronomePrunedConfig prunedConfig;
 
     @Inject
     private KeyManager keyManager;
