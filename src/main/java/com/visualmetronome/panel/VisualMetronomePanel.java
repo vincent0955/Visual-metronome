@@ -287,7 +287,6 @@ public class VisualMetronomePanel extends PluginPanel
         return new JSpinner(new SpinnerNumberModel(value.doubleValue(), min.doubleValue(), max.doubleValue(), step.doubleValue()));
     }
 
-
     public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
     {
         if (members == null) return;
@@ -552,10 +551,6 @@ public class VisualMetronomePanel extends PluginPanel
     {
         final KeyCaptureDialog dialog = new KeyCaptureDialog();
         return dialog.showAndGetKeybind();
-    }
-
-    private String toHex(Color color) {
-        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     private void updateConfig()
