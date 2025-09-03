@@ -4,6 +4,8 @@ import com.visualmetronome.FontTypes;
 import com.visualmetronome.VisualMetronomeConfig;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
+import net.runelite.client.party.PartyMember;
+import net.runelite.client.party.PartyService;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.swing.Box;
@@ -33,6 +35,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class VisualMetronomePanel extends PluginPanel
 {
@@ -89,12 +92,14 @@ public class VisualMetronomePanel extends PluginPanel
     private final JCheckBox overheadUseCurrentColor;
 
     private final ConfigManager configManager;
+    private final PartyService partyService;
 
     public boolean updatingFromConfig = false;
 
-    public VisualMetronomePanel(ConfigManager configManager, VisualMetronomeConfig config)
+    public VisualMetronomePanel(ConfigManager configManager,VisualMetronomeConfig config, PartyService partyService)
     {
         this.configManager = configManager;
+        this.partyService = partyService;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -106,6 +111,8 @@ public class VisualMetronomePanel extends PluginPanel
         partySyncPanel.add(labeledCheckbox("Enable Tick Sync", enablePartySync));
         memberDropdown = new JComboBox<>();
         partySyncPanel.add(labeled("Sync Target:", memberDropdown));
+        JButton refreshMembersBtn = getRefreshMembersBtn(configManager, config, partyService);
+        partySyncPanel.add(refreshMembersBtn);  // add the button to your Party Sync panel
         add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
 
         // --- General Metronome Section ---
@@ -243,6 +250,21 @@ public class VisualMetronomePanel extends PluginPanel
     }
 
     // --- Utility builders ---
+    private JButton getRefreshMembersBtn(ConfigManager configManager, VisualMetronomeConfig config, PartyService partyService) {
+        JButton refreshMembersBtn = new JButton("Refresh Members");
+        refreshMembersBtn.addActionListener(e -> {
+            if (partyService != null) {
+                List<PartyMember> membersList = partyService.getMembers();
+                List<String> memberNames = membersList.stream()
+                        .map(PartyMember::getDisplayName)
+                        .filter(name -> !"<unknown>".equals(name))
+                        .collect(Collectors.toList());
+                SwingUtilities.invokeLater(() -> updateMembers(memberNames, config, configManager));
+            }
+        });
+        return refreshMembersBtn;
+    }
+
     private JLabel sectionLabel(String text)
     {
         JLabel label = new JLabel(text, SwingConstants.LEADING);
