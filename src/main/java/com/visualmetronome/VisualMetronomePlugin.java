@@ -12,6 +12,8 @@ import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
+
 import java.awt.event.KeyEvent;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,6 +31,9 @@ import net.runelite.client.util.ImageUtil;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @PluginDescriptor(
@@ -81,7 +86,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     private boolean hasRespondedThisTick = false;
     private PartyMember localPlayer;
     private String syncTarget;
-    private static final BufferedImage ICON = ImageUtil.loadImageResource(VisualMetronomePanel.class,"/com.visualmetronome/Ice.png");
+    private static final BufferedImage ICON = ImageUtil.loadImageResource(VisualMetronomePanel.class,"/com.visualmetronome/icon.png");
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
@@ -125,21 +130,13 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         {
             return;
         }
+
+        syncTarget = config.syncTarget();
         if (syncTarget != null && !syncTarget.isEmpty())
         {
-            //filter the local player and party members who have left
-            if (visualMetronomePanel != null)
-            {
-                visualMetronomePanel.updateMembers(
-                        members.stream()
-                                .map(PartyMember::getDisplayName)
-                                .filter(name -> name != null && !name.equalsIgnoreCase("<unknown>"))
-                                .filter(name -> localPlayer == null || !name.equalsIgnoreCase(localPlayer.getDisplayName()))
-                                .collect(Collectors.toList())
-                );
-
-            }
             partyService.send(new TickRequestMessage(syncTarget));
+            // Debug printout
+            System.out.println("[DEBUG] TickRequest target=" + syncTarget );
         }
     }
 
@@ -209,33 +206,46 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         configManager.setConfiguration(CONFIG_GROUP, "colorCycle", syncMsg.getConfigColorIndex());
     }
 
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     @Subscribe
     public void onUserJoin(UserJoin event)
     {
-        members = partyService.getMembers();
-        localPlayer = partyService.getLocalMember();
-        if (visualMetronomePanel != null)
-        {
-            visualMetronomePanel.updateMembers(
-                    members.stream()
-                            .map(PartyMember::getDisplayName)
-                            .collect(Collectors.toList())
-            );
-        }
+        scheduler.schedule(() -> {
+            members = partyService.getMembers();
+            localPlayer = partyService.getLocalMember();
+
+            if (visualMetronomePanel != null)
+            {
+                List<String> memberNames = members.stream()
+                        .map(PartyMember::getDisplayName)
+                        .filter(name -> !"<unknown>".equals(name))  // filter out <unknown>
+                        .collect(Collectors.toList());
+
+                SwingUtilities.invokeLater(() ->
+                        visualMetronomePanel.updateMembers(memberNames, config, configManager)
+                );
+            }
+        }, 200, TimeUnit.MILLISECONDS);
     }
 
     @Subscribe
     public void onUserPart(UserPart event)
     {
-        members = partyService.getMembers();
-        if (visualMetronomePanel != null)
-        {
-            visualMetronomePanel.updateMembers(
-                    members.stream()
-                            .map(PartyMember::getDisplayName)
-                            .collect(Collectors.toList())
-            );
-        }
+        scheduler.schedule(() -> {
+            members = partyService.getMembers();
+
+            if (visualMetronomePanel != null)
+            {
+                List<String> memberNames = members.stream()
+                        .map(PartyMember::getDisplayName)
+                        .filter(name -> !"<unknown>".equals(name))
+                        .collect(Collectors.toList());
+
+                SwingUtilities.invokeLater(() ->
+                        visualMetronomePanel.updateMembers(memberNames, config, configManager)
+                );
+            }
+        }, 200, TimeUnit.MILLISECONDS);
     }
 
     @Subscribe

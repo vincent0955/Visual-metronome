@@ -3,12 +3,30 @@ package com.visualmetronome;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.ui.PluginPanel;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Color;
+
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JToggleButton;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Component;
 
 public class VisualMetronomePanel extends PluginPanel
 {
@@ -35,6 +53,7 @@ public class VisualMetronomePanel extends PluginPanel
     // Party Sync
     private final JCheckBox enablePartySync;
     private final JComboBox<String> memberDropdown;
+    private String lastSelectedMember;
 
     // Colors
     private final JSpinner colorCycleSpinner;
@@ -62,13 +81,12 @@ public class VisualMetronomePanel extends PluginPanel
     private final JCheckBox overheadUseCurrentColor;
 
     private final ConfigManager configManager;
-    //private final VisualMetronomeConfig config;
+
     private boolean updatingFromConfig = false;
 
     public VisualMetronomePanel(ConfigManager configManager, VisualMetronomeConfig config)
     {
         this.configManager = configManager;
-        //this.config = config;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -184,7 +202,7 @@ public class VisualMetronomePanel extends PluginPanel
         overheadHeight = spinner(20, -500, 500, 1);
         overheadXCenterOffset = spinner(0, -50, 50, 1);
         overheadUseCurrentColor = new JCheckBox();
-        overheadPanel.add(labeledCheckbox("Use Metronome Color for Overhead", overheadUseCurrentColor));
+        overheadPanel.add(labeledCheckbox("Metronome Color for Overhead", overheadUseCurrentColor));
         overheadPanel.add(labeled("Gap Distance:", overheadCyclesGapDistance));
         overheadPanel.add(labeled("Overhead Height:", overheadHeight));
         overheadPanel.add(labeled("X Center Offset:", overheadXCenterOffset));
@@ -222,7 +240,7 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BorderLayout());
 
         JLabel label = new JLabel(text);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5)); // optional spacing
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
         panel.add(label, BorderLayout.WEST);
 
         checkBox.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -239,17 +257,51 @@ public class VisualMetronomePanel extends PluginPanel
     }
 
 
-    // --- Party Sync member list ---
-    public void updateMembers(List<String> members)
+    public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
     {
+        if (members == null) return;
+
         SwingUtilities.invokeLater(() -> {
+
+            ActionListener[] listeners = memberDropdown.getActionListeners();
+            for (ActionListener l : listeners) {
+                memberDropdown.removeActionListener(l);
+            }
+
             memberDropdown.removeAllItems();
-            for (String member : members)
-            {
+
+            Set<String> uniqueMembers = new LinkedHashSet<>(members);
+            uniqueMembers.remove("<unknown>");
+            if (lastSelectedMember != null) uniqueMembers.remove(lastSelectedMember);
+
+            if (lastSelectedMember != null) {
+                memberDropdown.addItem(lastSelectedMember);
+            }
+
+            for (String member : uniqueMembers) {
                 memberDropdown.addItem(member);
+            }
+
+            // Set selection to lastSelectedMember if available, otherwise first item
+            if (lastSelectedMember != null && memberDropdown.getItemCount() > 0) {
+                memberDropdown.setSelectedItem(lastSelectedMember);
+            } else if (memberDropdown.getItemCount() > 0) {
+                memberDropdown.setSelectedIndex(0);
+            }
+
+            if (lastSelectedMember != config.syncTarget())
+            {
+                configManager.setConfiguration("visualmetronome", "syncTarget", lastSelectedMember);
+            }
+
+            // Reattach the action listeners
+            for (ActionListener l : listeners) {
+                memberDropdown.addActionListener(l);
             }
         });
     }
+
+
     // --- General Metronome ---
     public boolean isEnableMetronome() { return enableMetronome.isSelected(); }
     public boolean isHighlightCurrentTile() { return highlightCurrentTile.isSelected(); }
@@ -315,13 +367,11 @@ public class VisualMetronomePanel extends PluginPanel
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
 
-            // Assign contentPanel first
             contentPanel = content;
 
-            // Optional: add a border around content
             contentPanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(Color.BLACK),       // outer line border
-                    BorderFactory.createEmptyBorder(5, 5, 5, 5)      // inner padding
+                    BorderFactory.createLineBorder(Color.BLACK),
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5)
             ));
 
             contentPanel.setVisible(true);
@@ -360,7 +410,8 @@ public class VisualMetronomePanel extends PluginPanel
         changeFillColorOpacity.setValue((double) config.changeFillColorOpacity());
 
         enablePartySync.setSelected(config.enablePartySync());
-        memberDropdown.setSelectedItem(config.syncTarget());
+        lastSelectedMember = config.syncTarget();
+        memberDropdown.addItem(lastSelectedMember);
 
         colorCycleSpinner.setValue((double) config.colorCycle());
         tickColorBtns[0].setColor(config.getTickColor());
@@ -431,7 +482,7 @@ public class VisualMetronomePanel extends PluginPanel
 
         // --- Hotkeys ---
         tickResetStartTick.addChangeListener(updateChange);
-        tickResetHotkeyBtn.addActionListener(updateAction); // implement hotkey logic separately
+        tickResetHotkeyBtn.addActionListener(updateAction);
 
         // --- Mouse Following ---
         mouseFollowingTick.addActionListener(updateAction);
@@ -472,31 +523,32 @@ public class VisualMetronomePanel extends PluginPanel
         configManager.setConfiguration("visualmetronome", "showPlayerTick", isShowPlayerTick());
         configManager.setConfiguration("visualmetronome", "disableFontScaling", isDisableFontScaling());
         configManager.setConfiguration("visualmetronome", "fontSize", getFontSize());
-        configManager.setConfiguration("visualmetronome", "countColor", toHex(numberColorBtn.getColor()));
+        configManager.setConfiguration("visualmetronome", "countColor", numberColorBtn.getColor());
         configManager.setConfiguration("visualmetronome", "fontType", getFontType());
 
         // --- True Tile Overlay ---
-        configManager.setConfiguration("visualmetronome", "currentTileFillColor", toHex(currentTileFillColorBtn.getColor()));
+        configManager.setConfiguration("visualmetronome", "currentTileFillColor", currentTileFillColorBtn.getColor());
         configManager.setConfiguration("visualmetronome", "currentTileBorderWidth", getCurrentTileBorderWidth());
         configManager.setConfiguration("visualmetronome", "changeFillColor", isChangeFillColor());
         configManager.setConfiguration("visualmetronome", "changeFillColorOpacity", getChangeFillColorOpacity());
 
         // --- Party Sync ---
+        lastSelectedMember = (String) memberDropdown.getSelectedItem();
         configManager.setConfiguration("visualmetronome", "enablePartySync", isEnablePartySync());
-        configManager.setConfiguration("visualmetronome", "syncTarget", getSelectedMember());
+        configManager.setConfiguration("visualmetronome", "syncTarget", lastSelectedMember);
 
         // --- Color Settings ---
         configManager.setConfiguration("visualmetronome", "colorCycle", getColorCycle());
-        configManager.setConfiguration("visualmetronome", "tickColor", toHex(tickColorBtns[0].getColor()));
-        configManager.setConfiguration("visualmetronome", "tockColor", toHex(tickColorBtns[1].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick3Color", toHex(tickColorBtns[2].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick4Color", toHex(tickColorBtns[3].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick5Color", toHex(tickColorBtns[4].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick6Color", toHex(tickColorBtns[5].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick7Color", toHex(tickColorBtns[6].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick8Color", toHex(tickColorBtns[7].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick9Color", toHex(tickColorBtns[8].getColor()));
-        configManager.setConfiguration("visualmetronome", "tick10Color", toHex(tickColorBtns[9].getColor()));
+        configManager.setConfiguration("visualmetronome", "tickColor", tickColorBtns[0].getColor());
+        configManager.setConfiguration("visualmetronome", "tockColor", tickColorBtns[1].getColor());
+        configManager.setConfiguration("visualmetronome", "tick3Color", tickColorBtns[2].getColor());
+        configManager.setConfiguration("visualmetronome", "tick4Color", tickColorBtns[3].getColor());
+        configManager.setConfiguration("visualmetronome", "tick5Color", tickColorBtns[4].getColor());
+        configManager.setConfiguration("visualmetronome", "tick6Color", tickColorBtns[5].getColor());
+        configManager.setConfiguration("visualmetronome", "tick7Color", tickColorBtns[6].getColor());
+        configManager.setConfiguration("visualmetronome", "tick8Color", tickColorBtns[7].getColor());
+        configManager.setConfiguration("visualmetronome", "tick9Color", tickColorBtns[8].getColor());
+        configManager.setConfiguration("visualmetronome", "tick10Color", tickColorBtns[9].getColor());
 
         // --- Hotkeys ---
         configManager.setConfiguration("visualmetronome", "tickResetStartTick", getTickResetStartTick());
@@ -509,16 +561,16 @@ public class VisualMetronomePanel extends PluginPanel
         // --- Additional Overhead Cycles ---
         configManager.setConfiguration("visualmetronome", "showSecondCycle", isEnableCycle2());
         configManager.setConfiguration("visualmetronome", "tickCount2", getTickCount2());
-        configManager.setConfiguration("visualmetronome", "cycle2Color", toHex(cycle2ColorBtn.getColor()));
+        configManager.setConfiguration("visualmetronome", "cycle2Color", cycle2ColorBtn.getColor());
 
         configManager.setConfiguration("visualmetronome", "showThirdCycle", isEnableCycle3());
         configManager.setConfiguration("visualmetronome", "tickCount3", getTickCount3());
-        configManager.setConfiguration("visualmetronome", "cycle3Color", toHex(cycle3ColorBtn.getColor()));
+        configManager.setConfiguration("visualmetronome", "cycle3Color", cycle3ColorBtn.getColor());
 
         configManager.setConfiguration("visualmetronome", "overheadCyclesGapDistance", getOverheadCyclesGapDistance());
         configManager.setConfiguration("visualmetronome", "overheadHeight", getOverheadHeight());
         configManager.setConfiguration("visualmetronome", "overheadXCenterOffset", getOverheadXCenterOffset());
         configManager.setConfiguration("visualmetronome", "overheadUseCurrentColor", isOverheadUseCurrentColor());
-    }
+}
 
 }

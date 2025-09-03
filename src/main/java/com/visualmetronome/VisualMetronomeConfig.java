@@ -236,7 +236,7 @@ public interface VisualMetronomeConfig extends Config
     )
     default String syncTarget()
     {
-        return "";
+        return " ";
     }
 
 

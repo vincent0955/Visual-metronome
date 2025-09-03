@@ -1,9 +1,19 @@
 package com.visualmetronome;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ColorButtonPanel extends JPanel {
     private final JButton btn;
@@ -52,7 +62,6 @@ public class ColorButtonPanel extends JPanel {
         return btn.getBackground();
     }
 
-    // --- Listener support ---
     public void addColorChangeListener(ColorChangeListener listener) {
         listeners.add(listener);
     }
