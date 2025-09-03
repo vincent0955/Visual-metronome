@@ -23,7 +23,7 @@ public class ColorButtonPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         JLabel label = new JLabel(labelText);
-        label.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         label.setOpaque(true);
         label.setAlignmentY(Component.CENTER_ALIGNMENT);
 
@@ -34,7 +34,7 @@ public class ColorButtonPanel extends JPanel {
         label.setPreferredSize(prefSize);
         label.setMaximumSize(maxSize);
 
-        btn = new JButton("             ");
+        btn = new JButton("                ");
         btn.setBackground(initial);
         btn.setPreferredSize(new Dimension(50, 20));
         btn.setAlignmentY(Component.CENTER_ALIGNMENT);
