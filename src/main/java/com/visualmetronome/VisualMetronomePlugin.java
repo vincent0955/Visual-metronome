@@ -1,6 +1,7 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
+import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
@@ -135,8 +136,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         if (syncTarget != null && !syncTarget.isEmpty())
         {
             partyService.send(new TickRequestMessage(syncTarget));
-            // Debug printout
-            System.out.println("[DEBUG] TickRequest target=" + syncTarget );
         }
     }
 
@@ -210,6 +209,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onUserJoin(UserJoin event)
     {
+        //delay party service call to allow time for memberlist to be populated
         scheduler.schedule(() -> {
             members = partyService.getMembers();
             localPlayer = partyService.getLocalMember();
@@ -231,6 +231,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onUserPart(UserPart event)
     {
+        //delay party service call to allow time for memberlist to be populated
         scheduler.schedule(() -> {
             members = partyService.getMembers();
 
@@ -251,26 +252,35 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
+        if (!event.getGroup().equals("visualmetronome"))
+            return;
+
+        if (visualMetronomePanel == null)
+            return;
+
+        long startTime = System.currentTimeMillis(); // Debug: track how long this takes
+
+        SwingUtilities.invokeLater(() -> {
+            long swingStart = System.currentTimeMillis();
+            visualMetronomePanel.updatingFromConfig = true;
+            visualMetronomePanel.loadFromConfig(config);
+            visualMetronomePanel.updatingFromConfig = false;
+        });
+
+        // Existing plugin logic
         if (currentColorIndex > config.colorCycle())
-        {
             currentColorIndex = 0;
-        }
 
         if (tickCounter > config.tickCount())
-        {
             tickCounter = 0;
-        }
         if (tickCounter2 > config.tickCount2())
-        {
             tickCounter2 = 0;
-        }
         if (tickCounter3 > config.tickCount3())
-        {
             tickCounter3 = 0;
-        }
 
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
     }
+
 
     @Override
     protected void startUp() throws Exception

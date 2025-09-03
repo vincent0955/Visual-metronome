@@ -1,4 +1,4 @@
-package com.visualmetronome;
+package com.visualmetronome.panel;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;

@@ -1,32 +1,20 @@
-package com.visualmetronome;
+package com.visualmetronome.panel;
 
+import com.visualmetronome.FontTypes;
+import com.visualmetronome.VisualMetronomeConfig;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.Keybind;
 import net.runelite.client.ui.PluginPanel;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeListener;
-import java.awt.Font;
-import java.awt.Color;
+import java.awt.*;
 
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javax.swing.BoxLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JToggleButton;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Component;
 
 public class VisualMetronomePanel extends PluginPanel
 {
@@ -61,6 +49,8 @@ public class VisualMetronomePanel extends PluginPanel
 
     // Hotkeys
     private final JButton tickResetHotkeyBtn;
+    private final JButton resetHotkeyBtn;
+    private Keybind tickResetHotkey;
     private final JSpinner tickResetStartTick;
 
     // Mouse Following
@@ -82,7 +72,7 @@ public class VisualMetronomePanel extends PluginPanel
 
     private final ConfigManager configManager;
 
-    private boolean updatingFromConfig = false;
+    public boolean updatingFromConfig = false;
 
     public VisualMetronomePanel(ConfigManager configManager, VisualMetronomeConfig config)
     {
@@ -166,11 +156,34 @@ public class VisualMetronomePanel extends PluginPanel
         // --- Hotkeys Section ---
         JPanel hotkeyPanel = new JPanel();
         hotkeyPanel.setLayout(new BoxLayout(hotkeyPanel, BoxLayout.Y_AXIS));
-        tickResetHotkeyBtn = new JButton("Set Reset Hotkey"); // placeholder
+        tickResetHotkeyBtn = new JButton("Set Reset Hotkey");
+        tickResetHotkeyBtn.addActionListener(e -> {
+            Keybind newKeybind = promptForKeybind();
+            if (newKeybind != null) {
+                tickResetHotkey = newKeybind;
+                tickResetHotkeyBtn.setText("Hotkey: " + newKeybind.toString());
+                updateConfigThrottled(); // update directly
+            }
+        });
+        resetHotkeyBtn = new JButton("Reset Hotkey");
+        resetHotkeyBtn.addActionListener(e -> {
+            tickResetHotkey = Keybind.NOT_SET;
+            tickResetHotkeyBtn.setText("Set Reset Hotkey");
+            updateConfigThrottled();
+        });
         tickResetStartTick = spinner(0, 0, 10, 1);
-        hotkeyPanel.add(tickResetHotkeyBtn);
+
+        JPanel hotkeyButtonsPanel = new JPanel();
+        hotkeyButtonsPanel.setLayout(new BoxLayout(hotkeyButtonsPanel, BoxLayout.X_AXIS));
+        hotkeyButtonsPanel.add(tickResetHotkeyBtn);
+        hotkeyButtonsPanel.add(Box.createHorizontalStrut(5));
+        hotkeyButtonsPanel.add(resetHotkeyBtn);
+        hotkeyButtonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        hotkeyPanel.add(hotkeyButtonsPanel);
         hotkeyPanel.add(labeled("Reset to Tick:", tickResetStartTick));
         add(new CollapsibleSection("Hotkey Settings", hotkeyPanel));
+
 
         // --- Mouse Following Section ---
         JPanel mousePanel = new JPanel();
@@ -336,6 +349,7 @@ public class VisualMetronomePanel extends PluginPanel
 
     // --- Hotkeys ---
     public int getTickResetStartTick() { return ((Double) tickResetStartTick.getValue()).intValue(); }
+    public Keybind getTickResetHotkey() {return tickResetHotkey;}
 
     // --- Mouse Following ---
     public boolean isMouseFollowingTick() { return mouseFollowingTick.isSelected(); }
@@ -411,7 +425,13 @@ public class VisualMetronomePanel extends PluginPanel
 
         enablePartySync.setSelected(config.enablePartySync());
         lastSelectedMember = config.syncTarget();
-        memberDropdown.addItem(lastSelectedMember);
+
+        if (lastSelectedMember != null &&
+                Arrays.stream(memberDropdown.getModel().getSelectedItem() != null ? new String[]{memberDropdown.getSelectedItem().toString()} : new String[]{})
+                        .noneMatch(s -> s.equals(lastSelectedMember)))
+        {
+            memberDropdown.addItem(lastSelectedMember);
+        }
 
         colorCycleSpinner.setValue((double) config.colorCycle());
         tickColorBtns[0].setColor(config.getTickColor());
@@ -425,6 +445,12 @@ public class VisualMetronomePanel extends PluginPanel
         tickColorBtns[8].setColor(config.getTick9Color());
         tickColorBtns[9].setColor(config.getTick10Color());
 
+        tickResetHotkey = config.tickResetHotkey();
+        if (tickResetHotkey != null && tickResetHotkey != Keybind.NOT_SET) {
+            tickResetHotkeyBtn.setText("Hotkey: " + tickResetHotkey.toString());
+        } else {
+            tickResetHotkeyBtn.setText("Set Reset Hotkey");
+        }
 
         tickResetStartTick.setValue((double) config.tickResetStartTick());
         mouseFollowingTick.setSelected(config.mouseFollowingTick());
@@ -447,8 +473,8 @@ public class VisualMetronomePanel extends PluginPanel
         updatingFromConfig = false;
     }
     private void setupListeners() {
-        ActionListener updateAction = e -> updateConfig();
-        ChangeListener updateChange = e -> updateConfig();
+        ActionListener updateAction = e -> updateConfigThrottled();
+        ChangeListener updateChange = e -> updateConfigThrottled();
 
         // --- General Metronome ---
         enableMetronome.addActionListener(updateAction);
@@ -462,10 +488,10 @@ public class VisualMetronomePanel extends PluginPanel
         disableFontScaling.addActionListener(updateAction);
         fontSize.addChangeListener(updateChange);
         fontType.addActionListener(updateAction);
-        numberColorBtn.addColorChangeListener(c -> updateConfig());
+        numberColorBtn.addColorChangeListener(c -> updateConfigThrottled());
 
         // --- True Tile Overlay ---
-        currentTileFillColorBtn.addColorChangeListener(c -> updateConfig());
+        currentTileFillColorBtn.addColorChangeListener(c -> updateConfigThrottled());
         currentTileBorderWidth.addChangeListener(updateChange);
         changeFillColor.addActionListener(updateAction);
         changeFillColorOpacity.addChangeListener(updateChange);
@@ -477,12 +503,12 @@ public class VisualMetronomePanel extends PluginPanel
         // --- Color Settings ---
         colorCycleSpinner.addChangeListener(updateChange);
         for (ColorButtonPanel btn : tickColorBtns) {
-            btn.addColorChangeListener(c -> updateConfig());
+            btn.addColorChangeListener(c -> updateConfigThrottled());
         }
 
         // --- Hotkeys ---
         tickResetStartTick.addChangeListener(updateChange);
-        tickResetHotkeyBtn.addActionListener(updateAction);
+        //tickResetHotkeyBtn.addActionListener(updateAction);
 
         // --- Mouse Following ---
         mouseFollowingTick.addActionListener(updateAction);
@@ -492,16 +518,22 @@ public class VisualMetronomePanel extends PluginPanel
         // --- Additional Overhead Cycles ---
         enableCycle2.addActionListener(updateAction);
         tickCount2.addChangeListener(updateChange);
-        cycle2ColorBtn.addColorChangeListener(c -> updateConfig());
+        cycle2ColorBtn.addColorChangeListener(c -> updateConfigThrottled());
 
         enableCycle3.addActionListener(updateAction);
         tickCount3.addChangeListener(updateChange);
-        cycle3ColorBtn.addColorChangeListener(c -> updateConfig());
+        cycle3ColorBtn.addColorChangeListener(c -> updateConfigThrottled());
 
         overheadCyclesGapDistance.addChangeListener(updateChange);
         overheadHeight.addChangeListener(updateChange);
         overheadXCenterOffset.addChangeListener(updateChange);
         overheadUseCurrentColor.addActionListener(updateAction);
+    }
+
+    private Keybind promptForKeybind()
+    {
+        final KeyCaptureDialog dialog = new KeyCaptureDialog();
+        return dialog.showAndGetKeybind();
     }
 
     private String toHex(Color color) {
@@ -510,6 +542,7 @@ public class VisualMetronomePanel extends PluginPanel
 
     private void updateConfig()
     {
+        //System.out.println("[DEBUG] updateConfig called at " + System.currentTimeMillis());
         if (updatingFromConfig) return;
 
         // --- General Metronome ---
@@ -552,6 +585,7 @@ public class VisualMetronomePanel extends PluginPanel
 
         // --- Hotkeys ---
         configManager.setConfiguration("visualmetronome", "tickResetStartTick", getTickResetStartTick());
+        configManager.setConfiguration("visualmetronome", "tickResetHotkey", getTickResetHotkey());
 
         // --- Mouse Following ---
         configManager.setConfiguration("visualmetronome", "mouseFollowingTick", isMouseFollowingTick());
@@ -571,6 +605,16 @@ public class VisualMetronomePanel extends PluginPanel
         configManager.setConfiguration("visualmetronome", "overheadHeight", getOverheadHeight());
         configManager.setConfiguration("visualmetronome", "overheadXCenterOffset", getOverheadXCenterOffset());
         configManager.setConfiguration("visualmetronome", "overheadUseCurrentColor", isOverheadUseCurrentColor());
-}
+    }
 
+    private boolean updatePending = false;
+
+    private void updateConfigThrottled() {
+        if (updatePending) return;
+        updatePending = true;
+        SwingUtilities.invokeLater(() -> {
+            updateConfig();
+            updatePending = false;
+        });
+    }
 }
