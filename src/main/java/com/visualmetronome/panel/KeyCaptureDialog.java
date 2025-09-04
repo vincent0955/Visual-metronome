@@ -2,8 +2,10 @@ package com.visualmetronome.panel;
 
 import net.runelite.client.config.Keybind;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JDialog;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 

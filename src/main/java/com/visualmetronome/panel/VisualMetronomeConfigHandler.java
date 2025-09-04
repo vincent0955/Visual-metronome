@@ -4,7 +4,7 @@ import com.visualmetronome.VisualMetronomeConfig;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 import java.util.Arrays;
 
 public class VisualMetronomeConfigHandler
