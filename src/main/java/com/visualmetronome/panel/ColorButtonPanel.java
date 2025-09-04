@@ -63,9 +63,6 @@ public class ColorButtonPanel extends JPanel {
 
         });
 
-
-
-
         add(label);
         add(Box.createRigidArea(new Dimension(5, 0)));
         add(btn);
