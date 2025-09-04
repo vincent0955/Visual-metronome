@@ -248,7 +248,7 @@ public class VisualMetronomePanel extends PluginPanel
         overheadPanel.add(GuiUtils.labeled("X Center Offset:", overheadXCenterOffset));
         add(new CollapsibleSection("Additional Overhead Cycles", overheadPanel));
 
-        setupListeners();
+        new VisualMetronomePanelListener(this, configHandler);
     }
 
     public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
@@ -350,78 +350,6 @@ public class VisualMetronomePanel extends PluginPanel
     public int getOverheadHeight() { return ((Double) overheadHeight.getValue()).intValue(); }
     public int getOverheadXCenterOffset() { return ((Double) overheadXCenterOffset.getValue()).intValue(); }
     public boolean isOverheadUseCurrentColor() { return overheadUseCurrentColor.isSelected(); }
-
-    private void setupListeners() {
-        ActionListener updateAction = e -> configHandler.updateConfigThrottled();
-        ChangeListener updateChange = e -> configHandler.updateConfigThrottled();
-
-        // --- General Metronome ---
-        enableMetronome.addActionListener(updateAction);
-        highlightCurrentTile.addActionListener(updateAction);
-        boxWidth.addChangeListener(updateChange);
-        tickCount.addChangeListener(updateChange);
-
-        // --- Tick Number ---
-        showTick.addActionListener(updateAction);
-        showPlayerTick.addActionListener(updateAction);
-        disableFontScaling.addActionListener(updateAction);
-        fontSize.addChangeListener(updateChange);
-        fontType.addActionListener(updateAction);
-        numberColorBtn.addColorChangeListener(c -> configHandler.updateConfigThrottled());
-
-        // --- True Tile Overlay ---
-        currentTileFillColorBtn.addColorChangeListener(c -> configHandler.updateConfigThrottled());
-        currentTileBorderWidth.addChangeListener(updateChange);
-        changeFillColor.addActionListener(updateAction);
-        changeFillColorOpacity.addChangeListener(updateChange);
-
-        // --- Party Sync ---
-        enablePartySync.addActionListener(updateAction);
-        memberDropdown.addActionListener(e -> {
-            String selected = (String) memberDropdown.getSelectedItem();
-            if (selected != null && !selected.equals(lastSelectedMember)) {
-                lastSelectedMember = selected;
-
-                if (partyService != null) {
-                    List<PartyMember> membersList = partyService.getMembers();
-                    List<String> memberNames = membersList.stream()
-                            .map(PartyMember::getDisplayName)
-                            .filter(name -> !"<unknown>".equals(name))
-                            .collect(Collectors.toList());
-                    SwingUtilities.invokeLater(() -> updateMembers(memberNames, config, configManager));
-                }
-            }
-        });
-
-        // --- Color Settings ---
-        colorCycleSpinner.addChangeListener(updateChange);
-        for (ColorButtonPanel btn : tickColorBtns) {
-            btn.addColorChangeListener(c -> configHandler.updateConfigThrottled());
-        }
-
-        // --- Hotkeys ---
-        tickResetStartTick.addChangeListener(updateChange);
-        //tickResetHotkeyBtn.addActionListener(updateAction);
-
-        // --- Mouse Following ---
-        mouseFollowingTick.addActionListener(updateAction);
-        mouseOffsetX.addChangeListener(updateChange);
-        mouseOffsetY.addChangeListener(updateChange);
-
-        // --- Additional Overhead Cycles ---
-        enableCycle2.addActionListener(updateAction);
-        tickCount2.addChangeListener(updateChange);
-        cycle2ColorBtn.addColorChangeListener(c -> configHandler.updateConfigThrottled());
-
-        enableCycle3.addActionListener(updateAction);
-        tickCount3.addChangeListener(updateChange);
-        cycle3ColorBtn.addColorChangeListener(c -> configHandler.updateConfigThrottled());
-
-        overheadCyclesGapDistance.addChangeListener(updateChange);
-        overheadHeight.addChangeListener(updateChange);
-        overheadXCenterOffset.addChangeListener(updateChange);
-        overheadUseCurrentColor.addActionListener(updateAction);
-    }
 
     private Keybind promptForKeybind()
     {
