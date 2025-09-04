@@ -4,7 +4,6 @@ import com.visualmetronome.FontTypes;
 import com.visualmetronome.VisualMetronomeConfig;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
-import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
 import net.runelite.client.ui.PluginPanel;
 
@@ -17,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.BorderFactory;
-import javax.swing.event.ChangeListener;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class VisualMetronomePanel extends PluginPanel
 {
@@ -226,18 +223,21 @@ public class VisualMetronomePanel extends PluginPanel
         // --- Additional Overhead Cycles Section ---
         JPanel overheadPanel = new JPanel();
         overheadPanel.setLayout(new BoxLayout(overheadPanel, BoxLayout.Y_AXIS));
+
         enableCycle2 = new JCheckBox();
         overheadPanel.add(GuiUtils.labeledCheckbox("Enable Second Cycle", enableCycle2));
         tickCount2 = GuiUtils.spinner(2, 2, 20, 1);
         cycle2ColorBtn = new ColorButtonPanel("Second Cycle Color", Color.CYAN);
         overheadPanel.add(GuiUtils.labeled("Second Cycle Length:", tickCount2));
         overheadPanel.add(cycle2ColorBtn);
+
         enableCycle3 = new JCheckBox();
         overheadPanel.add(GuiUtils.labeledCheckbox("Enable Third Cycle", enableCycle3));
         tickCount3 = GuiUtils.spinner(2, 2, 20, 1);
         cycle3ColorBtn = new ColorButtonPanel("Third Cycle Color", Color.CYAN);
         overheadPanel.add(GuiUtils.labeled("Third Cycle Length:", tickCount3));
         overheadPanel.add(cycle3ColorBtn);
+
         overheadCyclesGapDistance = GuiUtils.spinner(20, 0, 100, 1);
         overheadHeight = GuiUtils.spinner(20, -500, 500, 1);
         overheadXCenterOffset = GuiUtils.spinner(0, -50, 50, 1);
@@ -248,6 +248,7 @@ public class VisualMetronomePanel extends PluginPanel
         overheadPanel.add(GuiUtils.labeled("X Center Offset:", overheadXCenterOffset));
         add(new CollapsibleSection("Additional Overhead Cycles", overheadPanel));
 
+        //Initialize event listeners to update on value changes
         new VisualMetronomePanelListener(this, configHandler);
     }
 
@@ -266,9 +267,9 @@ public class VisualMetronomePanel extends PluginPanel
 
             Set<String> uniqueMembers = new LinkedHashSet<>(members);
             uniqueMembers.remove("<unknown>");
-            if (lastSelectedMember != null) uniqueMembers.remove(lastSelectedMember);
 
             if (lastSelectedMember != null) {
+                uniqueMembers.remove(lastSelectedMember);
                 memberDropdown.addItem(lastSelectedMember);
             }
 
@@ -294,7 +295,6 @@ public class VisualMetronomePanel extends PluginPanel
             }
         });
     }
-
 
     // --- General Metronome ---
     public boolean isEnableMetronome() { return enableMetronome.isSelected(); }
