@@ -82,18 +82,12 @@ public class VisualMetronomePanel extends PluginPanel
     final JSpinner overheadXCenterOffset;
     final JCheckBox overheadUseCurrentColor;
 
-    final ConfigManager configManager;
-    final VisualMetronomeConfig config;
-    final PartyService partyService;
     public final VisualMetronomeConfigHandler configHandler;
 
     public boolean updatingFromConfig = false;
 
     public VisualMetronomePanel(ConfigManager configManager,VisualMetronomeConfig config, PartyService partyService)
     {
-        this.configManager = configManager;
-        this.partyService = partyService;
-        this.config = config;
         this.configHandler = new VisualMetronomeConfigHandler(configManager, config, this);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
