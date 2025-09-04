@@ -208,7 +208,6 @@ public class VisualMetronomePanel extends PluginPanel
         hotkeyPanel.add(GuiUtils.labeled("Reset to Tick:", tickResetStartTick));
         add(new CollapsibleSection("Hotkey Settings", hotkeyPanel));
 
-
         // --- Mouse Following Section ---
         JPanel mousePanel = new JPanel();
         mousePanel.setLayout(new BoxLayout(mousePanel, BoxLayout.Y_AXIS));
@@ -254,7 +253,10 @@ public class VisualMetronomePanel extends PluginPanel
 
     public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
     {
-        if (members == null) return;
+        if (members == null || members.isEmpty())
+        {
+            return;
+        }
 
         SwingUtilities.invokeLater(() -> {
 
