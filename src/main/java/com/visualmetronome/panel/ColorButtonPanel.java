@@ -56,7 +56,7 @@ public class ColorButtonPanel extends JPanel {
                     "Choose " + labelText,
                     true,
                     chooser,
-                    ee -> setColor(chooser.getColor()), // get the color from chooser
+                    ee -> setColor(chooser.getColor()),
                     null
             );
             dialog.setVisible(true);
