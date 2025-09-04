@@ -260,7 +260,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
         SwingUtilities.invokeLater(() -> {
             visualMetronomePanel.updatingFromConfig = true;
-            visualMetronomePanel.loadFromConfig();
+            visualMetronomePanel.configHandler.loadFromConfig();
             visualMetronomePanel.updatingFromConfig = false;
         });
 
@@ -293,7 +293,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         wsClient.registerMessage(TickRequestMessage.class);
 
         visualMetronomePanel = new VisualMetronomePanel(configManager, config, partyService);
-        visualMetronomePanel.loadFromConfig();
+        visualMetronomePanel.configHandler.loadFromConfig();
 
         navButton = NavigationButton.builder()
                 .tooltip("Visual Metronome")
