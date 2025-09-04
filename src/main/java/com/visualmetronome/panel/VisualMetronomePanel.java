@@ -93,6 +93,7 @@ public class VisualMetronomePanel extends PluginPanel
     private final JCheckBox overheadUseCurrentColor;
 
     private final ConfigManager configManager;
+    private final VisualMetronomeConfig config;
     private final PartyService partyService;
 
     public boolean updatingFromConfig = false;
@@ -101,6 +102,7 @@ public class VisualMetronomePanel extends PluginPanel
     {
         this.configManager = configManager;
         this.partyService = partyService;
+        this.config = config;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -446,7 +448,7 @@ public class VisualMetronomePanel extends PluginPanel
         }
     }
 
-    public void loadFromConfig(VisualMetronomeConfig config) {
+    public void loadFromConfig() {
         updatingFromConfig = true;
 
         enableMetronome.setSelected(config.enableMetronome());
@@ -541,7 +543,21 @@ public class VisualMetronomePanel extends PluginPanel
 
         // --- Party Sync ---
         enablePartySync.addActionListener(updateAction);
-        memberDropdown.addActionListener(updateAction);
+        memberDropdown.addActionListener(e -> {
+            String selected = (String) memberDropdown.getSelectedItem();
+            if (selected != null && !selected.equals(lastSelectedMember)) {
+                lastSelectedMember = selected;
+
+                if (partyService != null) {
+                    List<PartyMember> membersList = partyService.getMembers();
+                    List<String> memberNames = membersList.stream()
+                            .map(PartyMember::getDisplayName)
+                            .filter(name -> !"<unknown>".equals(name))
+                            .collect(Collectors.toList());
+                    SwingUtilities.invokeLater(() -> updateMembers(memberNames, config, configManager));
+                }
+            }
+        });
 
         // --- Color Settings ---
         colorCycleSpinner.addChangeListener(updateChange);
