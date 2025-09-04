@@ -14,6 +14,9 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.colorchooser.AbstractColorChooserPanel;
+
+
 
 public class ColorButtonPanel extends JPanel {
     private final JButton btn;
@@ -39,11 +42,29 @@ public class ColorButtonPanel extends JPanel {
         btn.setPreferredSize(new Dimension(50, 20));
         btn.setAlignmentY(Component.CENTER_ALIGNMENT);
         btn.addActionListener(e -> {
-            Color chosen = JColorChooser.showDialog(this, "Choose " + labelText, initial);
-            if (chosen != null) {
-                setColor(chosen);
+            JColorChooser chooser = new JColorChooser(getColor());
+            chooser.setPreviewPanel(new JPanel());
+
+            for (AbstractColorChooserPanel panel : chooser.getChooserPanels()) {
+                if (!panel.getDisplayName().equals("HSV")) {
+                    chooser.removeChooserPanel(panel);
+                }
             }
+
+            javax.swing.JDialog dialog = JColorChooser.createDialog(
+                    this,
+                    "Choose " + labelText,
+                    true,
+                    chooser,
+                    ee -> setColor(chooser.getColor()), // get the color from chooser
+                    null
+            );
+            dialog.setVisible(true);
+
         });
+
+
+
 
         add(label);
         add(Box.createRigidArea(new Dimension(5, 0)));
