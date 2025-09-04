@@ -13,21 +13,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JToggleButton;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.BorderFactory;
 import javax.swing.event.ChangeListener;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 
@@ -111,10 +104,11 @@ public class VisualMetronomePanel extends PluginPanel
         JPanel partySyncPanel = new JPanel();
         partySyncPanel.setLayout(new BoxLayout(partySyncPanel, BoxLayout.Y_AXIS));
         enablePartySync = new JCheckBox();
-        partySyncPanel.add(labeledCheckbox("Enable Tick Sync", enablePartySync));
+        partySyncPanel.add(GuiUtils.labeledCheckbox("Enable Tick Sync", enablePartySync));
         memberDropdown = new JComboBox<>();
-        partySyncPanel.add(labeled("Party Member:", memberDropdown));
-        JButton refreshMembersBtn = getRefreshMembersBtn(configManager, config, partyService);
+        partySyncPanel.add(GuiUtils.labeled("Party Member:", memberDropdown));
+        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(configManager, config, partyService,
+                members -> updateMembers(members, config, configManager));
         partySyncPanel.add(refreshMembersBtn);
         add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
 
@@ -122,52 +116,52 @@ public class VisualMetronomePanel extends PluginPanel
         JPanel generalPanel = new JPanel();
         generalPanel.setLayout(new BoxLayout(generalPanel, BoxLayout.Y_AXIS));
         enableMetronome = new JCheckBox();
-        generalPanel.add(labeledCheckbox("Enable Visual Metronome", enableMetronome));
+        generalPanel.add(GuiUtils.labeledCheckbox("Enable Visual Metronome", enableMetronome));
         highlightCurrentTile = new JCheckBox();
-        generalPanel.add(labeledCheckbox("Enable True Tile Overlay", highlightCurrentTile));
-        boxWidth = spinner(25, 16, 200, 1);
-        tickCount = spinner(1, 1, 10, 1);
-        generalPanel.add(labeled("Box Width:", boxWidth));
-        generalPanel.add(labeled("Tick Count:", tickCount));
+        generalPanel.add(GuiUtils.labeledCheckbox("Enable True Tile Overlay", highlightCurrentTile));
+        boxWidth = GuiUtils.spinner(25, 16, 200, 1);
+        tickCount = GuiUtils.spinner(1, 1, 10, 1);
+        generalPanel.add(GuiUtils.labeled("Box Width:", boxWidth));
+        generalPanel.add(GuiUtils.labeled("Tick Count:", tickCount));
         add(new CollapsibleSection("General Metronome", generalPanel));
 
         // --- Tick Number Section ---
         JPanel tickNumberPanel = new JPanel();
         tickNumberPanel.setLayout(new BoxLayout(tickNumberPanel, BoxLayout.Y_AXIS));
         showTick = new JCheckBox();
-        tickNumberPanel.add(labeledCheckbox("Show Metronome Tick Number", showTick));
+        tickNumberPanel.add(GuiUtils.labeledCheckbox("Show Metronome Tick Number", showTick));
         showPlayerTick = new JCheckBox();
-        tickNumberPanel.add(labeledCheckbox("Show Tick Above Player", showPlayerTick));
+        tickNumberPanel.add(GuiUtils.labeledCheckbox("Show Tick Above Player", showPlayerTick));
         disableFontScaling = new JCheckBox();
-        tickNumberPanel.add(labeledCheckbox("Disable Font Scaling", disableFontScaling));
-        fontSize = spinner(15, 8, 50, 1);
+        tickNumberPanel.add(GuiUtils.labeledCheckbox("Disable Font Scaling", disableFontScaling));
+        fontSize = GuiUtils.spinner(15, 8, 50, 1);
         numberColorBtn = new ColorButtonPanel("Tick Number Color", Color.CYAN);
         fontType = new JComboBox<>(Arrays.stream(FontTypes.values())
                 .map(FontTypes::name)
                 .toArray(String[]::new));
-        tickNumberPanel.add(labeled("Font Size:", fontSize));
+        tickNumberPanel.add(GuiUtils.labeled("Font Size:", fontSize));
         tickNumberPanel.add(numberColorBtn);
-        tickNumberPanel.add(labeled("Font Type:", fontType));
+        tickNumberPanel.add(GuiUtils.labeled("Font Type:", fontType));
         add(new CollapsibleSection("Tick Number Settings", tickNumberPanel));
 
         // --- True Tile Overlay Section ---
         JPanel tilePanel = new JPanel();
         tilePanel.setLayout(new BoxLayout(tilePanel, BoxLayout.Y_AXIS));
         currentTileFillColorBtn = new ColorButtonPanel("Tile Fill Color", new Color(0, 0, 0, 50));
-        currentTileBorderWidth = spinner(2, 0, 10, 0.5);
+        currentTileBorderWidth = GuiUtils.spinner(2, 0, 10, 0.5);
         changeFillColor = new JCheckBox();
-        tilePanel.add(labeledCheckbox("Enable Tile Fill Metronome", changeFillColor));
-        changeFillColorOpacity = spinner(50, 0, 255, 1);
+        tilePanel.add(GuiUtils.labeledCheckbox("Enable Tile Fill Metronome", changeFillColor));
+        changeFillColorOpacity = GuiUtils.spinner(50, 0, 255, 1);
         tilePanel.add(currentTileFillColorBtn);
-        tilePanel.add(labeled("Tile Border Width:", currentTileBorderWidth));
-        tilePanel.add(labeled("Fill Color Opacity:", changeFillColorOpacity));
+        tilePanel.add(GuiUtils.labeled("Tile Border Width:", currentTileBorderWidth));
+        tilePanel.add(GuiUtils.labeled("Fill Color Opacity:", changeFillColorOpacity));
         add(new CollapsibleSection("True Tile Overlay Settings", tilePanel));
 
         // --- Color Settings Section ---
         JPanel colorPanel = new JPanel();
         colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.Y_AXIS));
-        colorCycleSpinner = spinner(2, 2, 10, 1);
-        colorPanel.add(labeled("Number of Colors:", colorCycleSpinner));
+        colorCycleSpinner = GuiUtils.spinner(2, 2, 10, 1);
+        colorPanel.add(GuiUtils.labeled("Number of Colors:", colorCycleSpinner));
 
         tickColorBtns[0] = new ColorButtonPanel("Tick Color", Color.LIGHT_GRAY);
         colorPanel.add(tickColorBtns[0]);
@@ -202,7 +196,7 @@ public class VisualMetronomePanel extends PluginPanel
             tickResetHotkeyBtn.setText("Set Reset Hotkey");
             updateConfigThrottled();
         });
-        tickResetStartTick = spinner(0, 0, 10, 1);
+        tickResetStartTick = GuiUtils.spinner(0, 0, 10, 1);
 
         JPanel hotkeyButtonsPanel = new JPanel();
         hotkeyButtonsPanel.setLayout(new BoxLayout(hotkeyButtonsPanel, BoxLayout.X_AXIS));
@@ -212,7 +206,7 @@ public class VisualMetronomePanel extends PluginPanel
         hotkeyButtonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         hotkeyPanel.add(hotkeyButtonsPanel);
-        hotkeyPanel.add(labeled("Reset to Tick:", tickResetStartTick));
+        hotkeyPanel.add(GuiUtils.labeled("Reset to Tick:", tickResetStartTick));
         add(new CollapsibleSection("Hotkey Settings", hotkeyPanel));
 
 
@@ -220,99 +214,39 @@ public class VisualMetronomePanel extends PluginPanel
         JPanel mousePanel = new JPanel();
         mousePanel.setLayout(new BoxLayout(mousePanel, BoxLayout.Y_AXIS));
         mouseFollowingTick = new JCheckBox();
-        mousePanel.add(labeledCheckbox("Tick Counter Follows Mouse", mouseFollowingTick));
-        mouseOffsetX = spinner(10, -100, 100, 1);
-        mouseOffsetY = spinner(-10, -100, 100, 1);
-        mousePanel.add(labeled("Mouse Offset X:", mouseOffsetX));
-        mousePanel.add(labeled("Mouse Offset Y:", mouseOffsetY));
+        mousePanel.add(GuiUtils.labeledCheckbox("Tick Counter Follows Mouse", mouseFollowingTick));
+        mouseOffsetX = GuiUtils.spinner(10, -100, 100, 1);
+        mouseOffsetY = GuiUtils.spinner(-10, -100, 100, 1);
+        mousePanel.add(GuiUtils.labeled("Mouse Offset X:", mouseOffsetX));
+        mousePanel.add(GuiUtils.labeled("Mouse Offset Y:", mouseOffsetY));
         add(new CollapsibleSection("Mouse Following Settings", mousePanel));
 
         // --- Additional Overhead Cycles Section ---
         JPanel overheadPanel = new JPanel();
         overheadPanel.setLayout(new BoxLayout(overheadPanel, BoxLayout.Y_AXIS));
         enableCycle2 = new JCheckBox();
-        overheadPanel.add(labeledCheckbox("Enable Second Cycle", enableCycle2));
-        tickCount2 = spinner(2, 2, 20, 1);
+        overheadPanel.add(GuiUtils.labeledCheckbox("Enable Second Cycle", enableCycle2));
+        tickCount2 = GuiUtils.spinner(2, 2, 20, 1);
         cycle2ColorBtn = new ColorButtonPanel("Second Cycle Color", Color.CYAN);
-        overheadPanel.add(labeled("Second Cycle Length:", tickCount2));
+        overheadPanel.add(GuiUtils.labeled("Second Cycle Length:", tickCount2));
         overheadPanel.add(cycle2ColorBtn);
         enableCycle3 = new JCheckBox();
-        overheadPanel.add(labeledCheckbox("Enable Third Cycle", enableCycle3));
-        tickCount3 = spinner(2, 2, 20, 1);
+        overheadPanel.add(GuiUtils.labeledCheckbox("Enable Third Cycle", enableCycle3));
+        tickCount3 = GuiUtils.spinner(2, 2, 20, 1);
         cycle3ColorBtn = new ColorButtonPanel("Third Cycle Color", Color.CYAN);
-        overheadPanel.add(labeled("Third Cycle Length:", tickCount3));
+        overheadPanel.add(GuiUtils.labeled("Third Cycle Length:", tickCount3));
         overheadPanel.add(cycle3ColorBtn);
-        overheadCyclesGapDistance = spinner(20, 0, 100, 1);
-        overheadHeight = spinner(20, -500, 500, 1);
-        overheadXCenterOffset = spinner(0, -50, 50, 1);
+        overheadCyclesGapDistance = GuiUtils.spinner(20, 0, 100, 1);
+        overheadHeight = GuiUtils.spinner(20, -500, 500, 1);
+        overheadXCenterOffset = GuiUtils.spinner(0, -50, 50, 1);
         overheadUseCurrentColor = new JCheckBox();
-        overheadPanel.add(labeledCheckbox("Metronome Color for Overhead", overheadUseCurrentColor));
-        overheadPanel.add(labeled("Gap Distance:", overheadCyclesGapDistance));
-        overheadPanel.add(labeled("Overhead Height:", overheadHeight));
-        overheadPanel.add(labeled("X Center Offset:", overheadXCenterOffset));
+        overheadPanel.add(GuiUtils.labeledCheckbox("Metronome Color for Overhead", overheadUseCurrentColor));
+        overheadPanel.add(GuiUtils.labeled("Gap Distance:", overheadCyclesGapDistance));
+        overheadPanel.add(GuiUtils.labeled("Overhead Height:", overheadHeight));
+        overheadPanel.add(GuiUtils.labeled("X Center Offset:", overheadXCenterOffset));
         add(new CollapsibleSection("Additional Overhead Cycles", overheadPanel));
 
         setupListeners();
-    }
-
-    // --- Utility builders ---
-    private JButton getRefreshMembersBtn(ConfigManager configManager, VisualMetronomeConfig config, PartyService partyService) {
-        JButton refreshMembersBtn = new JButton("Refresh Members");
-        refreshMembersBtn.addActionListener(e -> {
-            if (partyService != null) {
-                List<PartyMember> membersList = partyService.getMembers();
-                List<String> memberNames = membersList.stream()
-                        .map(PartyMember::getDisplayName)
-                        .filter(name -> !"<unknown>".equals(name))
-                        .collect(Collectors.toList());
-                SwingUtilities.invokeLater(() -> updateMembers(memberNames, config, configManager));
-            }
-        });
-        return refreshMembersBtn;
-    }
-
-    private JLabel sectionLabel(String text)
-    {
-        JLabel label = new JLabel(text, SwingConstants.LEADING);
-        label.setFont(label.getFont().deriveFont(Font.BOLD));
-        label.setBorder(BorderFactory.createEmptyBorder(8, 0, 4, 0));
-        return label;
-    }
-
-    private JPanel labeled(String text, JComponent comp)
-    {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        JLabel label = new JLabel(text);
-        label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        comp.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(label);
-        panel.add(comp);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
-        return panel;
-    }
-
-    private JPanel labeledCheckbox(String text, JCheckBox checkBox)
-    {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        JLabel label = new JLabel(text);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        panel.add(label, BorderLayout.WEST);
-
-        checkBox.setHorizontalAlignment(SwingConstants.RIGHT);
-        panel.add(checkBox, BorderLayout.EAST);
-
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
-        return panel;
-    }
-
-    private JSpinner spinner(Number value, Number min, Number max, Number step)
-    {
-        return new JSpinner(new SpinnerNumberModel(value.doubleValue(), min.doubleValue(), max.doubleValue(), step.doubleValue()));
     }
 
     public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
@@ -414,39 +348,6 @@ public class VisualMetronomePanel extends PluginPanel
     public int getOverheadHeight() { return ((Double) overheadHeight.getValue()).intValue(); }
     public int getOverheadXCenterOffset() { return ((Double) overheadXCenterOffset.getValue()).intValue(); }
     public boolean isOverheadUseCurrentColor() { return overheadUseCurrentColor.isSelected(); }
-
-
-    public class CollapsibleSection extends JPanel
-    {
-        private final JPanel contentPanel;
-        private final JToggleButton toggle;
-
-        public CollapsibleSection(String title, JPanel content)
-        {
-            setLayout(new BorderLayout());
-            setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
-
-            contentPanel = content;
-
-            contentPanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(Color.BLACK),
-                    BorderFactory.createEmptyBorder(5, 5, 5, 5)
-            ));
-
-            contentPanel.setVisible(true);
-
-            toggle = new JToggleButton(title);
-            toggle.setSelected(true);
-            toggle.addActionListener(e -> {
-                contentPanel.setVisible(toggle.isSelected());
-                revalidate();
-                repaint();
-            });
-
-            add(toggle, BorderLayout.NORTH);
-            add(contentPanel, BorderLayout.CENTER);
-        }
-    }
 
     public void loadFromConfig() {
         updatingFromConfig = true;
