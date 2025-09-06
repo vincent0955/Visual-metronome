@@ -2,6 +2,7 @@ package com.visualmetronome.panel;
 
 import com.visualmetronome.FontTypes;
 import com.visualmetronome.VisualMetronomeConfig;
+import com.visualmetronome.messages.ColorRequestMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
 import net.runelite.client.party.PartyService;
@@ -110,6 +111,13 @@ public class VisualMetronomePanel extends PluginPanel
                 members -> updateMembers(members, config, configManager));
         partySyncPanel.add(refreshMembersBtn);
         add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
+        JButton requestColorsButton = new JButton("Color Sync");
+        requestColorsButton.addActionListener(e ->
+        {
+            ColorRequestMessage message = new ColorRequestMessage(config.syncTarget());
+            partyService.send(message);
+        });
+
 
         // --- General Metronome Section ---
         JPanel generalPanel = new JPanel();
