@@ -100,23 +100,41 @@ public class VisualMetronomePanel extends PluginPanel
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // --- Party Sync Section ---
+// --- Party Sync Section ---
         JPanel partySyncPanel = new JPanel();
         partySyncPanel.setLayout(new BoxLayout(partySyncPanel, BoxLayout.Y_AXIS));
+
         enablePartySync = new JCheckBox();
         partySyncPanel.add(GuiUtils.labeledCheckbox("Enable Tick Sync", enablePartySync));
+
         memberDropdown = new JComboBox<>();
         partySyncPanel.add(GuiUtils.labeled("Party Member:", memberDropdown));
-        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(configManager, config, partyService,
-                members -> updateMembers(members, config, configManager));
-        partySyncPanel.add(refreshMembersBtn);
-        add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
-        JButton requestColorsButton = new JButton("Color Sync");
-        requestColorsButton.addActionListener(e ->
-        {
+
+        JPanel buttonRow = new JPanel();
+        buttonRow.setLayout(new BoxLayout(buttonRow, BoxLayout.X_AXIS));
+        buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT); // align with other components
+
+        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
+                configManager, config, partyService,
+                members -> updateMembers(members, config, configManager)
+        );
+        refreshMembersBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        JButton requestColorsButton = new JButton("Sync Colors");
+        requestColorsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
+        requestColorsButton.addActionListener(e -> {
             ColorRequestMessage message = new ColorRequestMessage(config.syncTarget());
             partyService.send(message);
         });
+
+        buttonRow.add(refreshMembersBtn);
+        buttonRow.add(Box.createHorizontalStrut(5)); // spacing
+        buttonRow.add(requestColorsButton);
+
+        partySyncPanel.add(buttonRow);
+
+        add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
+
 
 
         // --- General Metronome Section ---

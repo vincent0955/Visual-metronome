@@ -33,7 +33,7 @@ public final class GuiUtils
                                                PartyService partyService,
                                                java.util.function.Consumer<List<String>> updateMembers)
     {
-        JButton refreshMembersBtn = new JButton("Refresh Members");
+        JButton refreshMembersBtn = new JButton("Refresh Party");
         refreshMembersBtn.addActionListener(e -> {
             if (partyService != null) {
                 List<PartyMember> membersList = partyService.getMembers();
