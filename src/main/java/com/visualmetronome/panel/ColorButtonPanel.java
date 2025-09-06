@@ -1,22 +1,11 @@
 package com.visualmetronome.panel;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.BorderFactory;
+import javax.swing.*;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.colorchooser.AbstractColorChooserPanel;
-
-
 
 public class ColorButtonPanel extends JPanel {
     private final JButton btn;
@@ -42,25 +31,105 @@ public class ColorButtonPanel extends JPanel {
         btn.setPreferredSize(new Dimension(50, 20));
         btn.setAlignmentY(Component.CENTER_ALIGNMENT);
         btn.addActionListener(e -> {
-            JColorChooser chooser = new JColorChooser(getColor());
+            final JColorChooser chooser = new JColorChooser(getColor());
             chooser.setPreviewPanel(new JPanel());
 
+            // keep only HSV panel
             for (AbstractColorChooserPanel panel : chooser.getChooserPanels()) {
-                if (!panel.getDisplayName().equals("HSV")) {
+                if (!"HSV".equals(panel.getDisplayName())) {
                     chooser.removeChooserPanel(panel);
                 }
             }
 
-            javax.swing.JDialog dialog = JColorChooser.createDialog(
-                    this,
+            // build default swatches panel
+            JPanel swatchPanel = new JPanel(new GridLayout(0, 8, 6, 6));
+            swatchPanel.setBorder(BorderFactory.createTitledBorder("Default Colors"));
+
+            Color[] defaultColors = new Color[] {
+                    Color.BLACK, Color.DARK_GRAY, Color.GRAY, Color.LIGHT_GRAY, Color.WHITE,
+                    Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN,
+                    Color.MAGENTA, Color.CYAN, Color.BLUE, new Color(128,0,128), new Color(165,42,42), new Color(0,128,128)
+            };
+
+            // previous/current color panel
+            JPanel prevCurrentPanel = new JPanel();
+            prevCurrentPanel.setLayout(new GridLayout(1, 2, 5, 5));
+            prevCurrentPanel.setBorder(BorderFactory.createTitledBorder("Preview Colors"));
+
+            JButton prevColorBtn = new JButton();
+            prevColorBtn.setBackground(initial);
+            Dimension colorPreviewSize = new Dimension(50,50);
+            prevColorBtn.setPreferredSize(colorPreviewSize);
+            prevColorBtn.setMinimumSize(colorPreviewSize);
+            prevColorBtn.setMaximumSize(colorPreviewSize);
+            prevColorBtn.setOpaque(true);
+            prevColorBtn.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+
+            JButton currentColorBtn = new JButton();
+            currentColorBtn.setBackground(initial);
+            currentColorBtn.setPreferredSize(colorPreviewSize);
+            currentColorBtn.setMinimumSize(colorPreviewSize);
+            currentColorBtn.setMaximumSize(colorPreviewSize);
+            currentColorBtn.setOpaque(true);
+            currentColorBtn.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+
+            prevCurrentPanel.add(prevColorBtn);
+            prevCurrentPanel.add(currentColorBtn);
+
+            // add default color swatches
+            for (Color c : defaultColors) {
+                JButton sw = new JButton();
+                sw.setPreferredSize(new Dimension(24, 24));
+                sw.setMaximumSize(new Dimension(24, 24));
+                sw.setBackground(c);
+                sw.setOpaque(true);
+                sw.setFocusPainted(false);
+                sw.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                sw.addActionListener(evt -> {
+                    chooser.setColor(c);
+                });
+                swatchPanel.add(sw);
+            }
+
+            Dimension swatchSize = new Dimension(300,75);
+            swatchPanel.setMaximumSize(swatchSize);
+            swatchPanel.setMinimumSize(swatchSize);
+            swatchPanel.setPreferredSize(swatchSize);
+
+            // Update current color preview in real-time
+            chooser.getSelectionModel().addChangeListener(ee -> {
+                Color selected = chooser.getColor();
+                currentColorBtn.setBackground(selected);
+            });
+
+            // wrap default colors and prev/current side by side
+            JPanel swatchesWrapper = new JPanel();
+            swatchesWrapper.setLayout(new BorderLayout(10, 0));
+            swatchesWrapper.add(prevCurrentPanel, BorderLayout.WEST);
+            swatchesWrapper.add(swatchPanel, BorderLayout.CENTER);
+
+            swatchesWrapper.setPreferredSize(swatchSize);
+
+            // vertical panel for chooser + swatches
+            JPanel verticalPanel = new JPanel();
+            verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS));
+            verticalPanel.add(chooser);
+            verticalPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+            verticalPanel.add(swatchesWrapper);
+
+            JDialog dialog = new JDialog(
+                    SwingUtilities.getWindowAncestor(ColorButtonPanel.this),
                     "Choose " + labelText,
-                    true,
-                    chooser,
-                    ee -> setColor(chooser.getColor()),
-                    null
+                    Dialog.ModalityType.APPLICATION_MODAL
             );
+
+            dialog.getContentPane().add(verticalPanel);
+            dialog.pack();
+            dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 
+            // Update color after dialog closes
+            setColor(chooser.getColor());
         });
 
         add(label);

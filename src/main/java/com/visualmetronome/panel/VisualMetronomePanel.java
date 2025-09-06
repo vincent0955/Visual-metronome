@@ -134,7 +134,7 @@ public class VisualMetronomePanel extends PluginPanel
         disableFontScaling = new JCheckBox();
         tickNumberPanel.add(GuiUtils.labeledCheckbox("Disable Font Scaling", disableFontScaling));
         fontSize = GuiUtils.spinner(15, 8, 50, 1);
-        numberColorBtn = new ColorButtonPanel("Tick Number Color", Color.CYAN);
+        numberColorBtn = new ColorButtonPanel("Tick Number Color", config.NumberColor());
         fontType = new JComboBox<>(Arrays.stream(FontTypes.values())
                 .map(FontTypes::name)
                 .toArray(String[]::new));
@@ -146,7 +146,7 @@ public class VisualMetronomePanel extends PluginPanel
         // --- True Tile Overlay Section ---
         JPanel tilePanel = new JPanel();
         tilePanel.setLayout(new BoxLayout(tilePanel, BoxLayout.Y_AXIS));
-        currentTileFillColorBtn = new ColorButtonPanel("Tile Fill Color", new Color(0, 0, 0, 50));
+        currentTileFillColorBtn = new ColorButtonPanel("Tile Fill Color", config.currentTileFillColor());
         currentTileBorderWidth = GuiUtils.spinner(2, 0, 10, 0.5);
         changeFillColor = new JCheckBox();
         tilePanel.add(GuiUtils.labeledCheckbox("Enable Tile Fill Metronome", changeFillColor));
@@ -162,15 +162,36 @@ public class VisualMetronomePanel extends PluginPanel
         colorCycleSpinner = GuiUtils.spinner(2, 2, 10, 1);
         colorPanel.add(GuiUtils.labeled("Number of Colors:", colorCycleSpinner));
 
-        tickColorBtns[0] = new ColorButtonPanel("Tick Color", Color.LIGHT_GRAY);
+        tickColorBtns[0] = new ColorButtonPanel("Tick Color", config.getTickColor());
         colorPanel.add(tickColorBtns[0]);
-        tickColorBtns[1] = new ColorButtonPanel("Tock Color", Color.LIGHT_GRAY);
+
+        tickColorBtns[1] = new ColorButtonPanel("Tock Color", config.getTockColor());
         colorPanel.add(tickColorBtns[1]);
 
-        for (int i = 2; i < 10; i++) {
-            tickColorBtns[i] = new ColorButtonPanel((i + 1) + " Tick Color", Color.LIGHT_GRAY);
-            colorPanel.add(tickColorBtns[i]);
-        }
+        tickColorBtns[2] = new ColorButtonPanel("3 Tick Color", config.getTick3Color());
+        colorPanel.add(tickColorBtns[2]);
+
+        tickColorBtns[3] = new ColorButtonPanel("4 Tick Color", config.getTick4Color());
+        colorPanel.add(tickColorBtns[3]);
+
+        tickColorBtns[4] = new ColorButtonPanel("5 Tick Color", config.getTick5Color());
+        colorPanel.add(tickColorBtns[4]);
+
+        tickColorBtns[5] = new ColorButtonPanel("6 Tick Color", config.getTick6Color());
+        colorPanel.add(tickColorBtns[5]);
+
+        tickColorBtns[6] = new ColorButtonPanel("7 Tick Color", config.getTick7Color());
+        colorPanel.add(tickColorBtns[6]);
+
+        tickColorBtns[7] = new ColorButtonPanel("8 Tick Color", config.getTick8Color());
+        colorPanel.add(tickColorBtns[7]);
+
+        tickColorBtns[8] = new ColorButtonPanel("9 Tick Color", config.getTick9Color());
+        colorPanel.add(tickColorBtns[8]);
+
+        tickColorBtns[9] = new ColorButtonPanel("10 Tick Color", config.getTick10Color());
+        colorPanel.add(tickColorBtns[9]);
+
         add(new CollapsibleSection("Color Settings", colorPanel));
 
 
@@ -226,14 +247,14 @@ public class VisualMetronomePanel extends PluginPanel
         enableCycle2 = new JCheckBox();
         overheadPanel.add(GuiUtils.labeledCheckbox("Enable Second Cycle", enableCycle2));
         tickCount2 = GuiUtils.spinner(2, 2, 20, 1);
-        cycle2ColorBtn = new ColorButtonPanel("Second Cycle Color", Color.CYAN);
+        cycle2ColorBtn = new ColorButtonPanel("Second Cycle Color", config.cycle2Color());
         overheadPanel.add(GuiUtils.labeled("Second Cycle Length:", tickCount2));
         overheadPanel.add(cycle2ColorBtn);
 
         enableCycle3 = new JCheckBox();
         overheadPanel.add(GuiUtils.labeledCheckbox("Enable Third Cycle", enableCycle3));
         tickCount3 = GuiUtils.spinner(2, 2, 20, 1);
-        cycle3ColorBtn = new ColorButtonPanel("Third Cycle Color", Color.CYAN);
+        cycle3ColorBtn = new ColorButtonPanel("Third Cycle Color", config.cycle3Color());
         overheadPanel.add(GuiUtils.labeled("Third Cycle Length:", tickCount3));
         overheadPanel.add(cycle3ColorBtn);
 
