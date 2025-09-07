@@ -1,5 +1,7 @@
 package com.visualmetronome.panel;
 
+import net.runelite.client.party.PartyMember;
+
 import com.visualmetronome.FontTypes;
 import com.visualmetronome.VisualMetronomeConfig;
 import com.visualmetronome.messages.ColorRequestMessage;
@@ -21,6 +23,8 @@ import javax.swing.BorderFactory;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
+import java.util.stream.Collectors;
+import java.util.List;
 import java.awt.event.ActionListener;
 
 import java.util.Arrays;
@@ -100,7 +104,7 @@ public class VisualMetronomePanel extends PluginPanel
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-// --- Party Sync Section ---
+        // --- Party Sync Section ---
         JPanel partySyncPanel = new JPanel();
         partySyncPanel.setLayout(new BoxLayout(partySyncPanel, BoxLayout.Y_AXIS));
 
@@ -300,13 +304,27 @@ public class VisualMetronomePanel extends PluginPanel
 
     public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
     {
-        if (members == null || members.isEmpty())
-        {
+        if (partyService != null && (members == null || members.isEmpty())) {
+            List<PartyMember> membersList = partyService.getMembers();
+            members = membersList.stream()
+                    .map(PartyMember::getDisplayName)
+                    .filter(name -> !"<unknown>".equals(name))
+                    .collect(Collectors.toList());
+        }
+
+        if (members == null || members.isEmpty()) {
             return;
         }
 
-        SwingUtilities.invokeLater(() -> {
+        // update lastSelectedMember based on dropdown
+        String selected = (String) memberDropdown.getSelectedItem();
+        if (selected != null && !selected.equals(lastSelectedMember)) {
+            lastSelectedMember = selected;
+        }
 
+        final List<String> finalMembers = members; // <- make it effectively final
+
+        SwingUtilities.invokeLater(() -> {
             ActionListener[] listeners = memberDropdown.getActionListeners();
             for (ActionListener l : listeners) {
                 memberDropdown.removeActionListener(l);
@@ -314,7 +332,7 @@ public class VisualMetronomePanel extends PluginPanel
 
             memberDropdown.removeAllItems();
 
-            Set<String> uniqueMembers = new LinkedHashSet<>(members);
+            Set<String> uniqueMembers = new LinkedHashSet<>(finalMembers);
             uniqueMembers.remove("<unknown>");
 
             if (lastSelectedMember != null) {
@@ -333,8 +351,7 @@ public class VisualMetronomePanel extends PluginPanel
                 memberDropdown.setSelectedIndex(0);
             }
 
-            if (!Objects.equals(lastSelectedMember, config.syncTarget()))
-            {
+            if (!Objects.equals(lastSelectedMember, config.syncTarget())) {
                 configManager.setConfiguration("visualmetronome", "syncTarget", lastSelectedMember);
             }
 
@@ -344,6 +361,7 @@ public class VisualMetronomePanel extends PluginPanel
             }
         });
     }
+
 
     // --- General Metronome ---
     public boolean isEnableMetronome() { return enableMetronome.isSelected(); }

@@ -1,12 +1,7 @@
 package com.visualmetronome.panel;
 
-import net.runelite.client.party.PartyMember;
-
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class VisualMetronomePanelListener {
     private final VisualMetronomeConfigHandler configHandler;
@@ -44,21 +39,7 @@ public class VisualMetronomePanelListener {
 
         // --- Party Sync ---
         panel.enablePartySync.addActionListener(updateAction);
-        panel.memberDropdown.addActionListener(e -> {
-            String selected = (String) panel.memberDropdown.getSelectedItem();
-            if (selected != null && !selected.equals(panel.lastSelectedMember)) {
-                panel.lastSelectedMember = selected;
-
-                if (panel.partyService != null) {
-                    List<PartyMember> membersList = panel.partyService.getMembers();
-                    List<String> memberNames = membersList.stream()
-                            .map(PartyMember::getDisplayName)
-                            .filter(name -> !"<unknown>".equals(name))
-                            .collect(Collectors.toList());
-                    SwingUtilities.invokeLater(() -> panel.updateMembers(memberNames, panel.config, panel.configManager));
-                }
-            }
-        });
+        panel.memberDropdown.addActionListener(e -> panel.updateMembers(null, panel.config, panel.configManager));
 
         // --- Color Settings ---
         panel.colorCycleSpinner.addChangeListener(updateChange);
