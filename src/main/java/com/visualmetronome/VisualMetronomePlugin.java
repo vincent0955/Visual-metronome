@@ -106,33 +106,33 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onGameTick(GameTick tick)
     {
-        if (tickCounter % config.tickCount() == 0)
+        if (tickCounter % visualMetronomePanel.getTickCount() == 0)
         {
             tickCounter = 0;
-            if (currentColorIndex == config.colorCycle())
+            if (currentColorIndex == visualMetronomePanel.getColorCycle())
             {
                 currentColorIndex = 0;
             }
             setCurrentColorByColorIndex(++currentColorIndex);
         }
         tickCounter++;
-        if (tickCounter2 % config.tickCount2() == 0){
+        if (tickCounter2 % visualMetronomePanel.getTickCount2() == 0){
             tickCounter2 = 0;
         }
         tickCounter2++;
-        if (tickCounter3 % config.tickCount3() == 0){
+        if (tickCounter3 % visualMetronomePanel.getTickCount3() == 0){
             tickCounter3 = 0;
         }
         tickCounter3++;
 
         //party sync
         hasRespondedThisTick = false;
-        if (!config.enablePartySync())
+        if (!visualMetronomePanel.isEnablePartySync())
         {
             return;
         }
 
-        syncTarget = config.syncTarget();
+        syncTarget = visualMetronomePanel.getSelectedMember();
         if (syncTarget != null && !syncTarget.isEmpty())
         {
             partyService.send(new TickRequestMessage(syncTarget));
@@ -166,10 +166,10 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
                 tickCounter2,
                 tickCounter3,
                 currentColorIndex,
-                config.colorCycle(),
-                config.tickCount(),
-                config.tickCount2(),
-                config.tickCount3(),
+                visualMetronomePanel.getColorCycle(),
+                visualMetronomePanel.getTickCount(),
+                visualMetronomePanel.getTickCount2(),
+                visualMetronomePanel.getTickCount3(),
                 localPlayer.getDisplayName()
         );
         partyService.send(syncMsg);
@@ -178,7 +178,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onTickSyncMessage(TickSyncMessage syncMsg)
     {
-        if (!config.enablePartySync() || syncTarget == null)
+        if (!visualMetronomePanel.isEnablePartySync() || syncTarget == null)
         {
             return;
         }
@@ -265,24 +265,25 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         });
 
         // Existing plugin logic
-        if (currentColorIndex > config.colorCycle())
+        if (currentColorIndex > visualMetronomePanel.getColorCycle())
             currentColorIndex = 0;
 
-        if (tickCounter > config.tickCount())
+        if (tickCounter > visualMetronomePanel.getTickCount())
             tickCounter = 0;
-        if (tickCounter2 > config.tickCount2())
+        if (tickCounter2 > visualMetronomePanel.getTickCount2())
             tickCounter2 = 0;
-        if (tickCounter3 > config.tickCount3())
+        if (tickCounter3 > visualMetronomePanel.getTickCount3())
             tickCounter3 = 0;
 
-        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
+        DEFAULT_SIZE = new Dimension(visualMetronomePanel.getBoxWidth(), visualMetronomePanel.getBoxWidth());
     }
 
 
     @Override
     protected void startUp() throws Exception
     {
-        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
+        visualMetronomePanel = new VisualMetronomePanel(configManager, config, partyService);
+        DEFAULT_SIZE = new Dimension(visualMetronomePanel.getBoxWidth(), visualMetronomePanel.getBoxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
         overlayManager.add(overlay);
         overlayManager.add(tileOverlay);
@@ -292,7 +293,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
 
-        visualMetronomePanel = new VisualMetronomePanel(configManager, config, partyService);
         visualMetronomePanel.configHandler.loadFromConfig();
 
         navButton = NavigationButton.builder()
@@ -316,7 +316,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         tickCounter2 = 0;
         tickCounter3 = 0;
         currentColorIndex = 0;
-        currentColor = config.getTickColor();
+        currentColor = visualMetronomePanel.getTickColor(1);
         overlayManager.remove(mouseFollowingOverlay);
         keyManager.unregisterKeyListener(this);
         wsClient.unregisterMessage(TickSyncMessage.class);
@@ -338,26 +338,26 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        if (config.tickResetHotkey().matches(e))
+        if (visualMetronomePanel.getTickResetHotkey().matches(e))
         {
             int resetValue = 0;
 
             // Reset Cycle 1
-            if (config.tickCount() > 1)
+            if (visualMetronomePanel.getTickCount() > 1)
             {
-                resetValue = (config.tickResetStartTick() >= config.tickCount()) ? 0 : config.tickResetStartTick();
+                resetValue = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getTickCount()) ? 0 : visualMetronomePanel.getTickResetStartTick();
                 currentColorIndex = resetValue == 0 ? 0 : 1;
             }
             else
             {
-                resetValue = (config.tickResetStartTick() >= config.colorCycle()) ? 0 : config.tickResetStartTick();
+                resetValue = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getColorCycle()) ? 0 : visualMetronomePanel.getTickResetStartTick();
                 currentColorIndex = resetValue;
             }
             tickCounter = resetValue;
             setCurrentColorByColorIndex(currentColorIndex);
 
-            tickCounter2 = (config.tickResetStartTick() >= config.tickCount2()) ? 0 : config.tickResetStartTick();
-            tickCounter3 = (config.tickResetStartTick() >= config.tickCount3()) ? 0 : config.tickResetStartTick();
+            tickCounter2 = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getTickCount2()) ? 0 : visualMetronomePanel.getTickResetStartTick();
+            tickCounter3 = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getTickCount3()) ? 0 : visualMetronomePanel.getTickResetStartTick();
         }
     }
 
@@ -371,34 +371,34 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         switch (currentColorIndex)
         {
             case 1:
-                currentColor = config.getTickColor();
+                currentColor = visualMetronomePanel.getTickColor(1);
                 break;
             case 2:
-                currentColor = config.getTockColor();
+                currentColor = visualMetronomePanel.getTickColor(2);
                 break;
             case 3:
-                currentColor = config.getTick3Color();
+                currentColor = visualMetronomePanel.getTickColor(3);
                 break;
             case 4:
-                currentColor = config.getTick4Color();
+                currentColor = visualMetronomePanel.getTickColor(4);
                 break;
             case 5:
-                currentColor = config.getTick5Color();
+                currentColor = visualMetronomePanel.getTickColor(5);
                 break;
             case 6:
-                currentColor = config.getTick6Color();
+                currentColor = visualMetronomePanel.getTickColor(6);
                 break;
             case 7:
-                currentColor = config.getTick7Color();
+                currentColor = visualMetronomePanel.getTickColor(7);
                 break;
             case 8:
-                currentColor = config.getTick8Color();
+                currentColor = visualMetronomePanel.getTickColor(8);
                 break;
             case 9:
-                currentColor = config.getTick9Color();
+                currentColor = visualMetronomePanel.getTickColor(9);
                 break;
             case 10:
-                currentColor = config.getTick10Color();
+                currentColor = visualMetronomePanel.getTickColor(10);
         }
     }
 }
