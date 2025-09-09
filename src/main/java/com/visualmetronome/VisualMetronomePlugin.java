@@ -89,7 +89,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     private boolean hasRespondedThisTick = false;
     private PartyMember localPlayer;
     private String syncTarget;
-    private static final BufferedImage ICON = ImageUtil.loadImageResource(VisualMetronomePanel.class,"/com.visualmetronome/icon.png");
+    private static final BufferedImage ICON = ImageUtil.loadImageResource(VisualMetronomePanel.class,"/com.visualmetronome/vismetro.png");
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;

@@ -1,11 +1,27 @@
 package com.visualmetronome.panel;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JTextField;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
 
 public class ColorButtonPanel extends JPanel {
     private final JButton btn;
@@ -54,7 +70,7 @@ public class ColorButtonPanel extends JPanel {
             // previous/current color panel
             JPanel prevCurrentPanel = new JPanel();
             prevCurrentPanel.setLayout(new GridLayout(1, 2, 5, 5));
-            prevCurrentPanel.setBorder(BorderFactory.createTitledBorder("Preview Colors"));
+            prevCurrentPanel.setBorder(BorderFactory.createTitledBorder("  Prev       Current"));
 
             Color currentBtnColor = getColor();
 
@@ -121,18 +137,13 @@ public class ColorButtonPanel extends JPanel {
             hexPanel.add(new JLabel("Hex:"));
             hexPanel.add(hexField);
 
-            hexField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-                private void updateColor() {
-                    String text = hexField.getText();
-                    if (text.matches("^#([0-9A-Fa-f]{6})$")) {
-                        chooser.setColor(Color.decode(text));
-                    }
+            // Sync hex input with color chooser
+            hexField.addActionListener(evt -> {
+                String text = hexField.getText();
+                if (text.matches("^#([0-9A-Fa-f]{6})$")) {
+                    chooser.setColor(Color.decode(text));
                 }
-                @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { updateColor(); }
-                @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { updateColor(); }
-                @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { updateColor(); }
             });
-
 
             // Update hex field in real-time as color changes
             chooser.getSelectionModel().addChangeListener(ee -> {
@@ -196,7 +207,6 @@ public class ColorButtonPanel extends JPanel {
     }
 
     private void notifyListeners(Color newColor) {
-        System.out.println("Color changed to: " + newColor);
         for (ColorChangeListener listener : listeners) {
             listener.colorChanged(newColor);
         }
