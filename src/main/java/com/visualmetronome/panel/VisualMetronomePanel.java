@@ -116,7 +116,7 @@ public class VisualMetronomePanel extends PluginPanel
 
         JPanel buttonRow = new JPanel();
         buttonRow.setLayout(new BoxLayout(buttonRow, BoxLayout.X_AXIS));
-        buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT); // align with other components
+        buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
                 configManager, config, partyService,

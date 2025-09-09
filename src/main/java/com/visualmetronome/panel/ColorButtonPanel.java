@@ -56,8 +56,10 @@ public class ColorButtonPanel extends JPanel {
             prevCurrentPanel.setLayout(new GridLayout(1, 2, 5, 5));
             prevCurrentPanel.setBorder(BorderFactory.createTitledBorder("Preview Colors"));
 
+            Color currentBtnColor = getColor();
+
             JButton prevColorBtn = new JButton();
-            prevColorBtn.setBackground(initial);
+            prevColorBtn.setBackground(currentBtnColor);
             Dimension colorPreviewSize = new Dimension(50,50);
             prevColorBtn.setPreferredSize(colorPreviewSize);
             prevColorBtn.setMinimumSize(colorPreviewSize);
@@ -66,7 +68,7 @@ public class ColorButtonPanel extends JPanel {
             prevColorBtn.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
             JButton currentColorBtn = new JButton();
-            currentColorBtn.setBackground(initial);
+            currentColorBtn.setBackground(currentBtnColor);
             currentColorBtn.setPreferredSize(colorPreviewSize);
             currentColorBtn.setMinimumSize(colorPreviewSize);
             currentColorBtn.setMaximumSize(colorPreviewSize);
@@ -110,12 +112,47 @@ public class ColorButtonPanel extends JPanel {
 
             swatchesWrapper.setPreferredSize(swatchSize);
 
+            // Hex input panel
+            JPanel hexPanel = new JPanel();
+            hexPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            hexPanel.setBorder(BorderFactory.createTitledBorder("Hex Input"));
+
+            JTextField hexField = new JTextField(String.format("#%06X", getColor().getRGB() & 0xFFFFFF), 7);
+            hexPanel.add(new JLabel("Hex:"));
+            hexPanel.add(hexField);
+
+            hexField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+                private void updateColor() {
+                    String text = hexField.getText();
+                    if (text.matches("^#([0-9A-Fa-f]{6})$")) {
+                        chooser.setColor(Color.decode(text));
+                    }
+                }
+                @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { updateColor(); }
+                @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { updateColor(); }
+                @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { updateColor(); }
+            });
+
+
+            // Update hex field in real-time as color changes
+            chooser.getSelectionModel().addChangeListener(ee -> {
+                Color selected = chooser.getColor();
+                hexField.setText(String.format("#%06X", selected.getRGB() & 0xFFFFFF));
+            });
+
+            JPanel swatchesAndHexWrapper = new JPanel();
+            swatchesAndHexWrapper.setLayout(new BoxLayout(swatchesAndHexWrapper, BoxLayout.X_AXIS));
+            swatchesAndHexWrapper.add(hexPanel);
+            swatchesAndHexWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
+            swatchesAndHexWrapper.add(swatchesWrapper);
+
             // vertical panel for chooser + swatches
             JPanel verticalPanel = new JPanel();
             verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS));
             verticalPanel.add(chooser);
             verticalPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-            verticalPanel.add(swatchesWrapper);
+            verticalPanel.add(swatchesAndHexWrapper);
+
 
             JDialog dialog = new JDialog(
                     SwingUtilities.getWindowAncestor(ColorButtonPanel.this),
@@ -130,6 +167,7 @@ public class ColorButtonPanel extends JPanel {
 
             // Update color after dialog closes
             setColor(chooser.getColor());
+
         });
 
         add(label);
@@ -158,6 +196,7 @@ public class ColorButtonPanel extends JPanel {
     }
 
     private void notifyListeners(Color newColor) {
+        System.out.println("Color changed to: " + newColor);
         for (ColorChangeListener listener : listeners) {
             listener.colorChanged(newColor);
         }
