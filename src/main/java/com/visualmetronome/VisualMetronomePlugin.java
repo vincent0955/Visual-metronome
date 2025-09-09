@@ -105,7 +105,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         return configManager.getConfig(VisualMetronomeConfig.class);
     }
 
-
     @Subscribe
     public void onGameTick(GameTick tick)
     {

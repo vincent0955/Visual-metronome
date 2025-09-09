@@ -35,7 +35,7 @@ public class CollapsibleSection extends JPanel
         add(contentPanel, BorderLayout.CENTER);
     }
 
-    //constructor defaults to expanded
+    // existing constructor defaults to expanded
     public CollapsibleSection(String title, JPanel content) {
         this(title, content, false);
     }
