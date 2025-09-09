@@ -1,5 +1,6 @@
 package com.visualmetronome;
 
+import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -13,17 +14,17 @@ import net.runelite.client.ui.overlay.OverlayUtil;
 public class FullResizableVisualMetronomeOverlay extends Overlay
 {
 
-    private final VisualMetronomeConfig config;
+    private final VisualMetronomePanel panel;
     private final VisualMetronomePlugin plugin;
 
     private static int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
 
     @Inject
-    public FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    public FullResizableVisualMetronomeOverlay(VisualMetronomePanel panel, VisualMetronomePlugin plugin)
     {
         super(plugin);
-        this.config = config;
+        this.panel = panel;
         this.plugin = plugin;
         setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
         setMinimumSize(MINIMUM_SIZE);
@@ -42,18 +43,18 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
             setPreferredSize(preferredSize);
         }
 
-        if (config.enableMetronome())
+        if (panel.isEnableMetronome())
         {
             graphics.setColor(plugin.currentColor);
             graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
             TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4); // scales tick number position with box size
 
-            if (config.showTick())
+            if (panel.isShowTick())
             {
-                if (config.disableFontScaling())
+                if (panel.isDisableFontScaling())
                 {
-                    graphics.setColor(config.NumberColor());
-                    if (config.tickCount() == 1)
+                    graphics.setColor(panel.getNumberColor());
+                    if (panel.getTickCount() == 1)
                     {
                         graphics.drawString(String.valueOf(plugin.currentColorIndex), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
                     }
@@ -65,23 +66,23 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                 }
                 else
                 {
-                    if (config.fontType() == FontTypes.REGULAR)
+                    if (panel.getFontType().equals(FontTypes.REGULAR.name()))
                     {
                         graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, Math.min(preferredSize.width, preferredSize.height))); //scales font size based on the size of the metronome
                     }
                     else
                     {
-                        graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, Math.min(preferredSize.width, Math.min(preferredSize.width, preferredSize.height))));
+                        graphics.setFont(new Font(panel.getFontType(), Font.PLAIN, Math.min(preferredSize.width, Math.min(preferredSize.width, preferredSize.height))));
                     }
 
                     final Point tickCounterPoint = new Point(preferredSize.width / 3, preferredSize.height);
-                    if (config.tickCount() == 1)
+                    if (panel.getTickCount() == 1)
                     {
-                        OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.currentColorIndex), config.NumberColor());
+                        OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.currentColorIndex), panel.getNumberColor());
                     }
                     else
                     {
-                        OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), config.NumberColor());
+                        OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.tickCounter), panel.getNumberColor());
                     }
                 }
             }
@@ -90,3 +91,4 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
         return preferredSize;
     }
 }
+

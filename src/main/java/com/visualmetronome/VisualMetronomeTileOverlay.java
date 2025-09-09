@@ -1,5 +1,6 @@
 package com.visualmetronome;
 
+import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.coords.LocalPoint;
@@ -21,15 +22,15 @@ public class VisualMetronomeTileOverlay extends Overlay
 {
 
     private final Client client;
-    private final VisualMetronomeConfig config;
+    private final VisualMetronomePanel panel;
     private final VisualMetronomePlugin plugin;
 
     @Inject
-    public VisualMetronomeTileOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    public VisualMetronomeTileOverlay(Client client, VisualMetronomePanel panel, VisualMetronomePlugin plugin)
     {
         super(plugin);
         this.client = client;
-        this.config = config;
+        this.panel = panel;
         this.plugin = plugin;
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ABOVE_SCENE);
@@ -39,7 +40,7 @@ public class VisualMetronomeTileOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (config.highlightCurrentTile())
+        if (panel.isHighlightCurrentTile())
         {
             final WorldPoint playerPos = client.getLocalPlayer().getWorldLocation();
             if (playerPos == null)
@@ -53,14 +54,14 @@ public class VisualMetronomeTileOverlay extends Overlay
                 return null;
             }
 
-            if (config.changeFillColor())
+            if (panel.isChangeFillColor())
             {
-                final Color fillColor = new Color(plugin.currentColor.getRed(), plugin.currentColor.getGreen(), plugin.currentColor.getBlue(), config.changeFillColorOpacity());
-                renderTile(graphics, playerPosLocal, plugin.currentColor, fillColor, config.currentTileBorderWidth());
+                final Color fillColor = new Color(plugin.currentColor.getRed(), plugin.currentColor.getGreen(), plugin.currentColor.getBlue(), panel.getChangeFillColorOpacity());
+                renderTile(graphics, playerPosLocal, plugin.currentColor, fillColor, panel.getCurrentTileBorderWidth());
             }
             else
             {
-                renderTile(graphics, playerPosLocal, plugin.currentColor, config.currentTileFillColor(), config.currentTileBorderWidth());
+                renderTile(graphics, playerPosLocal, plugin.currentColor, panel.getCurrentTileFillColor(), panel.getCurrentTileBorderWidth());
             }
         }
 
@@ -84,5 +85,3 @@ public class VisualMetronomeTileOverlay extends Overlay
         OverlayUtil.renderPolygon(graphics, poly, color, fillColor, new BasicStroke((float) borderWidth));
     }
 }
-
-

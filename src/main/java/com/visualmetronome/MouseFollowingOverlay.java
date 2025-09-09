@@ -1,5 +1,6 @@
 package com.visualmetronome;
 
+import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.client.ui.FontManager;
@@ -17,15 +18,15 @@ import java.awt.Graphics2D;
 
 public class MouseFollowingOverlay extends Overlay {
     private final Client client;
-    private final VisualMetronomeConfig config;
+    private final VisualMetronomePanel panel;
     private final VisualMetronomePlugin plugin;
 
     @Inject
-    public MouseFollowingOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    public MouseFollowingOverlay(Client client, VisualMetronomePanel panel, VisualMetronomePlugin plugin)
     {
         super(plugin);
         this.client = client;
-        this.config = config;
+        this.panel = panel;
         this.plugin = plugin;
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ALWAYS_ON_TOP);
@@ -35,38 +36,37 @@ public class MouseFollowingOverlay extends Overlay {
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (config.mouseFollowingTick())
+        if (panel.isMouseFollowingTick())
         {
             Point mousePos = client.getMouseCanvasPosition();
             if (mousePos != null)
             {
                 // Set font
-                Font font = config.fontType() == FontTypes.REGULAR
-                        ? FontManager.getRunescapeFont().deriveFont(Font.PLAIN, config.fontSize())
-                        : new Font(config.fontType().toString(), Font.PLAIN, config.fontSize());
+                Font font = panel.getFontType().equals(FontTypes.REGULAR.name())
+                        ? FontManager.getRunescapeFont().deriveFont(Font.PLAIN, panel.getFontSize())
+                        : new Font(panel.getFontType(), Font.PLAIN, panel.getFontSize());
                 graphics.setFont(font);
 
                 // Set text
-                String text = config.tickCount() == 1
+                String text = panel.getTickCount() == 1
                         ? String.valueOf(plugin.currentColorIndex)
                         : String.valueOf(plugin.tickCounter);
 
                 // Apply configurable offsets using getX()/getY()
                 Point textPosition = new Point(
-                        (int)mousePos.getX() + config.mouseOffsetX(),
-                        (int)mousePos.getY() + config.mouseOffsetY()
+                        (int)mousePos.getX() + panel.getMouseOffsetX(),
+                        (int)mousePos.getY() + panel.getMouseOffsetY()
                 );
 
                 // Set which color to use
-
                 Color numberColor;
-                if (config.overheadUseCurrentColor())
+                if (panel.isOverheadUseCurrentColor())
                 {
                     numberColor = plugin.currentColor;
                 }
                 else
                 {
-                    numberColor = config.NumberColor();
+                    numberColor = panel.getNumberColor();
                 }
 
                 // Render
