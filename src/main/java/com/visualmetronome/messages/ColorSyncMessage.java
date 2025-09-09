@@ -29,8 +29,7 @@ public class ColorSyncMessage extends PartyMemberMessage
     private boolean changeFillColor;
     private int changeFillColorOpacity;
 
-    private String displayName;
-    private String localSender;
+    private String reqSender;
 
     public ColorSyncMessage() {}
 
@@ -53,7 +52,7 @@ public class ColorSyncMessage extends PartyMemberMessage
             Color currentTileFillColor,
             boolean changeFillColor,
             int changeFillColorOpacity,
-            String localSender
+            String reqSender
     )
     {
         this.colorCycle = colorCycle;
@@ -74,7 +73,7 @@ public class ColorSyncMessage extends PartyMemberMessage
         this.currentTileFillColor = currentTileFillColor;
         this.changeFillColor = changeFillColor;
         this.changeFillColorOpacity = changeFillColorOpacity;
-        this.localSender = localSender;
+        this.reqSender = reqSender;
     }
 
     public int getColorCycle() { return colorCycle; }
@@ -98,9 +97,6 @@ public class ColorSyncMessage extends PartyMemberMessage
     public boolean isChangeFillColor() { return changeFillColor; }
     public int getChangeFillColorOpacity() { return changeFillColorOpacity; }
 
-    public String getDisplayName() { return displayName; }
-    public void setDisplayName(String displayName) { this.displayName = displayName; }
+    public String getReqSender() { return reqSender; }
 
-    public String getLocalSender() { return localSender; }
-    public void setLocalSender(String localSender) { this.localSender = localSender; }
 }

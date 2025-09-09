@@ -28,7 +28,6 @@ import java.util.List;
 import java.awt.event.ActionListener;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -36,60 +35,61 @@ import java.util.Objects;
 public class VisualMetronomePanel extends PluginPanel
 {
     // General Metronome
-    final JCheckBox enableMetronome;
-    final JCheckBox highlightCurrentTile;
-    final JSpinner boxWidth;
-    final JSpinner tickCount;
+    public final JCheckBox enableMetronome;
+    public final JCheckBox highlightCurrentTile;
+    public final JSpinner boxWidth;
+    public final JSpinner tickCount;
 
     // Tick Number
-    final JCheckBox showTick;
-    final JCheckBox showPlayerTick;
-    final JCheckBox disableFontScaling;
-    final JSpinner fontSize;
-    final ColorButtonPanel numberColorBtn;
-    final JComboBox<String> fontType;
+    public final JCheckBox showTick;
+    public final JCheckBox showPlayerTick;
+    public final JCheckBox disableFontScaling;
+    public final JSpinner fontSize;
+    public final ColorButtonPanel numberColorBtn;
+    public final JComboBox<String> fontType;
 
     // True Tile Overlay
-    final ColorButtonPanel currentTileFillColorBtn;
-    final JSpinner currentTileBorderWidth;
-    final JCheckBox changeFillColor;
-    final JSpinner changeFillColorOpacity;
+    public final ColorButtonPanel currentTileFillColorBtn;
+    public final JSpinner currentTileBorderWidth;
+    public final JCheckBox changeFillColor;
+    public final JSpinner changeFillColorOpacity;
 
     // Party Sync
-    final JCheckBox enablePartySync;
-    final JComboBox<String> memberDropdown;
-    String lastSelectedMember;
+    public final JCheckBox enablePartySync;
+    public final JComboBox<String> memberDropdown;
+    public String lastSelectedMember;
 
     // Colors
-    final JSpinner colorCycleSpinner;
-    final ColorButtonPanel[] tickColorBtns = new ColorButtonPanel[10];
+    public final JSpinner colorCycleSpinner;
+    public final ColorButtonPanel[] tickColorBtns = new ColorButtonPanel[10];
 
     // Hotkeys
-    final JButton tickResetHotkeyBtn;
-    final JButton resetHotkeyBtn;
-    Keybind tickResetHotkey;
-    final JSpinner tickResetStartTick;
+    public final JButton tickResetHotkeyBtn;
+    public final JButton resetHotkeyBtn;
+    public Keybind tickResetHotkey;
+    public final JSpinner tickResetStartTick;
 
     // Mouse Following
-    final JCheckBox mouseFollowingTick;
-    final JSpinner mouseOffsetX;
-    final JSpinner mouseOffsetY;
+    public final JCheckBox mouseFollowingTick;
+    public final JSpinner mouseOffsetX;
+    public final JSpinner mouseOffsetY;
 
     // Additional Overhead Cycles
-    final JCheckBox enableCycle2;
-    final JSpinner tickCount2;
-    final ColorButtonPanel cycle2ColorBtn;
-    final JCheckBox enableCycle3;
-    final JSpinner tickCount3;
-    final ColorButtonPanel cycle3ColorBtn;
-    final JSpinner overheadCyclesGapDistance;
-    final JSpinner overheadHeight;
-    final JSpinner overheadXCenterOffset;
-    final JCheckBox overheadUseCurrentColor;
+    public final JCheckBox enableCycle2;
+    public final JSpinner tickCount2;
+    public final ColorButtonPanel cycle2ColorBtn;
+    public final JCheckBox enableCycle3;
+    public final JSpinner tickCount3;
+    public final ColorButtonPanel cycle3ColorBtn;
+    public final JSpinner overheadCyclesGapDistance;
+    public final JSpinner overheadHeight;
+    public final JSpinner overheadXCenterOffset;
+    public final JCheckBox overheadUseCurrentColor;
 
-    final ConfigManager configManager;
-    final VisualMetronomeConfig config;
-    final PartyService partyService;
+    public final ConfigManager configManager;
+    public final VisualMetronomeConfig config;
+    public final PartyService partyService;
+
     public final VisualMetronomeConfigHandler configHandler;
 
     public boolean updatingFromConfig = false;
@@ -127,7 +127,7 @@ public class VisualMetronomePanel extends PluginPanel
         JButton requestColorsButton = new JButton("Sync Colors");
         requestColorsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
         requestColorsButton.addActionListener(e -> {
-            ColorRequestMessage message = new ColorRequestMessage(config.syncTarget());
+            ColorRequestMessage message = new ColorRequestMessage(config.syncTarget(),partyService.getLocalMember().getDisplayName());
             partyService.send(message);
         });
 
@@ -138,7 +138,6 @@ public class VisualMetronomePanel extends PluginPanel
         partySyncPanel.add(buttonRow);
 
         add(new CollapsibleSection("Party Sync Settings", partySyncPanel));
-
 
 
         // --- General Metronome Section ---

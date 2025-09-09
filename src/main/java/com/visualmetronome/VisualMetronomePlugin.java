@@ -1,6 +1,8 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
+import com.visualmetronome.messages.ColorRequestMessage;
+import com.visualmetronome.messages.ColorSyncMessage;
 import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
@@ -203,6 +205,82 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         configManager.setConfiguration(CONFIG_GROUP, "tickCount2", syncMsg.getTickCount2());
         configManager.setConfiguration(CONFIG_GROUP, "tickCount3", syncMsg.getTickCount3());
         configManager.setConfiguration(CONFIG_GROUP, "colorCycle", syncMsg.getConfigColorIndex());
+    }
+
+    @Subscribe
+    public void onColorRequestMessage(ColorRequestMessage colorReqMsg)
+    {
+        if (localPlayer == null)
+        {
+            localPlayer = partyService.getLocalMember();
+        }
+
+        String reqTarget = colorReqMsg.getTarget();
+        String reqSender = colorReqMsg.getRequester();
+
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(reqTarget))
+        {
+            return;
+        }
+        ColorSyncMessage colorSyncMsg = new ColorSyncMessage(
+                visualMetronomePanel.getColorCycle(),
+                visualMetronomePanel.getTickColor(1),
+                visualMetronomePanel.getTickColor(2),
+                visualMetronomePanel.getTickColor(3),
+                visualMetronomePanel.getTickColor(4),
+                visualMetronomePanel.getTickColor(5),
+                visualMetronomePanel.getTickColor(6),
+                visualMetronomePanel.getTickColor(7),
+                visualMetronomePanel.getTickColor(8),
+                visualMetronomePanel.getTickColor(9),
+                visualMetronomePanel.getTickColor(10),
+                visualMetronomePanel.getNumberColor(),
+                visualMetronomePanel.isOverheadUseCurrentColor(),
+                visualMetronomePanel.getCycle2Color(),
+                visualMetronomePanel.getCycle3Color(),
+                visualMetronomePanel.getCurrentTileFillColor(),
+                visualMetronomePanel.isChangeFillColor(),
+                visualMetronomePanel.getChangeFillColorOpacity(),
+                reqSender
+        );
+
+        partyService.send(colorSyncMsg);
+
+    }
+
+    @Subscribe
+    public void onColorSyncMessage(ColorSyncMessage syncMsg)
+    {
+        if (!visualMetronomePanel.isEnablePartySync() || syncTarget == null)
+        {
+            return;
+        }
+        if(!localPlayer.getDisplayName().equalsIgnoreCase(syncMsg.getReqSender()))
+        {
+            return;
+        }
+
+        visualMetronomePanel.colorCycleSpinner.setValue(syncMsg.getColorCycle());
+        visualMetronomePanel.tickColorBtns[0].setColor(syncMsg.getTickColor());
+        visualMetronomePanel.tickColorBtns[1].setColor(syncMsg.getTockColor());
+        visualMetronomePanel.tickColorBtns[2].setColor(syncMsg.getTick3Color());
+        visualMetronomePanel.tickColorBtns[3].setColor(syncMsg.getTick4Color());
+        visualMetronomePanel.tickColorBtns[4].setColor(syncMsg.getTick5Color());
+        visualMetronomePanel.tickColorBtns[5].setColor(syncMsg.getTick6Color());
+        visualMetronomePanel.tickColorBtns[6].setColor(syncMsg.getTick7Color());
+        visualMetronomePanel.tickColorBtns[7].setColor(syncMsg.getTick8Color());
+        visualMetronomePanel.tickColorBtns[8].setColor(syncMsg.getTick9Color());
+        visualMetronomePanel.tickColorBtns[9].setColor(syncMsg.getTick10Color());
+
+        visualMetronomePanel.numberColorBtn.setColor(syncMsg.getNumberColor());
+        visualMetronomePanel.overheadUseCurrentColor.setSelected(syncMsg.isOverheadUseCurrentColor());
+        visualMetronomePanel.cycle2ColorBtn.setColor(syncMsg.getCycle2Color());
+        visualMetronomePanel.cycle3ColorBtn.setColor(syncMsg.getCycle3Color());
+
+        visualMetronomePanel.currentTileFillColorBtn.setColor(syncMsg.getCurrentTileFillColor());
+        visualMetronomePanel.changeFillColor.setSelected(syncMsg.isChangeFillColor());
+        visualMetronomePanel.changeFillColorOpacity.setValue(syncMsg.getChangeFillColorOpacity());
+
     }
 
     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();

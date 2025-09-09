@@ -5,12 +5,14 @@ import net.runelite.client.party.messages.PartyMemberMessage;
 public class ColorRequestMessage extends PartyMemberMessage
 {
     private String target;
+    private String requester; // new field
 
     public ColorRequestMessage() {}
 
-    public ColorRequestMessage(String target)
+    public ColorRequestMessage(String target, String requester)
     {
         this.target = target;
+        this.requester = requester;
     }
 
     public String getTarget()
@@ -21,5 +23,15 @@ public class ColorRequestMessage extends PartyMemberMessage
     public void setTarget(String target)
     {
         this.target = target;
+    }
+
+    public String getRequester()
+    {
+        return requester;
+    }
+
+    public void setRequester(String requester)
+    {
+        this.requester = requester;
     }
 }
