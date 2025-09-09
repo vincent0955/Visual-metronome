@@ -1,7 +1,5 @@
 package com.visualmetronome;
 
-import com.visualmetronome.panel.VisualMetronomePanel;
-
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
@@ -19,19 +17,20 @@ import net.runelite.client.ui.overlay.OverlayPriority;
 import java.awt.Color;
 
 
-public class VisualMetronomeNumberOverlay extends Overlay {
+public class VisualMetronomeNumberOverlay extends Overlay
+{
 
     private final Client client;
+    private final VisualMetronomeConfig config;
     private final VisualMetronomePlugin plugin;
-    private final VisualMetronomePanel panel;
 
     @Inject
-    public VisualMetronomeNumberOverlay(Client client, VisualMetronomePanel panel, VisualMetronomePlugin plugin) {
+    public VisualMetronomeNumberOverlay(Client client, VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    {
         super(plugin);
         this.client = client;
+        this.config = config;
         this.plugin = plugin;
-        this.panel = panel;
-
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.UNDER_WIDGETS);
         setPriority(OverlayPriority.MED);
@@ -39,50 +38,64 @@ public class VisualMetronomeNumberOverlay extends Overlay {
     }
 
     @Override
-    public Dimension render(Graphics2D graphics) {
-        if (panel.isShowPlayerTick()) {
-            if (panel.getFontType().equals(FontTypes.REGULAR.name())) {
-                graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, panel.getFontSize()));
-            } else {
-                graphics.setFont(new Font(panel.getFontType(), Font.PLAIN, panel.getFontSize()));
+    public Dimension render(Graphics2D graphics)
+    {
+        if (config.showPlayerTick())
+        {
+            if (config.fontType() == FontTypes.REGULAR)
+            {
+                graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, config.fontSize()));
+            }
+            else
+            {
+                graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, config.fontSize()));
             }
 
             // Set which color to use
             Color numberColor;
-            if (panel.isOverheadUseCurrentColor()) {
+            if (config.overheadUseCurrentColor())
+            {
                 numberColor = plugin.currentColor;
-            } else {
-                numberColor = panel.getNumberColor();
+            }
+            else
+            {
+                numberColor = config.NumberColor();
             }
 
-            final int height = client.getLocalPlayer().getLogicalHeight() + panel.getOverheadHeight();
+            final int height = client.getLocalPlayer().getLogicalHeight() + config.overheadHeight();
             final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
             final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getPlane(), height);
-            final int valueX = playerPoint.getX() + panel.getOverheadXCenterOffset();
+            final int valueX = playerPoint.getX() + config.overheadXCenterOffset();
             final int valueY = playerPoint.getY();
-            final Point tickPoint = new Point(valueX, valueY);
+            final Point tickPoint = new Point(valueX,valueY);
 
-            if (panel.getTickCount() == 1) {
+            if (config.tickCount() == 1)
+            {
                 OverlayUtil.renderTextLocation(graphics, tickPoint, String.valueOf(plugin.currentColorIndex), numberColor);
-            } else {
+            }
+            else
+            {
                 OverlayUtil.renderTextLocation(graphics, tickPoint, String.valueOf(plugin.tickCounter), numberColor);
             }
 
-            if (panel.isEnableCycle2()) {
-                final int valueX2 = valueX - panel.getOverheadCyclesGapDistance();
-                final Point tick2Point = new Point(valueX2, valueY);
-                OverlayUtil.renderTextLocation(graphics, tick2Point, String.valueOf(plugin.tickCounter2), panel.getCycle2Color());
+            if (config.enableCycle2())
+            {
+                final int valueX2 = valueX - config.overheadCyclesGapDistance();
+                final Point tick2Point = new Point(valueX2,valueY);
+                OverlayUtil.renderTextLocation(graphics, tick2Point, String.valueOf(plugin.tickCounter2), config.cycle2Color());
             }
 
-            if (panel.isEnableCycle3()) {
-                final int valueX3 = valueX + panel.getOverheadCyclesGapDistance();
-                final Point tick3Point = new Point(valueX3, valueY);
-                OverlayUtil.renderTextLocation(graphics, tick3Point, String.valueOf(plugin.tickCounter3), panel.getCycle3Color());
+            if (config.enableCycle3())
+            {
+                final int valueX3 = valueX + config.overheadCyclesGapDistance();
+                final Point tick3Point = new Point(valueX3,valueY);
+                OverlayUtil.renderTextLocation(graphics, tick3Point, String.valueOf(plugin.tickCounter3), config.cycle3Color());
             }
 
         }
         return null;
     }
+
 }
 
 
