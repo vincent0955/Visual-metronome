@@ -11,7 +11,7 @@ public class CollapsibleSection extends JPanel
     private final JPanel contentPanel;
     private final JToggleButton toggle;
 
-    public CollapsibleSection(String title, JPanel content)
+    public CollapsibleSection(String title, JPanel content, boolean collapsed)
     {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
@@ -21,10 +21,10 @@ public class CollapsibleSection extends JPanel
                 BorderFactory.createLineBorder(Color.BLACK),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
-        contentPanel.setVisible(true);
+        contentPanel.setVisible(!collapsed); // hide content if collapsed
 
         toggle = new JToggleButton(title);
-        toggle.setSelected(true);
+        toggle.setSelected(!collapsed); // toggle selected if expanded
         toggle.addActionListener(e -> {
             contentPanel.setVisible(toggle.isSelected());
             revalidate();
@@ -33,5 +33,10 @@ public class CollapsibleSection extends JPanel
 
         add(toggle, BorderLayout.NORTH);
         add(contentPanel, BorderLayout.CENTER);
+    }
+
+    //constructor defaults to expanded
+    public CollapsibleSection(String title, JPanel content) {
+        this(title, content, false);
     }
 }
