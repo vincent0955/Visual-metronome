@@ -336,11 +336,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         if (visualMetronomePanel == null)
             return;
 
-        SwingUtilities.invokeLater(() -> {
-            visualMetronomePanel.updatingFromConfig = true;
-            visualMetronomePanel.configHandler.loadFromConfig();
-            visualMetronomePanel.updatingFromConfig = false;
-        });
+        visualMetronomePanel.configHandler.loadFromConfig();
 
         // Existing plugin logic
         if (currentColorIndex > visualMetronomePanel.getColorCycle())

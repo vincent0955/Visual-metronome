@@ -47,15 +47,7 @@ public class VisualMetronomeConfigHandler
 
         panel.enablePartySync.setSelected(config.enablePartySync());
         panel.lastSelectedMember = config.syncTarget();
-
-        if (panel.lastSelectedMember != null &&
-                Arrays.stream(panel.memberDropdown.getModel().getSelectedItem() != null ?
-                                new String[]{panel.memberDropdown.getSelectedItem().toString()} :
-                                new String[]{})
-                        .noneMatch(s -> s.equals(panel.lastSelectedMember)))
-        {
-            panel.memberDropdown.addItem(panel.lastSelectedMember);
-        }
+        panel.updateMembers(null, config, configManager);
 
         panel.colorCycleSpinner.setValue((double) config.colorCycle());
         panel.tickColorBtns[0].setColor(config.getTickColor());

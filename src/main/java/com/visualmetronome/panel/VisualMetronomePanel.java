@@ -312,16 +312,17 @@ public class VisualMetronomePanel extends PluginPanel
         }
 
         if (members == null || members.isEmpty()) {
-            return;
+            memberDropdown.removeAll();
+            memberDropdown.addItem(lastSelectedMember);
         }
 
         // update lastSelectedMember based on dropdown
         String selected = (String) memberDropdown.getSelectedItem();
         if (selected != null && !selected.equals(lastSelectedMember)) {
             lastSelectedMember = selected;
-        }
+       }
 
-        final List<String> finalMembers = members; // <- make it effectively final
+        final List<String> finalMembers = members;
 
         SwingUtilities.invokeLater(() -> {
             ActionListener[] listeners = memberDropdown.getActionListeners();

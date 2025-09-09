@@ -17,6 +17,7 @@ public interface VisualMetronomeConfig extends Config
 			position = 1,
 			keyName = "enableMetronome",
 			name = "Visual Metronome",
+            hidden = true,
 			description = "Enable visual metronome"
 	)
 	default boolean enableMetronome()
@@ -28,6 +29,7 @@ public interface VisualMetronomeConfig extends Config
 			position = 2,
 			keyName = "highlightCurrentTile",
 			name = "Enable True Tile Overlay",
+            hidden = true,
 			description = "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)"
 	)
 	default boolean highlightCurrentTile()
@@ -42,7 +44,8 @@ public interface VisualMetronomeConfig extends Config
 			position = 3,
 			keyName = "boxWidth",
 			name = "Default Box Size (Alt + Right Click Box)",
-			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
+            hidden = true,
+            description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
 	)
 	default int boxWidth()
 	{
@@ -56,6 +59,7 @@ public interface VisualMetronomeConfig extends Config
 			position = 4,
 			keyName = "tickCount",
 			name = "Tick Count",
+            hidden = true,
 			description = "The tick on which the color changes"
 	)
 	default int tickCount()
@@ -63,11 +67,11 @@ public interface VisualMetronomeConfig extends Config
 		return 1;
 	}
 
-	@ConfigSection(
-			name = "Tick Number Settings",
-			description = "Change Tick Number settings",
-			position = 5
-	)
+//	@ConfigSection(
+//			name = "Tick Number Settings",
+//			description = "Change Tick Number settings",
+//			position = 5
+//	)
 	String TickNumberSettings = "Tick Number Settings";
 
 	@ConfigItem(
@@ -75,7 +79,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "showTick",
 			name = "Show Metronome Tick Number",
 			description = "Shows current tick number on the metronome",
-			section = TickNumberSettings
+            hidden = true,
+            section = TickNumberSettings
 	)
 	default boolean showTick()
 	{
@@ -87,7 +92,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "showPlayerTick",
 			name = "Show Tick Number Above Player",
 			description = "Shows current tick number above the player",
-			section = TickNumberSettings
+            hidden = true,
+            section = TickNumberSettings
 	)
 	default boolean showPlayerTick()
 	{
@@ -99,7 +105,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "disableFontScaling",
 			name = "Disable Font Size Scaling (Metronome Tick Only)",
 			description = "Disables font size scaling for metronome tick number",
-			section = TickNumberSettings
+            hidden = true,
+            section = TickNumberSettings
 	)
 	default boolean disableFontScaling()
 	{
@@ -115,7 +122,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "fontSize",
 			name = "Font Size (Overhead Tick Only)",
 			description = "Change the font size of the overhead Tick Number",
-			section = TickNumberSettings
+            hidden = true,
+            section = TickNumberSettings
 	)
 	default int fontSize()
 	{
@@ -127,7 +135,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "countColor",
 			name = "Tick Number Color",
 			description = "Configures the color of tick number",
-			section = TickNumberSettings
+            hidden = true,
+            section = TickNumberSettings
 	)
 	default Color NumberColor()
 	{
@@ -139,15 +148,16 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "fontType",
 			name = "Font Type",
 			description = "Change the font of the Tick Number",
+            hidden = true,
 			section = TickNumberSettings
 	)
 	default FontTypes fontType() { return FontTypes.REGULAR; }
 
-	@ConfigSection(
-			name = "True Tile Overlay Settings",
-			description = "Settings only applied to True Tile Overlay",
-			position = 6
-	)
+//	@ConfigSection(
+//			name = "True Tile Overlay Settings",
+//			description = "Settings only applied to True Tile Overlay",
+//			position = 6
+//	)
 	String TileSettings = "True Tile Overlay Settings";
 
 	@Alpha
@@ -156,7 +166,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "currentTileFillColor",
 			name = "True Tile Fill Color",
 			description = "Fill color of the true tile overlay",
-			section = TileSettings
+            hidden = true,
+            section = TileSettings
 	)
 	default Color currentTileFillColor()
 	{
@@ -168,7 +179,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "currentTileBorderWidth",
 			name = "True Tile Border Width",
 			description = "Border size of the true tile overlay",
-			section = TileSettings
+            hidden = true,
+            section = TileSettings
 	)
 	default double currentTileBorderWidth()
 	{
@@ -179,6 +191,7 @@ public interface VisualMetronomeConfig extends Config
 			position = 3,
 			keyName = "changeFillColor",
 			name = "Enable Tile Fill Color Metronome",
+            hidden = true,
 			description = "Makes the tile fill color change with the metronome",
 			section = TileSettings
 	)
@@ -196,7 +209,8 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "changeFillColorOpacity",
 			name = "Fill Color Metronome Opacity",
 			description = "Opacity of the tile fill metronome color if the option above is enabled. Otherwise, the opacity is determined by the True Tile Fill Color setting",
-			section = TileSettings
+            hidden = true,
+            section = TileSettings
 	)
 	default int changeFillColorOpacity()
 	{
@@ -236,15 +250,15 @@ public interface VisualMetronomeConfig extends Config
     )
     default String syncTarget()
     {
-        return " ";
+        return "Please Join a Party";
     }
 
 
-    @ConfigSection(
-			name = "Color Settings",
-			description = "Change the colors and number of colors to cycle through",
-			position = 8
-	)
+//    @ConfigSection(
+//			name = "Color Settings",
+//			description = "Change the colors and number of colors to cycle through",
+//			position = 8
+//	)
 	String ColorSettings = "Color Settings";
 
 
@@ -271,6 +285,7 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "tickColor",
 			name = "Tick Color",
 			description = "Configures the color of tick",
+            hidden = true,
 			section = ColorSettings
 	)
 	default Color getTickColor()
@@ -284,6 +299,7 @@ public interface VisualMetronomeConfig extends Config
 			keyName = "tockColor",
 			name = "Tock Color",
 			description = "Configures the color of tock",
+            hidden = true,
 			section = ColorSettings
 	)
 	default Color getTockColor()
@@ -646,12 +662,12 @@ public interface VisualMetronomeConfig extends Config
             position = 12,
             keyName = "additionalSettingsInfo",
             name = "Additional Settings",
-            description = "Party sync, mouse following, additional tick colors and more can be found in the Visual Metronome Side Panel",
+            description = "Visual Metronome Side Panel",
             section = AdditionalSettings
     )
     default String additionalSettingsInfo()
     {
-        return "Party sync, mouse following, additional tick colors and more can be found in the Visual Metronome Side Panel";
+        return "The Visual Metronome Side Panel now contains the settings for the visual metronome.";
     }
 
 }
