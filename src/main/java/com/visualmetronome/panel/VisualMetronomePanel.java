@@ -94,8 +94,6 @@ public class VisualMetronomePanel extends PluginPanel
 
     public final VisualMetronomeConfigHandler configHandler;
 
-    public boolean updatingFromConfig = false;
-
     public VisualMetronomePanel(ConfigManager configManager,VisualMetronomeConfig config, PartyService partyService)
     {
         this.configManager = configManager;
@@ -134,21 +132,26 @@ public class VisualMetronomePanel extends PluginPanel
         buttonRow.setLayout(new BoxLayout(buttonRow, BoxLayout.X_AXIS));
         buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
-                configManager, config, partyService,
-                members -> updateMembers(members, config, configManager)
-        );
-        refreshMembersBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
+//        //Debugging Code
+//        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
+//                configManager, config, partyService,
+//                members -> updateMembers(members, config, configManager)
+//        );
+//        refreshMembersBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
 
         JButton requestColorsButton = new JButton("Sync Colors");
         requestColorsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
         requestColorsButton.addActionListener(e -> {
-            ColorRequestMessage message = new ColorRequestMessage(config.syncTarget(),partyService.getLocalMember().getDisplayName());
-            partyService.send(message);
+            PartyMember localPlayer  = partyService.getLocalMember();
+            if(localPlayer != null)
+            {
+                ColorRequestMessage message = new ColorRequestMessage(config.syncTarget(), localPlayer.getDisplayName());
+                partyService.send(message);
+            }
         });
 
-        buttonRow.add(refreshMembersBtn);
-        buttonRow.add(Box.createHorizontalStrut(5));
+//      buttonRow.add(refreshMembersBtn);
+        buttonRow.add(Box.createHorizontalStrut(0));
         buttonRow.add(requestColorsButton);
 
         panel.add(buttonRow);
@@ -400,29 +403,29 @@ public class VisualMetronomePanel extends PluginPanel
     // --- General Metronome ---
     public boolean isEnableMetronome() { return enableMetronome.isSelected(); }
     public boolean isHighlightCurrentTile() { return highlightCurrentTile.isSelected(); }
-    public int getBoxWidth() { return ((Double) boxWidth.getValue()).intValue(); }
-    public int getTickCount() { return ((Double) tickCount.getValue()).intValue(); }
+    public int getBoxWidth() { return ((Number) boxWidth.getValue()).intValue(); }
+    public int getTickCount() { return ((Number) tickCount.getValue()).intValue(); }
 
     // --- Tick Number ---
     public boolean isShowTick() { return showTick.isSelected(); }
     public boolean isShowPlayerTick() { return showPlayerTick.isSelected(); }
     public boolean isDisableFontScaling() { return disableFontScaling.isSelected(); }
-    public int getFontSize() { return ((Double) fontSize.getValue()).intValue(); }
-    public Color getNumberColor() { return numberColorBtn.getBackground(); }
+    public int getFontSize() { return ((Number) fontSize.getValue()).intValue(); }
+    public Color getNumberColor() { return numberColorBtn.getColor(); }
     public String getFontType() { return (String) fontType.getSelectedItem(); }
 
     // --- True Tile Overlay ---
-    public Color getCurrentTileFillColor() { return currentTileFillColorBtn.getBackground(); }
-    public double getCurrentTileBorderWidth() { return (Double) currentTileBorderWidth.getValue(); }
+    public Color getCurrentTileFillColor() { return currentTileFillColorBtn.getColor(); }
+    public double getCurrentTileBorderWidth() { return ((Number) currentTileBorderWidth.getValue()).doubleValue(); }
     public boolean isChangeFillColor() { return changeFillColor.isSelected(); }
-    public int getChangeFillColorOpacity() { return ((Double) changeFillColorOpacity.getValue()).intValue(); }
+    public int getChangeFillColorOpacity() { return ((Number) changeFillColorOpacity.getValue()).intValue(); }
 
     // --- Party Sync ---
     public boolean isEnablePartySync() { return enablePartySync.isSelected(); }
     public String getSelectedMember() { return (String) memberDropdown.getSelectedItem(); }
 
     // --- Color Settings ---
-    public int getColorCycle() { return ((Double) colorCycleSpinner.getValue()).intValue(); }
+    public int getColorCycle() { return ((Number) colorCycleSpinner.getValue()).intValue(); }
     public Color getTickColor(int i)
     {
         if (i < 1 || i > 10) throw new IllegalArgumentException("Tick index must be 1-10");
@@ -430,26 +433,26 @@ public class VisualMetronomePanel extends PluginPanel
     }
 
     // --- Hotkeys ---
-    public int getTickResetStartTick() { return ((Double) tickResetStartTick.getValue()).intValue(); }
+    public int getTickResetStartTick() { return ((Number) tickResetStartTick.getValue()).intValue(); }
     public Keybind getTickResetHotkey() {return tickResetHotkey;}
 
     // --- Mouse Following ---
     public boolean isMouseFollowingTick() { return mouseFollowingTick.isSelected(); }
-    public int getMouseOffsetX() { return ((Double) mouseOffsetX.getValue()).intValue(); }
-    public int getMouseOffsetY() { return ((Double) mouseOffsetY.getValue()).intValue(); }
+    public int getMouseOffsetX() { return ((Number) mouseOffsetX.getValue()).intValue(); }
+    public int getMouseOffsetY() { return ((Number) mouseOffsetY.getValue()).intValue(); }
 
     // --- Additional Overhead Cycles ---
     public boolean isEnableCycle2() { return enableCycle2.isSelected(); }
-    public int getTickCount2() { return ((Double) tickCount2.getValue()).intValue(); }
-    public Color getCycle2Color() { return cycle2ColorBtn.getBackground(); }
+    public int getTickCount2() { return ((Number) tickCount2.getValue()).intValue(); }
+    public Color getCycle2Color() { return cycle2ColorBtn.getColor(); }
 
     public boolean isEnableCycle3() { return enableCycle3.isSelected(); }
-    public int getTickCount3() { return ((Double) tickCount3.getValue()).intValue(); }
-    public Color getCycle3Color() { return cycle3ColorBtn.getBackground(); }
+    public int getTickCount3() { return ((Number) tickCount3.getValue()).intValue(); }
+    public Color getCycle3Color() { return cycle3ColorBtn.getColor(); }
 
-    public int getOverheadCyclesGapDistance() { return ((Double) overheadCyclesGapDistance.getValue()).intValue(); }
-    public int getOverheadHeight() { return ((Double) overheadHeight.getValue()).intValue(); }
-    public int getOverheadXCenterOffset() { return ((Double) overheadXCenterOffset.getValue()).intValue(); }
+    public int getOverheadCyclesGapDistance() { return ((Number) overheadCyclesGapDistance.getValue()).intValue(); }
+    public int getOverheadHeight() { return ((Number) overheadHeight.getValue()).intValue(); }
+    public int getOverheadXCenterOffset() { return ((Number) overheadXCenterOffset.getValue()).intValue(); }
     public boolean isOverheadUseCurrentColor() { return overheadUseCurrentColor.isSelected(); }
 
     private Keybind promptForKeybind()
@@ -517,11 +520,9 @@ public class VisualMetronomePanel extends PluginPanel
         tickColorBtns[9].setColor(msg.getTick10Color());
 
         numberColorBtn.setColor(msg.getNumberColor());
-        overheadUseCurrentColor.setSelected(msg.isOverheadUseCurrentColor());
         cycle2ColorBtn.setColor(msg.getCycle2Color());
         cycle3ColorBtn.setColor(msg.getCycle3Color());
         currentTileFillColorBtn.setColor(msg.getCurrentTileFillColor());
-        changeFillColor.setSelected(msg.isChangeFillColor());
         changeFillColorOpacity.setValue(msg.getChangeFillColorOpacity());
     }
 

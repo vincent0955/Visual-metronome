@@ -1,8 +1,7 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
-import com.visualmetronome.messages.ColorRequestMessage;
-import com.visualmetronome.messages.ColorSyncMessage;
+import com.visualmetronome.messages.*;
 import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
@@ -26,8 +25,6 @@ import net.runelite.client.party.PartyService;
 import net.runelite.client.party.WSClient;
 import net.runelite.client.party.events.UserJoin;
 import net.runelite.client.party.events.UserPart;
-import com.visualmetronome.messages.TickSyncMessage;
-import com.visualmetronome.messages.TickRequestMessage;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.util.ImageUtil;
 
@@ -83,6 +80,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     private ClientToolbar clientToolbar;
 
     private VisualMetronomePanel visualMetronomePanel;
+
     private NavigationButton navButton;
 
     private List<PartyMember> members = Collections.emptyList();
@@ -129,15 +127,13 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
         //party sync
         hasRespondedThisTick = false;
-        if (!visualMetronomePanel.isEnablePartySync())
+        if (visualMetronomePanel.isEnablePartySync())
         {
-            return;
-        }
-
-        syncTarget = visualMetronomePanel.getSelectedMember();
-        if (syncTarget != null && !syncTarget.isEmpty()) {
-            if (localPlayer != null) {
+            if (!members.isEmpty())
+            {
+                syncTarget = visualMetronomePanel.getSelectedMember();
                 partyService.send(new TickRequestMessage(syncTarget));
+
             }
         }
     }
@@ -212,23 +208,20 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         }
 
         partyService.send(visualMetronomePanel.toColorSyncMessage(reqSender));
-
     }
 
     @Subscribe
     public void onColorSyncMessage(ColorSyncMessage syncMsg)
     {
-        if (!visualMetronomePanel.isEnablePartySync() || syncTarget == null)
-        {
-            return;
-        }
-        if(!localPlayer.getDisplayName().equalsIgnoreCase(syncMsg.getReqSender()))
+
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(syncMsg.getReqSender()))
         {
             return;
         }
 
         visualMetronomePanel.applyColorSyncMessage(syncMsg);
     }
+
 
     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     @Subscribe
@@ -311,6 +304,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         overlayManager.add(numberOverlay);
         overlayManager.add(mouseFollowingOverlay);
         keyManager.registerKeyListener(this);
+
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
         wsClient.registerMessage(ColorSyncMessage.class);

@@ -4,7 +4,8 @@ import com.visualmetronome.VisualMetronomeConfig;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
 
-import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
 
 public class VisualMetronomeConfigHandler
 {
@@ -13,6 +14,8 @@ public class VisualMetronomeConfigHandler
     private final VisualMetronomePanel panel;
     private boolean updatingFromConfig = false;
     private boolean updatePending = false;
+    private boolean updateStartup = false;
+    private Timer debounceTimer;
 
     public VisualMetronomeConfigHandler(ConfigManager configManager,
                                         VisualMetronomeConfig config,
@@ -23,74 +26,85 @@ public class VisualMetronomeConfigHandler
         this.panel = panel;
     }
 
-    public void loadFromConfig()
-    {
-        updatingFromConfig = true;
+    public void loadFromConfig() {
 
-        panel.enableMetronome.setSelected(config.enableMetronome());
-        panel.highlightCurrentTile.setSelected(config.highlightCurrentTile());
-        panel.boxWidth.setValue((double) config.boxWidth());
-        panel.tickCount.setValue((double) config.tickCount());
+        if (!updateStartup)
+        {
+            updatingFromConfig = true;
 
-        panel.showTick.setSelected(config.showTick());
-        panel.showPlayerTick.setSelected(config.showPlayerTick());
-        panel.disableFontScaling.setSelected(config.disableFontScaling());
-        panel.fontSize.setValue((double) config.fontSize());
-        panel.numberColorBtn.setColor(config.NumberColor());
-        panel.fontType.setSelectedItem(config.fontType().name());
+            panel.enableMetronome.setSelected(config.enableMetronome());
+            panel.highlightCurrentTile.setSelected(config.highlightCurrentTile());
+            panel.boxWidth.setValue((double) config.boxWidth());
+            panel.tickCount.setValue((double) config.tickCount());
 
-        panel.currentTileFillColorBtn.setColor(config.currentTileFillColor());
-        panel.currentTileBorderWidth.setValue(config.currentTileBorderWidth());
-        panel.changeFillColor.setSelected(config.changeFillColor());
-        panel.changeFillColorOpacity.setValue((double) config.changeFillColorOpacity());
+            panel.showTick.setSelected(config.showTick());
+            panel.showPlayerTick.setSelected(config.showPlayerTick());
+            panel.disableFontScaling.setSelected(config.disableFontScaling());
+            panel.fontSize.setValue((double) config.fontSize());
+            panel.numberColorBtn.setColor(config.NumberColor());
+            panel.fontType.setSelectedItem(config.fontType().name());
 
-        panel.enablePartySync.setSelected(config.enablePartySync());
-        panel.lastSelectedMember = config.syncTarget();
-        panel.updateMembers(null, config, configManager);
+            panel.currentTileFillColorBtn.setColor(config.currentTileFillColor());
+            panel.currentTileBorderWidth.setValue(config.currentTileBorderWidth());
+            panel.changeFillColor.setSelected(config.changeFillColor());
+            panel.changeFillColorOpacity.setValue((double) config.changeFillColorOpacity());
 
-        panel.colorCycleSpinner.setValue((double) config.colorCycle());
-        panel.tickColorBtns[0].setColor(config.getTickColor());
-        panel.tickColorBtns[1].setColor(config.getTockColor());
-        panel.tickColorBtns[2].setColor(config.getTick3Color());
-        panel.tickColorBtns[3].setColor(config.getTick4Color());
-        panel.tickColorBtns[4].setColor(config.getTick5Color());
-        panel.tickColorBtns[5].setColor(config.getTick6Color());
-        panel.tickColorBtns[6].setColor(config.getTick7Color());
-        panel.tickColorBtns[7].setColor(config.getTick8Color());
-        panel.tickColorBtns[8].setColor(config.getTick9Color());
-        panel.tickColorBtns[9].setColor(config.getTick10Color());
+            panel.enablePartySync.setSelected(config.enablePartySync());
+            panel.lastSelectedMember = config.syncTarget();
+            panel.updateMembers(null, config, configManager);
 
-        panel.tickResetHotkey = config.tickResetHotkey();
-        if (panel.tickResetHotkey != null && panel.tickResetHotkey != Keybind.NOT_SET) {
-            panel.tickResetHotkeyBtn.setText("Hotkey: " + panel.tickResetHotkey.toString());
-        } else {
-            panel.tickResetHotkeyBtn.setText("Set Reset Hotkey");
+            panel.colorCycleSpinner.setValue((double) config.colorCycle());
+            panel.tickColorBtns[0].setColor(config.getTickColor());
+            panel.tickColorBtns[1].setColor(config.getTockColor());
+            panel.tickColorBtns[2].setColor(config.getTick3Color());
+            panel.tickColorBtns[3].setColor(config.getTick4Color());
+            panel.tickColorBtns[4].setColor(config.getTick5Color());
+            panel.tickColorBtns[5].setColor(config.getTick6Color());
+            panel.tickColorBtns[6].setColor(config.getTick7Color());
+            panel.tickColorBtns[7].setColor(config.getTick8Color());
+            panel.tickColorBtns[8].setColor(config.getTick9Color());
+            panel.tickColorBtns[9].setColor(config.getTick10Color());
+
+            panel.tickResetHotkey = config.tickResetHotkey();
+            if (panel.tickResetHotkey != null && panel.tickResetHotkey != Keybind.NOT_SET) {
+                panel.tickResetHotkeyBtn.setText("Hotkey: " + panel.tickResetHotkey.toString());
+            } else {
+                panel.tickResetHotkeyBtn.setText("Set Reset Hotkey");
+            }
+
+            panel.tickResetStartTick.setValue((double) config.tickResetStartTick());
+            panel.mouseFollowingTick.setSelected(config.mouseFollowingTick());
+            panel.mouseOffsetX.setValue((double) config.mouseOffsetX());
+            panel.mouseOffsetY.setValue((double) config.mouseOffsetY());
+
+            panel.enableCycle2.setSelected(config.enableCycle2());
+            panel.tickCount2.setValue((double) config.tickCount2());
+            panel.cycle2ColorBtn.setColor(config.cycle2Color());
+
+            panel.enableCycle3.setSelected(config.enableCycle3());
+            panel.tickCount3.setValue((double) config.tickCount3());
+            panel.cycle3ColorBtn.setColor(config.cycle3Color());
+
+            panel.overheadCyclesGapDistance.setValue((double) config.overheadCyclesGapDistance());
+            panel.overheadHeight.setValue((double) config.overheadHeight());
+            panel.overheadXCenterOffset.setValue((double) config.overheadXCenterOffset());
+            panel.overheadUseCurrentColor.setSelected(config.overheadUseCurrentColor());
+
+            updateStartup = true;
+            updatingFromConfig = false;
         }
-
-        panel.tickResetStartTick.setValue((double) config.tickResetStartTick());
-        panel.mouseFollowingTick.setSelected(config.mouseFollowingTick());
-        panel.mouseOffsetX.setValue((double) config.mouseOffsetX());
-        panel.mouseOffsetY.setValue((double) config.mouseOffsetY());
-
-        panel.enableCycle2.setSelected(config.enableCycle2());
-        panel.tickCount2.setValue((double) config.tickCount2());
-        panel.cycle2ColorBtn.setColor(config.cycle2Color());
-
-        panel.enableCycle3.setSelected(config.enableCycle3());
-        panel.tickCount3.setValue((double) config.tickCount3());
-        panel.cycle3ColorBtn.setColor(config.cycle3Color());
-
-        panel.overheadCyclesGapDistance.setValue((double) config.overheadCyclesGapDistance());
-        panel.overheadHeight.setValue((double) config.overheadHeight());
-        panel.overheadXCenterOffset.setValue((double) config.overheadXCenterOffset());
-        panel.overheadUseCurrentColor.setSelected(config.overheadUseCurrentColor());
-
-        updatingFromConfig = false;
     }
 
     public void updateConfig()
     {
-        if (updatingFromConfig) return;
+        if (updatingFromConfig)
+        {
+            return;
+        }
+        if (updatePending)
+        {
+            return;
+        }
 
         configManager.setConfiguration("visualmetronome", "enableMetronome", panel.isEnableMetronome());
         configManager.setConfiguration("visualmetronome", "highlightCurrentTile", panel.isHighlightCurrentTile());
@@ -144,11 +158,17 @@ public class VisualMetronomeConfigHandler
 
     public void updateConfigThrottled()
     {
-        if (updatePending) return;
+        System.out.println("Updating Throttled Config");
+        if (debounceTimer != null && debounceTimer.isRunning()) {
+            debounceTimer.stop();
+        }
         updatePending = true;
-        SwingUtilities.invokeLater(() -> {
-            updateConfig();
+        debounceTimer = new Timer(20, e -> {
             updatePending = false;
+            updateConfig();
+            debounceTimer.stop();
         });
+        debounceTimer.setRepeats(false);
+        debounceTimer.start();
     }
 }
