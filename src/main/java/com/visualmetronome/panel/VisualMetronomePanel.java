@@ -5,6 +5,8 @@ import net.runelite.client.party.PartyMember;
 import com.visualmetronome.FontTypes;
 import com.visualmetronome.VisualMetronomeConfig;
 import com.visualmetronome.messages.ColorRequestMessage;
+import com.visualmetronome.messages.ColorSyncMessage;
+import com.visualmetronome.messages.TickSyncMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
 import net.runelite.client.party.PartyService;
@@ -424,7 +426,7 @@ public class VisualMetronomePanel extends PluginPanel
     public Color getTickColor(int i)
     {
         if (i < 1 || i > 10) throw new IllegalArgumentException("Tick index must be 1-10");
-        return tickColorBtns[i-1].getBackground();
+        return tickColorBtns[i-1].getColor();
     }
 
     // --- Hotkeys ---
@@ -455,4 +457,72 @@ public class VisualMetronomePanel extends PluginPanel
         final KeyCaptureDialog dialog = new KeyCaptureDialog();
         return dialog.showAndGetKeybind();
     }
+
+    public TickSyncMessage toTickSyncMessage(int tickCounter, int tickCounter2, int tickCounter3, int currentColorIndex, String sender) {
+        return new TickSyncMessage(
+                tickCounter,
+                tickCounter2,
+                tickCounter3,
+                currentColorIndex,
+                getColorCycle(),
+                getTickCount(),
+                getTickCount2(),
+                getTickCount3(),
+                sender
+        );
+    }
+
+    public void applyTickSyncMessage(TickSyncMessage msg) {
+        tickCount.setValue((double) msg.getTickCount());
+        tickCount2.setValue((double) msg.getTickCount2());
+        tickCount3.setValue((double) msg.getTickCount3());
+        colorCycleSpinner.setValue((double) msg.getConfigColorIndex());
+    }
+
+    public ColorSyncMessage toColorSyncMessage(String reqSender) {
+        return new ColorSyncMessage(
+                getColorCycle(),
+                getTickColor(1),
+                getTickColor(2),
+                getTickColor(3),
+                getTickColor(4),
+                getTickColor(5),
+                getTickColor(6),
+                getTickColor(7),
+                getTickColor(8),
+                getTickColor(9),
+                getTickColor(10),
+                getNumberColor(),
+                isOverheadUseCurrentColor(),
+                getCycle2Color(),
+                getCycle3Color(),
+                getCurrentTileFillColor(),
+                isChangeFillColor(),
+                getChangeFillColorOpacity(),
+                reqSender
+        );
+    }
+
+    public void applyColorSyncMessage(ColorSyncMessage msg) {
+        colorCycleSpinner.setValue(msg.getColorCycle());
+        tickColorBtns[0].setColor(msg.getTickColor());
+        tickColorBtns[1].setColor(msg.getTockColor());
+        tickColorBtns[2].setColor(msg.getTick3Color());
+        tickColorBtns[3].setColor(msg.getTick4Color());
+        tickColorBtns[4].setColor(msg.getTick5Color());
+        tickColorBtns[5].setColor(msg.getTick6Color());
+        tickColorBtns[6].setColor(msg.getTick7Color());
+        tickColorBtns[7].setColor(msg.getTick8Color());
+        tickColorBtns[8].setColor(msg.getTick9Color());
+        tickColorBtns[9].setColor(msg.getTick10Color());
+
+        numberColorBtn.setColor(msg.getNumberColor());
+        overheadUseCurrentColor.setSelected(msg.isOverheadUseCurrentColor());
+        cycle2ColorBtn.setColor(msg.getCycle2Color());
+        cycle3ColorBtn.setColor(msg.getCycle3Color());
+        currentTileFillColorBtn.setColor(msg.getCurrentTileFillColor());
+        changeFillColor.setSelected(msg.isChangeFillColor());
+        changeFillColorOpacity.setValue(msg.getChangeFillColorOpacity());
+    }
+
 }
