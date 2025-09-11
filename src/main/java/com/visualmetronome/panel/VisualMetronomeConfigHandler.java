@@ -114,7 +114,10 @@ public class VisualMetronomeConfigHandler
         configManager.setConfiguration("visualmetronome", "syncTarget", panel.lastSelectedMember);
 
         configManager.setConfiguration("visualmetronome", "colorCycle", panel.getColorCycle());
-        for (int i = 0; i < 10; i++) {
+
+        configManager.setConfiguration("visualmetronome", "tick" + "Color", panel.tickColorBtns[0].getColor());
+        configManager.setConfiguration("visualmetronome", "tock" + "Color", panel.tickColorBtns[1].getColor());
+        for (int i = 2; i < 10; i++) {
             configManager.setConfiguration("visualmetronome", "tick" + (i + 1) + "Color", panel.tickColorBtns[i].getColor());
         }
 
