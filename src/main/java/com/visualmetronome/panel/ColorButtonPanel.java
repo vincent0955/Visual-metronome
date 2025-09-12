@@ -19,6 +19,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
+import java.awt.Font;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +43,13 @@ public class ColorButtonPanel extends JPanel {
         label.setPreferredSize(prefSize);
         label.setMaximumSize(maxSize);
 
-        btn = new JButton("                ");
+        Dimension btnSize = new Dimension(100, 20);
+        btn = new JButton(String.format("#%06X", initial.getRGB() & 0xFFFFFF));
+        btn.setFont(btn.getFont().deriveFont(Font.BOLD, 14f));
         btn.setBackground(initial);
-        btn.setPreferredSize(new Dimension(50, 20));
+        btn.setPreferredSize(btnSize);
+        btn.setMinimumSize(btnSize);
+        btn.setMaximumSize(btnSize);
         btn.setAlignmentY(Component.CENTER_ALIGNMENT);
         btn.addActionListener(e -> {
             final JColorChooser chooser = new JColorChooser(getColor());
@@ -190,6 +195,8 @@ public class ColorButtonPanel extends JPanel {
 
     public void setColor(Color c) {
         btn.setBackground(c);
+        btn.setText(String.format("#%06X", c.getRGB() & 0xFFFFFF));
+        btn.setForeground(getContrastColor(c));
         btn.repaint();
         notifyListeners(c);
     }
@@ -210,6 +217,12 @@ public class ColorButtonPanel extends JPanel {
         for (ColorChangeListener listener : listeners) {
             listener.colorChanged(newColor);
         }
+    }
+
+    private Color getContrastColor(Color c) {
+        // Using YIQ formula to determine brightness
+        int yiq = ((c.getRed()*299) + (c.getGreen()*587) + (c.getBlue()*114)) / 1000;
+        return yiq >= 100 ? Color.BLACK : Color.WHITE;
     }
 
     public interface ColorChangeListener {
