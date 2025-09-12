@@ -181,7 +181,6 @@ public class ColorButtonPanel extends JPanel {
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 
-            // Update color after dialog closes
             setColor(chooser.getColor());
 
         });
@@ -220,7 +219,6 @@ public class ColorButtonPanel extends JPanel {
     }
 
     private Color getContrastColor(Color c) {
-        // Using YIQ formula to determine brightness
         int yiq = ((c.getRed()*299) + (c.getGreen()*587) + (c.getBlue()*114)) / 1000;
         return yiq >= 100 ? Color.BLACK : Color.WHITE;
     }

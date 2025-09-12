@@ -40,7 +40,6 @@ public class KeyCaptureDialog extends JDialog
             }
         });
 
-        // Ensure the dialog actually receives key focus
         setFocusable(true);
         requestFocusInWindow();
     }

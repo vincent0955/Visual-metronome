@@ -56,6 +56,7 @@ public class VisualMetronomeConfigHandler
 
             panel.enablePartySync.setSelected(config.enablePartySync());
             panel.lastSelectedMember = config.syncTarget();
+            panel.memberDropdown.removeAllItems();
             panel.updateMembers(null, config, configManager);
 
             panel.colorCycleSpinner.setValue((double) config.colorCycle());

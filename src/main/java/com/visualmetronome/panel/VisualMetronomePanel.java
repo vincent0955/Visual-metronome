@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Collections;
 import java.awt.event.ActionListener;
 
 import java.util.Arrays;
@@ -143,7 +144,15 @@ public class VisualMetronomePanel extends PluginPanel
             }
         });
 
-        buttonRow.add(Box.createHorizontalStrut(0));
+        //Debugging Code
+        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
+                configManager, config, partyService,
+                members -> updateMembers(members, config, configManager)
+        );
+        refreshMembersBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        buttonRow.add(refreshMembersBtn);
+        buttonRow.add(Box.createHorizontalStrut(5));
         buttonRow.add(requestColorsButton);
 
         panel.add(buttonRow);
@@ -330,28 +339,13 @@ public class VisualMetronomePanel extends PluginPanel
     }
 
 
-    public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager)
-    {
-        if (partyService != null && (members == null || members.isEmpty())) {
-            List<PartyMember> membersList = partyService.getMembers();
-            members = membersList.stream()
-                    .map(PartyMember::getDisplayName)
-                    .filter(name -> !"<unknown>".equals(name))
-                    .collect(Collectors.toList());
-        }
+    public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager) {
+        List<String> resolvedMembers = resolveMembers(members);
 
-        if (members == null || members.isEmpty()) {
-            memberDropdown.removeAll();
-            memberDropdown.addItem(lastSelectedMember);
-        }
-
-        // update lastSelectedMember based on dropdown
         String selected = (String) memberDropdown.getSelectedItem();
         if (selected != null && !selected.equals(lastSelectedMember)) {
             lastSelectedMember = selected;
-       }
-
-        final List<String> finalMembers = members;
+        }
 
         SwingUtilities.invokeLater(() -> {
             ActionListener[] listeners = memberDropdown.getActionListeners();
@@ -359,36 +353,48 @@ public class VisualMetronomePanel extends PluginPanel
                 memberDropdown.removeActionListener(l);
             }
 
-            memberDropdown.removeAllItems();
+            try {
+                updateDropdownItems(resolvedMembers);
 
-            Set<String> uniqueMembers = new LinkedHashSet<>(finalMembers);
-            uniqueMembers.remove("<unknown>");
-
-            if (lastSelectedMember != null) {
-                uniqueMembers.remove(lastSelectedMember);
-                memberDropdown.addItem(lastSelectedMember);
-            }
-
-            for (String member : uniqueMembers) {
-                memberDropdown.addItem(member);
-            }
-
-            // Set selection to lastSelectedMember if available, otherwise first item
-            if (lastSelectedMember != null && memberDropdown.getItemCount() > 0) {
-                memberDropdown.setSelectedItem(lastSelectedMember);
-            } else if (memberDropdown.getItemCount() > 0) {
-                memberDropdown.setSelectedIndex(0);
-            }
-
-            if (!Objects.equals(lastSelectedMember, config.syncTarget())) {
-                configManager.setConfiguration("visualmetronome", "syncTarget", lastSelectedMember);
-            }
-
-            // Reattach the action listeners
-            for (ActionListener l : listeners) {
-                memberDropdown.addActionListener(l);
+                if (!Objects.equals(lastSelectedMember, config.syncTarget())) {
+                    configManager.setConfiguration("visualmetronome", "syncTarget", lastSelectedMember);
+                }
+            } finally {
+                for (ActionListener l : listeners) {
+                    memberDropdown.addActionListener(l);
+                }
             }
         });
+    }
+
+    private List<String> resolveMembers(List<String> members) {
+        if ((members == null || members.isEmpty()) && partyService != null) {
+            return partyService.getMembers().stream()
+                    .map(PartyMember::getDisplayName)
+                    .filter(name -> !"<unknown>".equals(name))
+                    .collect(Collectors.toList());
+        }
+        return members == null ? Collections.emptyList() : members;
+    }
+
+    private void updateDropdownItems(List<String> members) {
+        memberDropdown.removeAllItems();
+
+        Set<String> uniqueMembers = new LinkedHashSet<>(members);
+        uniqueMembers.remove("<unknown>");
+
+        if (lastSelectedMember != null) {
+            uniqueMembers.remove(lastSelectedMember);
+            memberDropdown.addItem(lastSelectedMember);
+        }
+
+        uniqueMembers.forEach(memberDropdown::addItem);
+
+        if (lastSelectedMember != null && memberDropdown.getItemCount() > 0) {
+            memberDropdown.setSelectedItem(lastSelectedMember);
+        } else if (memberDropdown.getItemCount() > 0) {
+            memberDropdown.setSelectedIndex(0);
+        }
     }
 
 
