@@ -250,7 +250,7 @@ public interface VisualMetronomeConfig extends Config
     )
     default String syncTarget()
     {
-        return "Please Join a Party";
+        return "Join a Party";
     }
 
 
