@@ -27,6 +27,11 @@ public class VisualMetronomeConfigHandler
     }
 
     public void loadFromConfig() {
+        if(config.wasReset())
+        {
+            updateStartup = false;
+            configManager.setConfiguration("visualmetronome", "wasReset", false);
+        }
 
         if (!updateStartup)
         {
@@ -158,7 +163,6 @@ public class VisualMetronomeConfigHandler
 
     public void updateConfigThrottled()
     {
-        System.out.println("Updating Throttled Config");
         if (debounceTimer != null && debounceTimer.isRunning()) {
             debounceTimer.stop();
         }

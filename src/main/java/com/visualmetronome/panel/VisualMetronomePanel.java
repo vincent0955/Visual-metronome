@@ -132,13 +132,6 @@ public class VisualMetronomePanel extends PluginPanel
         buttonRow.setLayout(new BoxLayout(buttonRow, BoxLayout.X_AXIS));
         buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-//        //Debugging Code
-//        JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
-//                configManager, config, partyService,
-//                members -> updateMembers(members, config, configManager)
-//        );
-//        refreshMembersBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
-
         JButton requestColorsButton = new JButton("Sync Colors");
         requestColorsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
         requestColorsButton.addActionListener(e -> {
@@ -150,7 +143,6 @@ public class VisualMetronomePanel extends PluginPanel
             }
         });
 
-//      buttonRow.add(refreshMembersBtn);
         buttonRow.add(Box.createHorizontalStrut(0));
         buttonRow.add(requestColorsButton);
 

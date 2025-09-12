@@ -669,6 +669,19 @@ public interface VisualMetronomeConfig extends Config
     {
         return "The Visual Metronome Side Panel now contains the settings for the visual metronome.";
     }
+    @ConfigItem(
+            position = 13,
+            keyName = "wasReset",
+            name = "Was Reset",
+            description = "Indicates if the config was reset",
+            hidden = true,
+            section = AdditionalSettings
+    )
+    default boolean wasReset()
+    {
+        return true;
+    }
+
 
 }
 

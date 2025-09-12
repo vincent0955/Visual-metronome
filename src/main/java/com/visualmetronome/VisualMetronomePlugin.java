@@ -278,7 +278,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
         visualMetronomePanel.configHandler.loadFromConfig();
 
-        // Existing plugin logic
         if (currentColorIndex > visualMetronomePanel.getColorCycle())
             currentColorIndex = 0;
 
