@@ -124,27 +124,14 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         enablePartySync = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Enable Tick Sync", enablePartySync));
-
         memberDropdown = new JComboBox<>();
-        panel.add(GuiUtils.labeled("Party Member:", memberDropdown));
 
         JPanel buttonRow = new JPanel();
         buttonRow.setLayout(new BoxLayout(buttonRow, BoxLayout.X_AXIS));
         buttonRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JButton requestColorsButton = new JButton("Sync Colors");
-        requestColorsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-        requestColorsButton.addActionListener(e -> {
-            PartyMember localPlayer  = partyService.getLocalMember();
-            if(localPlayer != null)
-            {
-                ColorRequestMessage message = new ColorRequestMessage(config.syncTarget(), localPlayer.getDisplayName());
-                partyService.send(message);
-            }
-        });
+        JButton requestColorsButton = GuiUtils.createRequestColorsButton(partyService, config);
 
-        //Debugging Code
         JButton refreshMembersBtn = GuiUtils.getRefreshMembersBtn(
                 configManager, config, partyService,
                 members -> updateMembers(members, config, configManager)
@@ -155,7 +142,11 @@ public class VisualMetronomePanel extends PluginPanel
         buttonRow.add(Box.createHorizontalStrut(5));
         buttonRow.add(requestColorsButton);
 
+        panel.add(GuiUtils.labeledCheckbox("Enable Tick Sync", enablePartySync, "Synchronize tick counters with a designated party member"));
+        panel.add(GuiUtils.labeled("Party Member:", memberDropdown, "Type the name of a party member to sync with their tick counters"));
+
         panel.add(buttonRow);
+
         return new CollapsibleSection("Party Sync Settings", panel);
     }
 
@@ -165,19 +156,19 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         enableMetronome = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Enable Visual Metronome", enableMetronome));
-
         highlightCurrentTile = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Enable True Tile Overlay", highlightCurrentTile));
 
         boxWidth = GuiUtils.spinner(25, 16, 200, 1);
         tickCount = GuiUtils.spinner(1, 1, 10, 1);
 
-        panel.add(GuiUtils.labeled("Box Width:", boxWidth));
-        panel.add(GuiUtils.labeled("Tick Count:", tickCount));
+        panel.add(GuiUtils.labeledCheckbox("Enable Visual Metronome", enableMetronome, "Enable visual metronome"));
+        panel.add(GuiUtils.labeledCheckbox("Enable True Tile Overlay", highlightCurrentTile, "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)"));
+        panel.add(GuiUtils.labeled("Box Width:", boxWidth, "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"));
+        panel.add(GuiUtils.labeled("Tick Count:", tickCount, "The tick on which the color changes"));
 
         return new CollapsibleSection("General Metronome", panel);
     }
+
 
     // --- Tick Number Section ---
     private CollapsibleSection createTickNumberSection() {
@@ -185,27 +176,27 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         showTick = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Show Metronome Tick Number", showTick));
-
         showPlayerTick = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Show Tick Above Player", showPlayerTick));
-
         disableFontScaling = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Disable Font Scaling", disableFontScaling));
 
         fontSize = GuiUtils.spinner(15, 8, 50, 1);
-        numberColorBtn = new ColorButtonPanel("Tick Number Color", config.NumberColor());
+        numberColorBtn = new ColorButtonPanel("Tick Number Color", config.NumberColor(), "Configures the color of tick number");
 
         fontType = new JComboBox<>(Arrays.stream(FontTypes.values())
                 .map(FontTypes::name)
                 .toArray(String[]::new));
 
-        panel.add(GuiUtils.labeled("Font Size:", fontSize));
+
+        panel.add(GuiUtils.labeledCheckbox("Show Metronome Tick Number", showTick, "Shows current tick number on the metronome"));
+        panel.add(GuiUtils.labeledCheckbox("Show Tick Above Player", showPlayerTick, "Shows current tick number above the player"));
+        panel.add(GuiUtils.labeledCheckbox("Disable Font Scaling", disableFontScaling, "Disables font size scaling for metronome tick number"));
+        panel.add(GuiUtils.labeled("Font Size:", fontSize, "Change the font size of the overhead Tick Number"));
         panel.add(numberColorBtn);
-        panel.add(GuiUtils.labeled("Font Type:", fontType));
+        panel.add(GuiUtils.labeled("Font Type:", fontType, "Change the font of the Tick Number"));
 
         return new CollapsibleSection("Tick Number Settings", panel);
     }
+
 
     // --- True Tile Overlay Section ---
     private CollapsibleSection createTrueTileOverlaySection() {
@@ -213,15 +204,14 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         changeFillColor = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Enable Tile Fill Metronome", changeFillColor));
-
-        currentTileFillColorBtn = new ColorButtonPanel("Tile Fill Color", config.currentTileFillColor());
+        currentTileFillColorBtn = new ColorButtonPanel("Tile Fill Color", config.currentTileFillColor(), "Fill color of the true tile overlay");
         currentTileBorderWidth = GuiUtils.spinner(2, 0, 10, 0.5);
         changeFillColorOpacity = GuiUtils.spinner(50, 0, 255, 1);
 
+        panel.add(GuiUtils.labeledCheckbox("Enable Tile Fill Metronome", changeFillColor, "Makes the tile fill color change with the metronome"));
         panel.add(currentTileFillColorBtn);
-        panel.add(GuiUtils.labeled("Tile Border Width:", currentTileBorderWidth));
-        panel.add(GuiUtils.labeled("Fill Color Opacity:", changeFillColorOpacity));
+        panel.add(GuiUtils.labeled("Tile Border Width:", currentTileBorderWidth, "Border size of the true tile overlay"));
+        panel.add(GuiUtils.labeled("Fill Color Opacity:", changeFillColorOpacity, "Opacity of the tile fill metronome color if the option above is enabled. Otherwise, the opacity is determined by the True Tile Fill Color setting"));
 
         return new CollapsibleSection("True Tile Overlay Settings", panel);
     }
@@ -232,7 +222,7 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         colorCycleSpinner = GuiUtils.spinner(2, 2, 10, 1);
-        panel.add(GuiUtils.labeled("Number of Colors:", colorCycleSpinner));
+        panel.add(GuiUtils.labeled("Number of Colors:", colorCycleSpinner, "The number of colors it cycles through"));
 
         tickColorBtns[0] = new ColorButtonPanel("Tick Color", config.getTickColor());
         tickColorBtns[1] = new ColorButtonPanel("Tock Color", config.getTockColor());
@@ -286,7 +276,7 @@ public class VisualMetronomePanel extends PluginPanel
         buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(buttonsPanel);
-        panel.add(GuiUtils.labeled("Reset to Tick:", tickResetStartTick));
+        panel.add(GuiUtils.labeled("Reset to Tick:", tickResetStartTick, "Choose which tick the hotkey resets the timer to"));
 
         return new CollapsibleSection("Hotkey Settings", panel, true);
     }
@@ -297,12 +287,12 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         mouseFollowingTick = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Tick Counter Follows Mouse", mouseFollowingTick));
-
         mouseOffsetX = GuiUtils.spinner(10, -100, 100, 1);
         mouseOffsetY = GuiUtils.spinner(-10, -100, 100, 1);
-        panel.add(GuiUtils.labeled("Mouse Offset X:", mouseOffsetX));
-        panel.add(GuiUtils.labeled("Mouse Offset Y:", mouseOffsetY));
+
+        panel.add(GuiUtils.labeledCheckbox("Tick Counter Follows Mouse", mouseFollowingTick, "Makes the tick counter follow your mouse cursor. It uses the same settings as the Overhead Tick Number"));
+        panel.add(GuiUtils.labeled("Mouse Offset X:", mouseOffsetX, "X offset from mouse cursor for tick counter"));
+        panel.add(GuiUtils.labeled("Mouse Offset Y:", mouseOffsetY, "Y offset from mouse cursor for tick counter"));
 
         return new CollapsibleSection("Mouse Following Settings", panel, true);
     }
@@ -313,31 +303,34 @@ public class VisualMetronomePanel extends PluginPanel
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         enableCycle2 = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Enable Second Cycle", enableCycle2));
         tickCount2 = GuiUtils.spinner(2, 2, 20, 1);
-        cycle2ColorBtn = new ColorButtonPanel("Second Cycle Color", config.cycle2Color());
-        panel.add(GuiUtils.labeled("Second Cycle Length:", tickCount2));
-        panel.add(cycle2ColorBtn);
+        cycle2ColorBtn = new ColorButtonPanel("Second Cycle Color", config.cycle2Color(), "Configures the color of second cycle");
 
         enableCycle3 = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Enable Third Cycle", enableCycle3));
         tickCount3 = GuiUtils.spinner(2, 2, 20, 1);
-        cycle3ColorBtn = new ColorButtonPanel("Third Cycle Color", config.cycle3Color());
-        panel.add(GuiUtils.labeled("Third Cycle Length:", tickCount3));
-        panel.add(cycle3ColorBtn);
+        cycle3ColorBtn = new ColorButtonPanel("Third Cycle Color", config.cycle3Color(), "Configures the color of third cycle");
 
         overheadCyclesGapDistance = GuiUtils.spinner(20, 0, 100, 1);
         overheadHeight = GuiUtils.spinner(20, -500, 500, 1);
         overheadXCenterOffset = GuiUtils.spinner(0, -50, 50, 1);
         overheadUseCurrentColor = new JCheckBox();
-        panel.add(GuiUtils.labeledCheckbox("Metronome Color for Overhead", overheadUseCurrentColor));
-        panel.add(GuiUtils.labeled("Gap Distance:", overheadCyclesGapDistance));
-        panel.add(GuiUtils.labeled("Overhead Height:", overheadHeight));
-        panel.add(GuiUtils.labeled("X Center Offset:", overheadXCenterOffset));
+
+        panel.add(GuiUtils.labeledCheckbox("Enable Second Cycle", enableCycle2, "Enables second tick number above the player"));
+        panel.add(GuiUtils.labeled("Second Cycle Length:", tickCount2, "Length for the second cycle in ticks"));
+        panel.add(cycle2ColorBtn);
+
+        panel.add(GuiUtils.labeledCheckbox("Enable Third Cycle", enableCycle3, "Enables third tick number above the player"));
+        panel.add(GuiUtils.labeled("Third Cycle Length:", tickCount3, "Length for the third cycle in ticks"));
+        panel.add(cycle3ColorBtn);
+
+        panel.add(GuiUtils.labeledCheckbox("Metronome Color for Overhead", overheadUseCurrentColor, "Uses the metronome color for the overhead tick color instead of Tick Number Color"));
+        panel.add(GuiUtils.labeled("Gap Distance:", overheadCyclesGapDistance, "Configures the distance of the gap between the overhead ticks"));
+        panel.add(GuiUtils.labeled("Overhead Height:", overheadHeight, "Configures the height of overhead ticks"));
+        panel.add(GuiUtils.labeled("X Center Offset:", overheadXCenterOffset, "Configures the X offset of overhead ticks"));
+
 
         return new CollapsibleSection("Additional Overhead Cycles", panel, true);
     }
-
 
     public void updateMembers(List<String> members, VisualMetronomeConfig config, ConfigManager configManager) {
         List<String> resolvedMembers = resolveMembers(members);

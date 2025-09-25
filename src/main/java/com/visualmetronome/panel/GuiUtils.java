@@ -24,6 +24,8 @@ import java.awt.Font;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.visualmetronome.messages.ColorRequestMessage;
+
 public final class GuiUtils
 {
     private GuiUtils() {}
@@ -47,6 +49,22 @@ public final class GuiUtils
         return refreshMembersBtn;
     }
 
+    public static JButton createRequestColorsButton(PartyService partyService, VisualMetronomeConfig config) {
+        JButton requestColorsButton = new JButton("Sync Colors");
+        requestColorsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
+        requestColorsButton.addActionListener(e -> {
+            PartyMember localPlayer = partyService.getLocalMember();
+            if (localPlayer != null) {
+                ColorRequestMessage message = new ColorRequestMessage(
+                        config.syncTarget(),
+                        localPlayer.getDisplayName()
+                );
+                partyService.send(message);
+            }
+        });
+        return requestColorsButton;
+    }
+
     public static JLabel sectionLabel(String text)
     {
         JLabel label = new JLabel(text, SwingConstants.LEADING);
@@ -55,21 +73,31 @@ public final class GuiUtils
         return label;
     }
 
-    public static JPanel labeled(String text, JComponent comp)
+    public static JPanel labeled(String text, JComponent comp, String tooltip)
     {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
         JLabel label = new JLabel(text);
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         comp.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         panel.add(label);
         panel.add(comp);
+
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
+
+        if (tooltip != null) {
+            panel.setToolTipText(tooltip);
+            label.setToolTipText(tooltip);
+            comp.setToolTipText(tooltip);
+        }
+
         return panel;
     }
 
-    public static JPanel labeledCheckbox(String text, JCheckBox checkBox)
+    public static JPanel labeledCheckbox(String text, JCheckBox checkBox, String tooltip)
     {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -82,8 +110,16 @@ public final class GuiUtils
 
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
+
+        if (tooltip != null) {
+            panel.setToolTipText(tooltip);
+            label.setToolTipText(tooltip);
+            checkBox.setToolTipText(tooltip);
+        }
+
         return panel;
     }
+
 
     public static JSpinner spinner(Number value, Number min, Number max, Number step)
     {

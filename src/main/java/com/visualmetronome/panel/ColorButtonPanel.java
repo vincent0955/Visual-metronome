@@ -32,7 +32,7 @@ public class ColorButtonPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
         JLabel label = new JLabel(labelText);
-        label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        //label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         label.setOpaque(true);
         label.setAlignmentY(Component.CENTER_ALIGNMENT);
 
@@ -191,6 +191,16 @@ public class ColorButtonPanel extends JPanel {
         setAlignmentX(Component.LEFT_ALIGNMENT);
         setBorder(BorderFactory.createEmptyBorder(2, 0, 4, 0));
     }
+
+    public ColorButtonPanel(String labelText, Color initial, String tooltip) {
+        this(labelText, initial); // call existing constructor
+
+        if (tooltip != null) {
+            setToolTipText(tooltip);       // panel hover
+            btn.setToolTipText(tooltip);   // button hover
+        }
+    }
+
 
     public void setColor(Color c) {
         btn.setBackground(c);
