@@ -201,7 +201,6 @@ public class ColorButtonPanel extends JPanel {
         }
     }
 
-
     public void setColor(Color c) {
         btn.setBackground(c);
         btn.setText(String.format("#%06X", c.getRGB() & 0xFFFFFF));
