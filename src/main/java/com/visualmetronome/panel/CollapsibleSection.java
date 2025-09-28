@@ -21,10 +21,10 @@ public class CollapsibleSection extends JPanel
                 BorderFactory.createLineBorder(Color.BLACK),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
-        contentPanel.setVisible(!collapsed); // hide content if collapsed
+        contentPanel.setVisible(!collapsed);
 
         toggle = new JToggleButton(title);
-        toggle.setSelected(!collapsed); // toggle selected if expanded
+        toggle.setSelected(!collapsed);
         toggle.addActionListener(e -> {
             contentPanel.setVisible(toggle.isSelected());
             revalidate();
