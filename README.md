@@ -112,6 +112,8 @@ Tick Counts will be sync'd to the target player
     - Added Tick Counter Follows Mouse *(Thanks [Manlet008](https://github.com/Manlet008))*
 - **V1.5**
     - Added Party Sync functionality *(Thanks [Stromboli](https://github.com/ShadowTimGit))*
+- **V1.5.1**
+    - Improved tick counter centering in metronome box
 
 # Feedback & Contributing
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
