@@ -18,6 +18,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
 
     private static int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
+    private Point tickCounterCenter;
 
     @Inject
     public FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
@@ -68,13 +69,15 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                     if (config.fontType() == FontTypes.REGULAR)
                     {
                         graphics.setFont(new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, Math.min(preferredSize.width, preferredSize.height))); //scales font size based on the size of the metronome
+                        tickCounterCenter = new Point(preferredSize.width / 4, preferredSize.height);
                     }
                     else
                     {
                         graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, Math.min(preferredSize.width, Math.min(preferredSize.width, preferredSize.height))));
+                        tickCounterCenter = new Point(preferredSize.width / 4, preferredSize.height - (preferredSize.height / 8));
                     }
 
-                    final Point tickCounterPoint = new Point(preferredSize.width / 3, preferredSize.height);
+                    final Point tickCounterPoint = tickCounterCenter;
                     if (config.tickCount() == 1)
                     {
                         OverlayUtil.renderTextLocation(graphics, tickCounterPoint, String.valueOf(plugin.currentColorIndex), config.NumberColor());
