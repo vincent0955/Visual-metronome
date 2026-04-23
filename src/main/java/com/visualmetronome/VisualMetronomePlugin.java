@@ -1,7 +1,8 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
-import net.runelite.api.Point;
+import com.visualmetronome.messages.*;
+import com.visualmetronome.panel.VisualMetronomePanel;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
@@ -9,35 +10,39 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
+
 import java.awt.event.KeyEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import net.runelite.client.party.PartyService;
 import net.runelite.client.party.WSClient;
 import net.runelite.client.party.events.UserJoin;
 import net.runelite.client.party.events.UserPart;
-import com.visualmetronome.messages.TickSyncMessage;
-import com.visualmetronome.messages.TickRequestMessage;
 import net.runelite.client.party.PartyMember;
+import net.runelite.client.util.ImageUtil;
 
+import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @PluginDescriptor(
         name = "Visual Metronome",
         description = "Shows a visual cue on an overlay every game tick to help timing based activities",
-        tags = {"timers", "overlays", "tick", "skilling"}
+        tags = {"timers", "overlays", "tick", "skilling", "party"}
 )
 public class VisualMetronomePlugin extends Plugin implements KeyListener
 {
-
     @Inject
     private OverlayManager overlayManager;
 
@@ -71,8 +76,18 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private WSClient wsClient;
 
-    List<PartyMember> members = Collections.emptyList();
+    @Inject
+    private ClientToolbar clientToolbar;
+
+    private VisualMetronomePanel visualMetronomePanel;
+
+    private NavigationButton navButton;
+
+    private List<PartyMember> members = Collections.emptyList();
     private boolean hasRespondedThisTick = false;
+    private PartyMember localPlayer;
+    private String syncTarget;
+    private static final BufferedImage ICON = ImageUtil.loadImageResource(VisualMetronomePanel.class,"/com.visualmetronome/vismetro.png");
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
@@ -91,166 +106,219 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Subscribe
     public void onGameTick(GameTick tick)
     {
-        if (tickCounter % config.tickCount() == 0)
+        if (tickCounter % visualMetronomePanel.getTickCount() == 0)
         {
             tickCounter = 0;
-            if (currentColorIndex == config.colorCycle())
+            if (currentColorIndex == visualMetronomePanel.getColorCycle())
             {
                 currentColorIndex = 0;
             }
             setCurrentColorByColorIndex(++currentColorIndex);
         }
         tickCounter++;
-        if (tickCounter2 % config.tickCount2() == 0){
+        if (tickCounter2 % visualMetronomePanel.getTickCount2() == 0){
             tickCounter2 = 0;
         }
         tickCounter2++;
-        if (tickCounter3 % config.tickCount3() == 0){
+        if (tickCounter3 % visualMetronomePanel.getTickCount3() == 0){
             tickCounter3 = 0;
         }
         tickCounter3++;
 
         //party sync
         hasRespondedThisTick = false;
-        if (config.enablePartySync())
+        if (visualMetronomePanel.isEnablePartySync())
         {
             if (!members.isEmpty())
             {
-                String targetName = config.syncTarget();
-                partyService.send(new TickRequestMessage(targetName));
+                syncTarget = visualMetronomePanel.getSelectedMember();
+                partyService.send(new TickRequestMessage(syncTarget));
+
             }
         }
-
     }
 
     @Subscribe
-    public void onTickRequestMessage(TickRequestMessage target)
+    public void onTickRequestMessage(TickRequestMessage reqMsg)
     {
-        String syncTarget = target.getTarget();
-        PartyMember localPlayer = partyService.getLocalMember();
-
-        if (!localPlayer.getDisplayName().equalsIgnoreCase(syncTarget))
+        if (localPlayer == null)
         {
-            return;
+            localPlayer = partyService.getLocalMember();
         }
 
         if (hasRespondedThisTick)
         {
             return;
         }
-        hasRespondedThisTick = true;
 
-        TickSyncMessage msg = new TickSyncMessage(
-                tickCounter,
-                tickCounter2,
-                tickCounter3,
-                currentColorIndex,
-                config.colorCycle(),
-                config.tickCount(),
-                config.tickCount2(),
-                config.tickCount3(),
-                localPlayer.getDisplayName()
-        );
-        partyService.send(msg);
-    }
+        String reqTarget = reqMsg.getTarget();
 
-    @Subscribe
-    public void onTickSyncMessage(TickSyncMessage msg)
-    {
-        if (!config.enablePartySync())
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(reqTarget))
         {
             return;
         }
 
-        String Sender = msg.getlocalSender();
-        String targetName = config.syncTarget();
+        hasRespondedThisTick = true;
 
-        if (!Sender.equalsIgnoreCase(targetName))
+        TickSyncMessage syncMsg = visualMetronomePanel.toTickSyncMessage(
+                tickCounter, tickCounter2, tickCounter3, currentColorIndex, localPlayer.getDisplayName()
+        );
+        partyService.send(syncMsg);
+    }
+
+    @Subscribe
+    public void onTickSyncMessage(TickSyncMessage syncMsg)
+    {
+        if (!visualMetronomePanel.isEnablePartySync() || syncTarget == null)
+        {
+            return;
+        }
+
+        String sender = syncMsg.getlocalSender();
+
+        if (!sender.equalsIgnoreCase(syncTarget))
         {
             return;
         }
 
         //  Apply received counters
-        this.tickCounter = msg.getTickCounter();
-        this.tickCounter2 = msg.getTickCounter2();
-        this.tickCounter3 = msg.getTickCounter3();
-
-        this.currentColorIndex = msg.getColorIndex();
+        this.tickCounter = syncMsg.getTickCounter();
+        this.tickCounter2 = syncMsg.getTickCounter2();
+        this.tickCounter3 = syncMsg.getTickCounter3();
+        this.currentColorIndex = syncMsg.getColorIndex();
         setCurrentColorByColorIndex(this.currentColorIndex);
 
-        //  Update config so UI reflects remote tickCount
-        configManager.setConfiguration(
-                CONFIG_GROUP,
-                "tickCount",
-                msg.getTickCount()
-        );
-        configManager.setConfiguration(
-                CONFIG_GROUP,
-                "tickCount2",
-                msg.getTickCount2()
-        );
-        configManager.setConfiguration(
-                CONFIG_GROUP,
-                "tickCount3",
-                msg.getTickCount3()
-        );
-        configManager.setConfiguration(
-                CONFIG_GROUP,
-                "colorCycle",
-                msg.getConfigColorIndex()
-        );
+        visualMetronomePanel.applyTickSyncMessage(syncMsg);
     }
 
     @Subscribe
+    public void onColorRequestMessage(ColorRequestMessage colorReqMsg)
+    {
+        if (localPlayer == null)
+        {
+            localPlayer = partyService.getLocalMember();
+        }
+
+        String reqTarget = colorReqMsg.getTarget();
+        String reqSender = colorReqMsg.getRequester();
+
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(reqTarget))
+        {
+            return;
+        }
+
+        partyService.send(visualMetronomePanel.toColorSyncMessage(reqSender));
+    }
+
+    @Subscribe
+    public void onColorSyncMessage(ColorSyncMessage syncMsg)
+    {
+
+        if (!localPlayer.getDisplayName().equalsIgnoreCase(syncMsg.getReqSender()))
+        {
+            return;
+        }
+
+        visualMetronomePanel.applyColorSyncMessage(syncMsg);
+    }
+
+
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    @Subscribe
     public void onUserJoin(UserJoin event)
     {
-        members = partyService.getMembers();
+        //delay party service call to allow time for memberlist to be populated
+        scheduler.schedule(() -> {
+            members = partyService.getMembers();
+            localPlayer = partyService.getLocalMember();
+
+            if (visualMetronomePanel != null)
+            {
+                List<String> memberNames = members.stream()
+                        .map(PartyMember::getDisplayName)
+                        .filter(name -> !"<unknown>".equals(name))  // filter out <unknown>
+                        .collect(Collectors.toList());
+
+                SwingUtilities.invokeLater(() ->
+                        visualMetronomePanel.updateMembers(memberNames, config, configManager)
+                );
+            }
+        }, 200, TimeUnit.MILLISECONDS);
     }
 
     @Subscribe
     public void onUserPart(UserPart event)
     {
-        members = partyService.getMembers();
-    }
+        //delay party service call to allow time for memberlist to be populated
+        scheduler.schedule(() -> {
+            members = partyService.getMembers();
 
+            if (visualMetronomePanel != null)
+            {
+                List<String> memberNames = members.stream()
+                        .map(PartyMember::getDisplayName)
+                        .filter(name -> !"<unknown>".equals(name))
+                        .collect(Collectors.toList());
+
+                SwingUtilities.invokeLater(() ->
+                        visualMetronomePanel.updateMembers(memberNames, config, configManager)
+                );
+            }
+        }, 200, TimeUnit.MILLISECONDS);
+    }
 
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
-        if (currentColorIndex > config.colorCycle())
-        {
+        if (!event.getGroup().equals("visualmetronome"))
+            return;
+
+        if (visualMetronomePanel == null)
+            return;
+
+        visualMetronomePanel.configHandler.loadFromConfig();
+
+        if (currentColorIndex > visualMetronomePanel.getColorCycle())
             currentColorIndex = 0;
-        }
 
-        if (tickCounter > config.tickCount())
-        {
+        if (tickCounter > visualMetronomePanel.getTickCount())
             tickCounter = 0;
-        }
-        if (tickCounter2 > config.tickCount2())
-        {
+        if (tickCounter2 > visualMetronomePanel.getTickCount2())
             tickCounter2 = 0;
-        }
-        if (tickCounter3 > config.tickCount3())
-        {
+        if (tickCounter3 > visualMetronomePanel.getTickCount3())
             tickCounter3 = 0;
-        }
 
-        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
+        DEFAULT_SIZE = new Dimension(visualMetronomePanel.getBoxWidth(), visualMetronomePanel.getBoxWidth());
     }
+
 
     @Override
     protected void startUp() throws Exception
     {
-        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
+        visualMetronomePanel = new VisualMetronomePanel(configManager, config, partyService);
+        DEFAULT_SIZE = new Dimension(visualMetronomePanel.getBoxWidth(), visualMetronomePanel.getBoxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
         overlayManager.add(overlay);
         overlayManager.add(tileOverlay);
         overlayManager.add(numberOverlay);
         overlayManager.add(mouseFollowingOverlay);
         keyManager.registerKeyListener(this);
+
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
+        wsClient.registerMessage(ColorSyncMessage.class);
+        wsClient.registerMessage(ColorRequestMessage.class);
 
+        visualMetronomePanel.configHandler.loadFromConfig();
+
+        navButton = NavigationButton.builder()
+                .tooltip("Visual Metronome")
+                .icon(ICON)
+                .priority(10)
+                .panel(visualMetronomePanel)
+                .build();
+
+        clientToolbar.addNavigation(navButton);
     }
 
     @Override
@@ -263,12 +331,19 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         tickCounter2 = 0;
         tickCounter3 = 0;
         currentColorIndex = 0;
-        currentColor = config.getTickColor();
+        currentColor = visualMetronomePanel.getTickColor(1);
         overlayManager.remove(mouseFollowingOverlay);
         keyManager.unregisterKeyListener(this);
         wsClient.unregisterMessage(TickSyncMessage.class);
         wsClient.unregisterMessage(TickRequestMessage.class);
-
+        wsClient.unregisterMessage(ColorSyncMessage.class);
+        wsClient.unregisterMessage(ColorRequestMessage.class);
+        members = Collections.emptyList();
+        localPlayer = null;
+        clientToolbar.removeNavigation(navButton);
+        visualMetronomePanel = null;
+        navButton = null;
+        syncTarget = null;
     }
 
     //hotkey settings
@@ -280,29 +355,26 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        if (config.tickResetHotkey().matches(e))
+        if (visualMetronomePanel.getTickResetHotkey().matches(e))
         {
             int resetValue = 0;
 
             // Reset Cycle 1
-            if (config.tickCount() > 1)
+            if (visualMetronomePanel.getTickCount() > 1)
             {
-                // Prevent out of bounds by setting to 0 if reset start is above tick count
-                resetValue = (config.tickResetStartTick() >= config.tickCount()) ? 0 : config.tickResetStartTick();
-                // If resetting to 0, set color index to 0 as well so that the color is set to the first color next
-                // onGameTick
+                resetValue = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getTickCount()) ? 0 : visualMetronomePanel.getTickResetStartTick();
                 currentColorIndex = resetValue == 0 ? 0 : 1;
             }
             else
             {
-                resetValue = (config.tickResetStartTick() >= config.colorCycle()) ? 0 : config.tickResetStartTick();
+                resetValue = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getColorCycle()) ? 0 : visualMetronomePanel.getTickResetStartTick();
                 currentColorIndex = resetValue;
             }
             tickCounter = resetValue;
             setCurrentColorByColorIndex(currentColorIndex);
 
-            tickCounter2 = (config.tickResetStartTick() >= config.tickCount2()) ? 0 : config.tickResetStartTick();
-            tickCounter3 = (config.tickResetStartTick() >= config.tickCount3()) ? 0 : config.tickResetStartTick();
+            tickCounter2 = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getTickCount2()) ? 0 : visualMetronomePanel.getTickResetStartTick();
+            tickCounter3 = (visualMetronomePanel.getTickResetStartTick() >= visualMetronomePanel.getTickCount3()) ? 0 : visualMetronomePanel.getTickResetStartTick();
         }
     }
 
@@ -313,37 +385,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     private void setCurrentColorByColorIndex(int currentColorIndex)
     {
-        switch (currentColorIndex)
+        if (currentColorIndex >= 1 && currentColorIndex <= 10)
         {
-            case 1:
-                currentColor = config.getTickColor();
-                break;
-            case 2:
-                currentColor = config.getTockColor();
-                break;
-            case 3:
-                currentColor = config.getTick3Color();
-                break;
-            case 4:
-                currentColor = config.getTick4Color();
-                break;
-            case 5:
-                currentColor = config.getTick5Color();
-                break;
-            case 6:
-                currentColor = config.getTick6Color();
-                break;
-            case 7:
-                currentColor = config.getTick7Color();
-                break;
-            case 8:
-                currentColor = config.getTick8Color();
-                break;
-            case 9:
-                currentColor = config.getTick9Color();
-                break;
-            case 10:
-                currentColor = config.getTick10Color();
+            currentColor = visualMetronomePanel.getTickColor(currentColorIndex);
         }
     }
 }

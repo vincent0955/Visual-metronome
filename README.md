@@ -17,7 +17,7 @@ Alt+right click on the overlay to reset to default size
 # Party Sync Functionality
 Type the name of a player in your party
 
-![](https://i.imgur.com/vuRrLJ9.png)
+![](https://i.imgur.com/rtpopcl.png)
 
 Tick Counts will be sync'd to the target player
 ![](https://i.imgur.com/LEwh5RJ.gif)
