@@ -114,6 +114,8 @@ Tick Counts will be sync'd to the target player
     - Added Party Sync functionality *(Thanks [Stromboli](https://github.com/ShadowTimGit))*
 - **V1.5.1**
     - Improved tick counter centering in metronome box
+- **V1.5.2**
+    - Reworked metronome tick number centering/scaling behavior
 
 # Feedback & Contributing
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
