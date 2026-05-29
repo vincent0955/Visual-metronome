@@ -470,8 +470,8 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigSection(
-			name = "Additional Overhead Cycle Settings",
-			description = "Enable additional tick cycles to track",
+			name = "Additional Cycle Settings",
+			description = "Configure additional independent tick cycles and where they are displayed",
 			position = 11,
 			closedByDefault = true
 	)
@@ -480,8 +480,8 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigItem(
 			position = 1,
 			keyName = "showSecondCycle",
-			name = "Enable Second Cycle",
-			description = "Enables second tick number above the player",
+			name = "Enable Cycle 2",
+			description = "Activates the second tick counter",
 			section = additionalOverheadSettings
 	)
 	default boolean enableCycle2()
@@ -489,14 +489,12 @@ public interface VisualMetronomeConfig extends Config
 		return false;
 	}
 
-	@Range(
-			min = 2
-	)
+	@Range(min = 2)
 	@ConfigItem(
 			position = 2,
 			keyName = "tickCount2",
-			name = "Second Cycle Length",
-			description = "Length for the second cycle in ticks",
+			name = "Cycle 2 Length",
+			description = "Length of the second cycle in ticks",
 			section = additionalOverheadSettings
 	)
 	default int tickCount2()
@@ -504,11 +502,12 @@ public interface VisualMetronomeConfig extends Config
 		return 2;
 	}
 
+	@Alpha
 	@ConfigItem(
 			position = 3,
 			keyName = "cycle2Color",
-			name = "Second Cycle Color",
-			description = "Configures the color of second cycle",
+			name = "Cycle 2 Color",
+			description = "Color used for Cycle 2 in both overhead and overlay",
 			section = additionalOverheadSettings
 	)
 	default Color cycle2Color()
@@ -518,23 +517,46 @@ public interface VisualMetronomeConfig extends Config
 
 	@ConfigItem(
 			position = 4,
+			keyName = "showCycle2Overhead",
+			name = "Show Cycle 2 in Overhead",
+			description = "Displays Cycle 2 tick number above the player",
+			section = additionalOverheadSettings
+	)
+	default boolean showCycle2Overhead()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 5,
+			keyName = "showCycle2Overlay",
+			name = "Show Cycle 2 in Overlay",
+			description = "Adds a Cycle 2 box to the metronome overlay",
+			section = additionalOverheadSettings
+	)
+	default boolean showCycle2Overlay()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 6,
 			keyName = "showThirdCycle",
-			name = "Enable Third Cycle",
-			description = "Enables third tick number above the player",
+			name = "Enable Cycle 3",
+			description = "Activates the third tick counter",
 			section = additionalOverheadSettings
 	)
 	default boolean enableCycle3()
 	{
 		return false;
 	}
-	@Range(
-			min = 2
-	)
+
+	@Range(min = 2)
 	@ConfigItem(
-			position = 5,
+			position = 7,
 			keyName = "tickCount3",
-			name = "Third Cycle Length",
-			description = "Length for the third cycle in ticks",
+			name = "Cycle 3 Length",
+			description = "Length of the third cycle in ticks",
 			section = additionalOverheadSettings
 	)
 	default int tickCount3()
@@ -542,11 +564,12 @@ public interface VisualMetronomeConfig extends Config
 		return 2;
 	}
 
+	@Alpha
 	@ConfigItem(
-			position = 6,
+			position = 8,
 			keyName = "cycle3Color",
-			name = "Third Cycle Color",
-			description = "Configures the color of third cycle",
+			name = "Cycle 3 Color",
+			description = "Color used for Cycle 3 in both overhead and overlay",
 			section = additionalOverheadSettings
 	)
 	default Color cycle3Color()
@@ -555,9 +578,33 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 7,
+			position = 9,
+			keyName = "showCycle3Overhead",
+			name = "Show Cycle 3 in Overhead",
+			description = "Displays Cycle 3 tick number above the player",
+			section = additionalOverheadSettings
+	)
+	default boolean showCycle3Overhead()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 10,
+			keyName = "showCycle3Overlay",
+			name = "Show Cycle 3 in Overlay",
+			description = "Adds a Cycle 3 box to the metronome overlay",
+			section = additionalOverheadSettings
+	)
+	default boolean showCycle3Overlay()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 11,
 			keyName = "overheadCyclesGapDistance",
-			name = "Second and Third Tick Gap Distance",
+			name = "Overhead Cycle Gap Distance",
 			description = "Configures the distance of the gap between the overhead ticks",
 			section = additionalOverheadSettings
 	)
@@ -571,7 +618,7 @@ public interface VisualMetronomeConfig extends Config
 			max = 500
 	)
 	@ConfigItem(
-			position = 8,
+			position = 12,
 			keyName = "overheadHeight",
 			name = "Overhead Tick Height",
 			description = "Configures the height of overhead ticks",
@@ -587,7 +634,7 @@ public interface VisualMetronomeConfig extends Config
 			max = 50
 	)
 	@ConfigItem(
-			position = 9,
+			position = 13,
 			keyName = "overheadXCenterOffset",
 			name = "Overhead Tick X Center Offset",
 			description = "Configures the X offset of overhead ticks",
@@ -599,7 +646,7 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 10,
+			position = 14,
 			keyName = "overheadUseCurrentColor",
 			name = "Use Metronome Color for Overhead",
 			description = "Uses the metronome color for the overhead tick color instead of Tick Number Color",
