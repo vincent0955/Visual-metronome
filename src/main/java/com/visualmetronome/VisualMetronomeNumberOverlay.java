@@ -80,18 +80,16 @@ public class VisualMetronomeNumberOverlay extends Overlay
 
             if (config.enableCycle2() && config.showCycle2Overhead())
             {
-                final int valueX2 = valueX + config.overheadCyclesGapDistance();
+                final int valueX2 = valueX - config.overheadCyclesGapDistance();
                 final Point tick2Point = new Point(valueX2,valueY);
-                final Color cycle2Color = config.overheadUseCurrentColor() ? plugin.currentColor : config.cycle2Color();
-                OverlayUtil.renderTextLocation(graphics, tick2Point, String.valueOf(plugin.tickCounter2), cycle2Color);
+                OverlayUtil.renderTextLocation(graphics, tick2Point, String.valueOf(plugin.tickCounter2), config.cycle2Color());
             }
 
             if (config.enableCycle3() && config.showCycle3Overhead())
             {
-                final int valueX3 = valueX + config.overheadCyclesGapDistance() * 2;
+                final int valueX3 = valueX + config.overheadCyclesGapDistance();
                 final Point tick3Point = new Point(valueX3,valueY);
-                final Color cycle3Color = config.overheadUseCurrentColor() ? plugin.currentColor : config.cycle3Color();
-                OverlayUtil.renderTextLocation(graphics, tick3Point, String.valueOf(plugin.tickCounter3), cycle3Color);
+                OverlayUtil.renderTextLocation(graphics, tick3Point, String.valueOf(plugin.tickCounter3), config.cycle3Color());
             }
 
         }

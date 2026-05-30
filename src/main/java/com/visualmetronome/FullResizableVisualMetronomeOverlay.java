@@ -3,6 +3,7 @@ package com.visualmetronome;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Font;
@@ -17,6 +18,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
 
     private final VisualMetronomeConfig config;
     private final VisualMetronomePlugin plugin;
+    private final int cycleNumber;
 
     private static int TITLE_PADDING = 10;
     private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
@@ -25,9 +27,15 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
     @Inject
     public FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
     {
+        this(config, plugin, 1);
+    }
+
+    public FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin, int cycleNumber)
+    {
         super(plugin);
         this.config = config;
         this.plugin = plugin;
+        this.cycleNumber = cycleNumber;
         setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
         setMinimumSize(MINIMUM_SIZE);
         setResizable(true);
@@ -36,6 +44,15 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
+        if (cycleNumber == 2 && (!config.enableCycle2() || !config.showCycle2Overlay()))
+        {
+            return null;
+        }
+        if (cycleNumber == 3 && (!config.enableCycle3() || !config.showCycle3Overlay()))
+        {
+            return null;
+        }
+
         Dimension preferredSize = getPreferredSize();
 
         if (preferredSize == null)
@@ -45,29 +62,25 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
             setPreferredSize(preferredSize);
         }
 
-        if (config.enableMetronome())
+        final boolean showBox = cycleNumber != 1 || config.enableMetronome();
+        if (showBox)
         {
-            graphics.setColor(plugin.currentColor);
-            graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
             TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4);
 
-            if (config.showTick())
+            if (cycleNumber == 1)
             {
-                if (config.disableFontScaling())
+                graphics.setColor(plugin.currentColor);
+                graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+            }
+
+            final boolean showTick = cycleNumber != 1 || config.showTick();
+            if (showTick)
+            {
+                final String text;
+                final Color textColor;
+                if (cycleNumber == 1)
                 {
-                    graphics.setColor(config.NumberColor());
-                    if (config.tickCount() == 1)
-                    {
-                        graphics.drawString(String.valueOf(plugin.currentColorIndex), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
-                    }
-                    else
-                    {
-                        graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
-                    }
-                }
-                else
-                {
-                    String text;
+                    textColor = config.NumberColor();
                     if (config.tickCount() == 1)
                     {
                         text = String.valueOf(plugin.currentColorIndex);
@@ -76,12 +89,31 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
                     {
                         text = String.valueOf(plugin.tickCounter);
                     }
+                }
+                else if (cycleNumber == 2)
+                {
+                    text = String.valueOf(plugin.tickCounter2);
+                    textColor = config.cycle2Color();
+                }
+                else
+                {
+                    text = String.valueOf(plugin.tickCounter3);
+                    textColor = config.cycle3Color();
+                }
+
+                if (config.disableFontScaling())
+                {
+                    graphics.setColor(textColor);
+                    graphics.drawString(text, TITLE_PADDING, preferredSize.height - TITLE_PADDING);
+                }
+                else
+                {
                     final Font baseFont = (config.fontType() == FontTypes.REGULAR)
                         ? new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, 1)
                         : new Font(config.fontType().toString(), Font.PLAIN, 1);
                     graphics.setFont(getBestFitFont(graphics, baseFont, text, preferredSize.width, preferredSize.height));
                     tickCounterCenter = getCenteredTextPoint(graphics, text, preferredSize.width, preferredSize.height);
-                    OverlayUtil.renderTextLocation(graphics, tickCounterCenter, text, config.NumberColor());
+                    OverlayUtil.renderTextLocation(graphics, tickCounterCenter, text, textColor);
                 }
             }
         }
