@@ -24,9 +24,9 @@ Tick Counts will be sync'd to the target player
 
 
 # Settings
-![](https://i.imgur.com/3d8DRoq.png)
+![](https://i.imgur.com/svearB7.png)
 
-![](https://i.imgur.com/jLls9zb.png)
+![](https://i.imgur.com/GLo4GqK.png)
 
 # Changelog
 - **V1.1**
