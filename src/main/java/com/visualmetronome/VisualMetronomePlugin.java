@@ -65,6 +65,9 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private MouseFollowingOverlay mouseFollowingOverlay;
 
+    private VisualMetronomeSecondaryCycleOverlay cycle2Overlay;
+    private VisualMetronomeSecondaryCycleOverlay cycle3Overlay;
+
     @Inject
     private PartyService partyService;
 
@@ -101,14 +104,22 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             setCurrentColorByColorIndex(++currentColorIndex);
         }
         tickCounter++;
-        if (tickCounter2 % config.tickCount2() == 0){
-            tickCounter2 = 0;
+        if (config.enableCycle2())
+        {
+            if (tickCounter2 % config.tickCount2() == 0)
+            {
+                tickCounter2 = 0;
+            }
+            tickCounter2++;
         }
-        tickCounter2++;
-        if (tickCounter3 % config.tickCount3() == 0){
-            tickCounter3 = 0;
+        if (config.enableCycle3())
+        {
+            if (tickCounter3 % config.tickCount3() == 0)
+            {
+                tickCounter3 = 0;
+            }
+            tickCounter3++;
         }
-        tickCounter3++;
 
         //party sync
         hasRespondedThisTick = false;
@@ -241,12 +252,16 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     protected void startUp() throws Exception
     {
+        cycle2Overlay = new VisualMetronomeSecondaryCycleOverlay(config, this, 2);
+        cycle3Overlay = new VisualMetronomeSecondaryCycleOverlay(config, this, 3);
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
         overlayManager.add(overlay);
         overlayManager.add(tileOverlay);
         overlayManager.add(numberOverlay);
         overlayManager.add(mouseFollowingOverlay);
+        overlayManager.add(cycle2Overlay);
+        overlayManager.add(cycle3Overlay);
         keyManager.registerKeyListener(this);
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
@@ -259,6 +274,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         overlayManager.remove(overlay);
         overlayManager.remove(tileOverlay);
         overlayManager.remove(numberOverlay);
+        overlayManager.remove(cycle2Overlay);
+        overlayManager.remove(cycle3Overlay);
         tickCounter = 0;
         tickCounter2 = 0;
         tickCounter3 = 0;

@@ -78,14 +78,14 @@ public class VisualMetronomeNumberOverlay extends Overlay
                 OverlayUtil.renderTextLocation(graphics, tickPoint, String.valueOf(plugin.tickCounter), numberColor);
             }
 
-            if (config.enableCycle2())
+            if (config.enableCycle2() && config.showCycle2Overhead())
             {
                 final int valueX2 = valueX - config.overheadCyclesGapDistance();
                 final Point tick2Point = new Point(valueX2,valueY);
                 OverlayUtil.renderTextLocation(graphics, tick2Point, String.valueOf(plugin.tickCounter2), config.cycle2Color());
             }
 
-            if (config.enableCycle3())
+            if (config.enableCycle3() && config.showCycle3Overhead())
             {
                 final int valueX3 = valueX + config.overheadCyclesGapDistance();
                 final Point tick3Point = new Point(valueX3,valueY);
