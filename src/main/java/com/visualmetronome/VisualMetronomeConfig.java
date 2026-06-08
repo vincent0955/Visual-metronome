@@ -7,6 +7,7 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Keybind;
+import net.runelite.client.config.Units;
 
 import java.awt.Color;
 
@@ -215,6 +216,44 @@ public interface VisualMetronomeConfig extends Config
 	default int changeFillColorOpacity()
 	{
 		return 50;
+	}
+
+	@ConfigItem(
+			position = 6,
+			keyName = "currentTileCornersOnly",
+			name = "Corners only",
+			description = "Draw only the corners of the current tile.",
+			section = TileSettings
+	)
+	default boolean currentTileCornersOnly()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 7,
+			keyName = "trueTileFadeout",
+			name = "Fadeout",
+			description = "Fade out the true tile once the player stops moving.",
+			section = TileSettings
+	)
+	default boolean trueTileFadeout()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 8,
+			keyName = "trueTileFadeoutTime",
+			name = "Fadeout time",
+			description = "Milliseconds that the true tile is drawn for after moving. Minimum is 600 (1 game tick).",
+			section = TileSettings
+	)
+	@Range(min = 600)
+	@Units(Units.MILLISECONDS)
+	default int trueTileFadeoutTime()
+	{
+		return 800;
 	}
 
 
