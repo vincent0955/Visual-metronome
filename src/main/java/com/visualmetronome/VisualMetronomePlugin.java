@@ -65,8 +65,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Inject
     private MouseFollowingOverlay mouseFollowingOverlay;
 
-    private FullResizableVisualMetronomeOverlay cycle2Overlay;
-    private FullResizableVisualMetronomeOverlay cycle3Overlay;
+    private VisualMetronomeSecondaryCycleOverlay cycle2Overlay;
+    private VisualMetronomeSecondaryCycleOverlay cycle3Overlay;
 
     @Inject
     private PartyService partyService;
@@ -252,8 +252,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     protected void startUp() throws Exception
     {
-        cycle2Overlay = new FullResizableVisualMetronomeOverlay(config, this, 2);
-        cycle3Overlay = new FullResizableVisualMetronomeOverlay(config, this, 3);
+        cycle2Overlay = new VisualMetronomeSecondaryCycleOverlay(config, this, 2);
+        cycle3Overlay = new VisualMetronomeSecondaryCycleOverlay(config, this, 3);
         DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
         overlay.setPreferredSize(DEFAULT_SIZE);
         overlayManager.add(overlay);

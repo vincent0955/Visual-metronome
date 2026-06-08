@@ -3,31 +3,33 @@ package com.visualmetronome;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import javax.inject.Inject;
 import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.OverlayUtil;
 
-public class FullResizableVisualMetronomeOverlay extends Overlay
+public class VisualMetronomeSecondaryCycleOverlay extends Overlay
 {
-
     private final VisualMetronomeConfig config;
     private final VisualMetronomePlugin plugin;
+    private final int cycleNumber;
 
-    private static int TITLE_PADDING = 10;
-    private static final int MINIMUM_SIZE = 16; // too small and resizing becomes impossible, requiring a reset
-    private Point tickCounterCenter;
+    private static final int MINIMUM_SIZE = 16;
 
-    @Inject
-    public FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    public VisualMetronomeSecondaryCycleOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin, int cycleNumber)
     {
         super(plugin);
         this.config = config;
         this.plugin = plugin;
+        if (cycleNumber != 2 && cycleNumber != 3)
+        {
+            throw new IllegalArgumentException("cycleNumber must be 2 or 3");
+        }
+        this.cycleNumber = cycleNumber;
         setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
         setMinimumSize(MINIMUM_SIZE);
         setResizable(true);
@@ -36,58 +38,58 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        Dimension preferredSize = getPreferredSize();
+        if (!isCycleEnabled() || !showOverlay())
+        {
+            return null;
+        }
 
+        Dimension preferredSize = getPreferredSize();
         if (preferredSize == null)
         {
-            // if this happens, reset to default - should be rare, but eg. alt+rightclick will cause this
             preferredSize = plugin.DEFAULT_SIZE;
             setPreferredSize(preferredSize);
         }
 
-        if (config.enableMetronome())
+        final String text = getTickText();
+        final Color textColor = getTextColor();
+        if (config.disableFontScaling())
         {
-            graphics.setColor(plugin.currentColor);
-            graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
-            TITLE_PADDING = (Math.min(preferredSize.width, preferredSize.height) / 2 - 4); // scales tick number position with box size
-
-            if (config.showTick())
-            {
-                if (config.disableFontScaling())
-                {
-                    graphics.setColor(config.NumberColor());
-                    if (config.tickCount() == 1)
-                    {
-                        graphics.drawString(String.valueOf(plugin.currentColorIndex), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
-                    }
-                    else
-                    {
-                        graphics.drawString(String.valueOf(plugin.tickCounter), TITLE_PADDING, preferredSize.height - TITLE_PADDING);
-                    }
-
-                }
-                else
-                {
-                    String text;
-                    if (config.tickCount() == 1)
-                    {
-                        text = String.valueOf(plugin.currentColorIndex);
-                    }
-                    else
-                    {
-                        text = String.valueOf(plugin.tickCounter);
-                    }
-                    final Font baseFont = (config.fontType() == FontTypes.REGULAR)
-                        ? new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, 1)
-                        : new Font(config.fontType().toString(), Font.PLAIN, 1);
-                    graphics.setFont(getBestFitFont(graphics, baseFont, text, preferredSize.width, preferredSize.height));
-                    tickCounterCenter = getCenteredTextPoint(graphics, text, preferredSize.width, preferredSize.height);
-                    OverlayUtil.renderTextLocation(graphics, tickCounterCenter, text, config.NumberColor());
-                }
-            }
+            final int padding = Math.min(preferredSize.width, preferredSize.height) / 2 - 4;
+            graphics.setColor(textColor);
+            graphics.drawString(text, padding, preferredSize.height - padding);
+        }
+        else
+        {
+            final Font baseFont = (config.fontType() == FontTypes.REGULAR)
+                ? new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, 1)
+                : new Font(config.fontType().toString(), Font.PLAIN, 1);
+            graphics.setFont(getBestFitFont(graphics, baseFont, text, preferredSize.width, preferredSize.height));
+            final Point center = getCenteredTextPoint(graphics, text, preferredSize.width, preferredSize.height);
+            OverlayUtil.renderTextLocation(graphics, center, text, textColor);
         }
 
         return preferredSize;
+    }
+
+    private boolean isCycleEnabled()
+    {
+        return cycleNumber == 2 ? config.enableCycle2() : config.enableCycle3();
+    }
+
+    private boolean showOverlay()
+    {
+        return cycleNumber == 2 ? config.showCycle2Overlay() : config.showCycle3Overlay();
+    }
+
+    private String getTickText()
+    {
+        final int tickCounter = cycleNumber == 2 ? plugin.tickCounter2 : plugin.tickCounter3;
+        return String.valueOf(tickCounter);
+    }
+
+    private Color getTextColor()
+    {
+        return cycleNumber == 2 ? config.cycle2Color() : config.cycle3Color();
     }
 
     private Font getBestFitFont(Graphics2D graphics, Font baseFont, String text, int boxWidth, int boxHeight)
@@ -106,13 +108,7 @@ public class FullResizableVisualMetronomeOverlay extends Overlay
         final double widthScale = (maxBounds.width <= 0) ? 1.0 : (double) availableWidth / maxBounds.width;
         final double heightScale = (maxTextHeight <= 0) ? 1.0 : (double) availableHeight / maxTextHeight;
         final double fitScale = Math.min(1.0, Math.min(widthScale, heightScale));
-        final double sizeBoost;
-        if (config.fontType() == FontTypes.SEGOE_UI)
-        {
-            sizeBoost = 1.45;
-        } else {
-            sizeBoost = 1.2;
-        }
+        final double sizeBoost = (config.fontType() == FontTypes.SEGOE_UI) ? 1.45 : 1.2;
         final int fittedSize = Math.min(
             maxSize,
             Math.max(MINIMUM_SIZE, (int) Math.floor(maxSize * fitScale * sizeBoost))
