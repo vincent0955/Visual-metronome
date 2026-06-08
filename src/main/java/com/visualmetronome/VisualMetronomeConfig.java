@@ -24,26 +24,15 @@ public interface VisualMetronomeConfig extends Config
 		return true;
 	}
 
-	@ConfigItem(
-			position = 2,
-			keyName = "highlightCurrentTile",
-			name = "Enable True Tile Overlay",
-			description = "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)"
-	)
-	default boolean highlightCurrentTile()
-	{
-		return false;
-	}
-
-
 	@Range(
 			min = 16
 	)
 	@ConfigItem(
-			position = 3,
+			position = 2,
 			keyName = "boxWidth",
 			name = "Default Box Size (Alt + Right Click Box)",
-			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified"
+			description = "Configure the default length and width of the box. Use alt + right click on the box to reset to the size specified",
+			hidden = true
 	)
 	default int boxWidth()
 	{
@@ -54,7 +43,7 @@ public interface VisualMetronomeConfig extends Config
 			min = 1
 	)
 	@ConfigItem(
-			position = 4,
+			position = 3,
 			keyName = "tickCount",
 			name = "Tick Count",
 			description = "The tick on which the color changes"
@@ -67,7 +56,7 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigSection(
 			name = "Tick Number Settings",
 			description = "Change Tick Number settings",
-			position = 5
+			position = 6
 	)
 	String TickNumberSettings = "Tick Number Settings";
 
@@ -107,12 +96,24 @@ public interface VisualMetronomeConfig extends Config
 		return false;
 	}
 
+	@ConfigItem(
+			position = 4,
+			keyName = "overheadUseCurrentColor",
+			name = "Use Metronome Color for Overhead",
+			description = "Uses the metronome color for the overhead tick color instead of Tick Number Color",
+			section = TickNumberSettings
+	)
+	default boolean overheadUseCurrentColor()
+	{
+		return false;
+	}
+
 	@Range(
 			min = 8,
 			max = 50
 	)
 	@ConfigItem(
-			position = 4,
+			position = 5,
 			keyName = "fontSize",
 			name = "Font Size (Overhead Tick Only)",
 			description = "Change the font size of the overhead Tick Number",
@@ -124,7 +125,7 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 5,
+			position = 6,
 			keyName = "countColor",
 			name = "Tick Number Color",
 			description = "Configures the color of tick number",
@@ -136,7 +137,7 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 6,
+			position = 7,
 			keyName = "fontType",
 			name = "Font Type",
 			description = "Change the font of the Tick Number",
@@ -147,13 +148,25 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigSection(
 			name = "True Tile Overlay Settings",
 			description = "Settings only applied to True Tile Overlay",
-			position = 6
+			position = 7
 	)
 	String TileSettings = "True Tile Overlay Settings";
 
-	@Alpha
 	@ConfigItem(
 			position = 1,
+			keyName = "highlightCurrentTile",
+			name = "Enable True Tile Overlay",
+			description = "Highlights true player tile using the metronome colors (replacement for tile indicator plugin setting)",
+			section = TileSettings
+	)
+	default boolean highlightCurrentTile()
+	{
+		return false;
+	}
+
+	@Alpha
+	@ConfigItem(
+			position = 2,
 			keyName = "currentTileFillColor",
 			name = "True Tile Fill Color",
 			description = "Fill color of the true tile overlay",
@@ -165,7 +178,7 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 2,
+			position = 3,
 			keyName = "currentTileBorderWidth",
 			name = "True Tile Border Width",
 			description = "Border size of the true tile overlay",
@@ -177,7 +190,7 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 3,
+			position = 4,
 			keyName = "changeFillColor",
 			name = "Enable Tile Fill Color Metronome",
 			description = "Makes the tile fill color change with the metronome",
@@ -193,7 +206,7 @@ public interface VisualMetronomeConfig extends Config
 			max = 255
 	)
 	@ConfigItem(
-			position = 4,
+			position = 5,
 			keyName = "changeFillColorOpacity",
 			name = "Fill Color Metronome Opacity",
 			description = "Opacity of the tile fill metronome color if the option above is enabled. Otherwise, the opacity is determined by the True Tile Fill Color setting",
@@ -208,7 +221,7 @@ public interface VisualMetronomeConfig extends Config
     @ConfigSection(
             name = "Party Sync Settings",
             description = "Settings for syncing your metronome to a member of your party, this may modify the Tick Count and Number of Colors config settings",
-            position = 7
+            position = 8
     )
 
     String PartySyncSettings = "Party Sync Settings";
@@ -242,7 +255,7 @@ public interface VisualMetronomeConfig extends Config
     @ConfigSection(
 			name = "Color Settings",
 			description = "Change the colors and number of colors to cycle through",
-			position = 8
+			position = 5
 	)
 	String ColorSettings = "Color Settings";
 
@@ -643,18 +656,6 @@ public interface VisualMetronomeConfig extends Config
 	default int overheadXCenterOffset()
 	{
 		return 0;
-	}
-
-	@ConfigItem(
-			position = 14,
-			keyName = "overheadUseCurrentColor",
-			name = "Use Metronome Color for Overhead",
-			description = "Uses the metronome color for the overhead tick color instead of Tick Number Color",
-			section = additionalOverheadSettings
-	)
-	default boolean overheadUseCurrentColor()
-	{
-		return false;
 	}
 
 }
