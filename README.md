@@ -120,7 +120,7 @@ Tick Counts will be sync'd to the target player
     - Cycles 2 and 3 each get their own positionable overlay box with colored tick numbers *(Thanks [cam292](https://github.com/cam292))*
         - enableCycle2/3 now just activates the counter
         - showCycle2/3Overhead and showCycle2/3Overlay separately control where each cycle appears
-    - Added Corner Tiles Indicators *(Taken from [Corner Tiles Indicators](https://github.com/geheur/Corner-Tile-Indicators))*
+    - Added Corner Tiles Indicators functionality for true tile overlay *(Taken from [Corner Tiles Indicators](https://github.com/geheur/Corner-Tile-Indicators))*
     - Reorganized Config settings slightly
 
 # Feedback & Contributing
