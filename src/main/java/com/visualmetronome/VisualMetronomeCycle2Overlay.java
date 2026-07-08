@@ -9,27 +9,23 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import javax.inject.Inject;
 import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.OverlayUtil;
 
-public class VisualMetronomeSecondaryCycleOverlay extends Overlay
+public class VisualMetronomeCycle2Overlay extends Overlay
 {
     private final VisualMetronomeConfig config;
     private final VisualMetronomePlugin plugin;
-    private final int cycleNumber;
 
     private static final int MINIMUM_SIZE = 16;
 
-    public VisualMetronomeSecondaryCycleOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin, int cycleNumber)
+    @Inject
+    public VisualMetronomeCycle2Overlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
     {
         super(plugin);
         this.config = config;
         this.plugin = plugin;
-        if (cycleNumber != 2 && cycleNumber != 3)
-        {
-            throw new IllegalArgumentException("cycleNumber must be 2 or 3");
-        }
-        this.cycleNumber = cycleNumber;
         setPosition(OverlayPosition.ABOVE_CHATBOX_RIGHT);
         setMinimumSize(MINIMUM_SIZE);
         setResizable(true);
@@ -38,7 +34,7 @@ public class VisualMetronomeSecondaryCycleOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (!isCycleEnabled() || !showOverlay())
+        if (!config.enableCycle2() || !config.showCycle2Overlay())
         {
             return null;
         }
@@ -50,8 +46,8 @@ public class VisualMetronomeSecondaryCycleOverlay extends Overlay
             setPreferredSize(preferredSize);
         }
 
-        final String text = getTickText();
-        final Color textColor = getTextColor();
+        final String text = String.valueOf(plugin.tickCounter2);
+        final Color textColor = config.cycle2Color();
         if (config.disableFontScaling())
         {
             final int padding = Math.min(preferredSize.width, preferredSize.height) / 2 - 4;
@@ -69,27 +65,6 @@ public class VisualMetronomeSecondaryCycleOverlay extends Overlay
         }
 
         return preferredSize;
-    }
-
-    private boolean isCycleEnabled()
-    {
-        return cycleNumber == 2 ? config.enableCycle2() : config.enableCycle3();
-    }
-
-    private boolean showOverlay()
-    {
-        return cycleNumber == 2 ? config.showCycle2Overlay() : config.showCycle3Overlay();
-    }
-
-    private String getTickText()
-    {
-        final int tickCounter = cycleNumber == 2 ? plugin.tickCounter2 : plugin.tickCounter3;
-        return String.valueOf(tickCounter);
-    }
-
-    private Color getTextColor()
-    {
-        return cycleNumber == 2 ? config.cycle2Color() : config.cycle3Color();
     }
 
     private Font getBestFitFont(Graphics2D graphics, Font baseFont, String text, int boxWidth, int boxHeight)

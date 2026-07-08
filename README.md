@@ -122,6 +122,8 @@ Tick Counts will be sync'd to the target player
         - showCycle2/3Overhead and showCycle2/3Overlay separately control where each cycle appears
     - Added Corner Tiles Indicators functionality for true tile overlay *(Taken from [Corner Tiles Indicators](https://github.com/geheur/Corner-Tile-Indicators))*
     - Reorganized Config settings slightly
+- **V1.5.4**
+    - Fixed bug where Cycle 2 and Cycle 3 overlay positions were not saved correctly between sessions 
 
 # Feedback & Contributing
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
