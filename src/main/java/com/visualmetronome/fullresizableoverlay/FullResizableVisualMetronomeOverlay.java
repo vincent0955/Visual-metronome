@@ -1,27 +1,28 @@
-package com.visualmetronome;
+package com.visualmetronome.fullresizableoverlay;
 
+import com.visualmetronome.FontTypes;
+import com.visualmetronome.VisualMetronomeConfig;
+import com.visualmetronome.VisualMetronomePlugin;
+import net.runelite.api.Point;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.OverlayUtil;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import javax.inject.Inject;
-import net.runelite.api.Point;
-import net.runelite.client.ui.overlay.OverlayUtil;
 
-public class VisualMetronomeCycle2Overlay extends Overlay
+public abstract class FullResizableVisualMetronomeOverlay extends Overlay
 {
-    private final VisualMetronomeConfig config;
-    private final VisualMetronomePlugin plugin;
+    protected final VisualMetronomeConfig config;
+    protected final VisualMetronomePlugin plugin;
 
     private static final int MINIMUM_SIZE = 16;
 
-    @Inject
-    public VisualMetronomeCycle2Overlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
+    protected FullResizableVisualMetronomeOverlay(VisualMetronomeConfig config, VisualMetronomePlugin plugin)
     {
         super(plugin);
         this.config = config;
@@ -31,37 +32,51 @@ public class VisualMetronomeCycle2Overlay extends Overlay
         setResizable(true);
     }
 
-    @Override
-    public Dimension render(Graphics2D graphics)
-    {
-        if (!config.enableCycle2() || !config.showCycle2Overlay())
-        {
-            return null;
-        }
+    protected abstract boolean isVisible();
 
+    protected abstract String getTickText();
+
+    protected abstract Color getTextColor();
+
+    protected boolean showText()
+    {
+        return true;
+    }
+
+    @Override
+    public final Dimension render(Graphics2D graphics)
+    {
         Dimension preferredSize = getPreferredSize();
         if (preferredSize == null)
         {
-            preferredSize = plugin.DEFAULT_SIZE;
+            preferredSize = new Dimension(config.boxWidth(), config.boxWidth());
             setPreferredSize(preferredSize);
         }
 
-        final String text = String.valueOf(plugin.tickCounter2);
-        final Color textColor = config.cycle2Color();
-        if (config.disableFontScaling())
+        if (isVisible())
         {
-            final int padding = Math.min(preferredSize.width, preferredSize.height) / 2 - 4;
-            graphics.setColor(textColor);
-            graphics.drawString(text, padding, preferredSize.height - padding);
-        }
-        else
-        {
-            final Font baseFont = (config.fontType() == FontTypes.REGULAR)
-                ? new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, 1)
-                : new Font(config.fontType().toString(), Font.PLAIN, 1);
-            graphics.setFont(getBestFitFont(graphics, baseFont, text, preferredSize.width, preferredSize.height));
-            final Point center = getCenteredTextPoint(graphics, text, preferredSize.width, preferredSize.height);
-            OverlayUtil.renderTextLocation(graphics, center, text, textColor);
+            graphics.setColor(plugin.getCurrentColor());
+            graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+
+            if (showText())
+            {
+                final String text = getTickText();
+                if (config.disableFontScaling())
+                {
+                    final int padding = Math.min(preferredSize.width, preferredSize.height) / 2 - 4;
+                    graphics.setColor(getTextColor());
+                    graphics.drawString(text, padding, preferredSize.height - padding);
+                }
+                else
+                {
+                    final Font baseFont = (config.fontType() == FontTypes.REGULAR)
+                        ? new Font(FontManager.getRunescapeFont().getName(), Font.PLAIN, 1)
+                        : new Font(config.fontType().toString(), Font.PLAIN, 1);
+                    graphics.setFont(getBestFitFont(graphics, baseFont, text, preferredSize.width, preferredSize.height));
+                    final Point center = getCenteredTextPoint(graphics, text, preferredSize.width, preferredSize.height);
+                    OverlayUtil.renderTextLocation(graphics, center, text, getTextColor());
+                }
+            }
         }
 
         return preferredSize;
