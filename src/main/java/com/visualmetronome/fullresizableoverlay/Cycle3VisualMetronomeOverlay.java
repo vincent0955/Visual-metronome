@@ -30,4 +30,10 @@ public class Cycle3VisualMetronomeOverlay extends FullResizableVisualMetronomeOv
     {
         return config.cycle3Color();
     }
+
+    @Override
+    protected boolean showBackgroundColor()
+    {
+        return false;
+    }
 }

@@ -43,6 +43,11 @@ public abstract class FullResizableVisualMetronomeOverlay extends Overlay
         return true;
     }
 
+    protected boolean showBackgroundColor()
+    {
+        return true;
+    }
+
     @Override
     public final Dimension render(Graphics2D graphics)
     {
@@ -55,8 +60,11 @@ public abstract class FullResizableVisualMetronomeOverlay extends Overlay
 
         if (isVisible())
         {
-            graphics.setColor(plugin.getCurrentColor());
-            graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+            if (showBackgroundColor())
+            {
+                graphics.setColor(plugin.getCurrentColor());
+                graphics.fillRect(0, 0, preferredSize.width, preferredSize.height);
+            }
 
             if (showText())
             {
