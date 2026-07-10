@@ -1,7 +1,6 @@
 package com.visualmetronome;
 
 import com.google.inject.Provides;
-import net.runelite.api.Point;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
@@ -16,12 +15,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import net.runelite.client.party.PartyService;
 import net.runelite.client.party.WSClient;
 import net.runelite.client.party.events.UserJoin;
 import net.runelite.client.party.events.UserPart;
+import com.visualmetronome.fullresizableoverlay.DefaultCycleVisualMetronomeOverlay;
+import com.visualmetronome.fullresizableoverlay.Cycle2VisualMetronomeOverlay;
+import com.visualmetronome.fullresizableoverlay.Cycle3VisualMetronomeOverlay;
 import com.visualmetronome.messages.TickSyncMessage;
 import com.visualmetronome.messages.TickRequestMessage;
 import net.runelite.client.party.PartyMember;
@@ -51,7 +51,13 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     private VisualMetronomeNumberOverlay numberOverlay;
 
     @Inject
-    private FullResizableVisualMetronomeOverlay overlay;
+    private DefaultCycleVisualMetronomeOverlay defaultOverlay;
+
+    @Inject
+    private Cycle2VisualMetronomeOverlay cycle2Overlay;
+
+    @Inject
+    private Cycle3VisualMetronomeOverlay cycle3Overlay;
 
     @Inject
     private VisualMetronomeConfig config;
@@ -64,12 +70,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     @Inject
     private MouseFollowingOverlay mouseFollowingOverlay;
-
-    @Inject
-    private VisualMetronomeCycle2Overlay cycle2Overlay;
-
-    @Inject
-    private VisualMetronomeCycle3Overlay cycle3Overlay;
 
     @Inject
     private PartyService partyService;
@@ -86,7 +86,12 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     protected int tickCounter2 = 0;
     protected int tickCounter3 = 0;
     protected Color currentColor = Color.WHITE;
-    protected Dimension DEFAULT_SIZE = new Dimension(25, 25);
+
+    public int getCurrentColorIndex() { return currentColorIndex; }
+    public int getTickCounter() { return tickCounter; }
+    public int getTickCounter2() { return tickCounter2; }
+    public int getTickCounter3() { return tickCounter3; }
+    public Color getCurrentColor() { return currentColor; }
 
     @Provides
     VisualMetronomeConfig provideConfig(ConfigManager configManager)
@@ -248,21 +253,23 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         {
             tickCounter3 = 0;
         }
-
-        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
     }
 
     @Override
     protected void startUp() throws Exception
     {
-        DEFAULT_SIZE = new Dimension(config.boxWidth(), config.boxWidth());
-        overlay.setPreferredSize(DEFAULT_SIZE);
-        overlayManager.add(overlay);
+        final Dimension defaultSize = new Dimension(config.boxWidth(), config.boxWidth());
+        defaultOverlay.setPreferredSize(defaultSize);
+        cycle2Overlay.setPreferredSize(defaultSize);
+        cycle3Overlay.setPreferredSize(defaultSize);
+
+        overlayManager.add(defaultOverlay);
+        overlayManager.add(cycle2Overlay);
+        overlayManager.add(cycle3Overlay);
         overlayManager.add(tileOverlay);
         overlayManager.add(numberOverlay);
         overlayManager.add(mouseFollowingOverlay);
-        overlayManager.add(cycle2Overlay);
-        overlayManager.add(cycle3Overlay);
+
         keyManager.registerKeyListener(this);
         wsClient.registerMessage(TickSyncMessage.class);
         wsClient.registerMessage(TickRequestMessage.class);
@@ -272,21 +279,22 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     protected void shutDown() throws Exception
     {
-        overlayManager.remove(overlay);
-        overlayManager.remove(tileOverlay);
-        overlayManager.remove(numberOverlay);
+        overlayManager.remove(defaultOverlay);
         overlayManager.remove(cycle2Overlay);
         overlayManager.remove(cycle3Overlay);
+        overlayManager.remove(tileOverlay);
+        overlayManager.remove(numberOverlay);
+        overlayManager.remove(mouseFollowingOverlay);
+
         tickCounter = 0;
         tickCounter2 = 0;
         tickCounter3 = 0;
         currentColorIndex = 0;
         currentColor = config.getTickColor();
-        overlayManager.remove(mouseFollowingOverlay);
+
         keyManager.unregisterKeyListener(this);
         wsClient.unregisterMessage(TickSyncMessage.class);
         wsClient.unregisterMessage(TickRequestMessage.class);
-
     }
 
     //hotkey settings
@@ -300,7 +308,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     {
         if (config.tickResetHotkey().matches(e))
         {
-            int resetValue = 0;
+            int resetValue;
 
             // Reset Cycle 1
             if (config.tickCount() > 1)
