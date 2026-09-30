@@ -484,6 +484,30 @@ public interface VisualMetronomeConfig extends Config
 	}
 
 	@ConfigItem(
+		position = 4,
+		keyName = "increaseTickCountHotkey",
+		name = "Increase Tick Count Hotkey",
+		description = "Hotkey to increase the Tick Count setting by 1",
+		section = HotkeySettings
+	)
+	default Keybind increaseTickCountHotkey()
+	{
+		return Keybind.NOT_SET;
+	}
+
+	@ConfigItem(
+		position = 5,
+		keyName = "decreaseTickCountHotkey",
+		name = "Decrease Tick Count Hotkey",
+		description = "Hotkey to decrease the Tick Count setting by 1",
+		section = HotkeySettings
+	)
+	default Keybind decreaseTickCountHotkey()
+	{
+		return Keybind.NOT_SET;
+	}
+
+	@ConfigItem(
 		keyName = "metronomeHidden",
 		name = "",
 		description = "",

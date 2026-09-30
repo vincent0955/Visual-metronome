@@ -304,6 +304,16 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
             setOverlaysShown(!hidden);
         }
 
+        if (config.increaseTickCountHotkey().matches(e))
+        {
+            configManager.setConfiguration(CONFIG_GROUP, "tickCount", config.tickCount() + 1);
+        }
+
+        if (config.decreaseTickCountHotkey().matches(e))
+        {
+            configManager.setConfiguration(CONFIG_GROUP, "tickCount", Math.max(1, config.tickCount() - 1));
+        }
+
         if (config.tickResetHotkey().matches(e))
         {
             int resetValue;
