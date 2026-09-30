@@ -8,6 +8,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 import java.awt.event.KeyEvent;
@@ -79,6 +80,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     List<PartyMember> members = Collections.emptyList();
     private boolean hasRespondedThisTick = false;
+    private boolean hidden = false;
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
@@ -263,12 +265,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         cycle2Overlay.setPreferredSize(defaultSize);
         cycle3Overlay.setPreferredSize(defaultSize);
 
-        overlayManager.add(defaultOverlay);
-        overlayManager.add(cycle2Overlay);
-        overlayManager.add(cycle3Overlay);
-        overlayManager.add(tileOverlay);
-        overlayManager.add(numberOverlay);
-        overlayManager.add(mouseFollowingOverlay);
+        hidden = false;
+        setOverlaysShown(true);
 
         keyManager.registerKeyListener(this);
         wsClient.registerMessage(TickSyncMessage.class);
@@ -279,12 +277,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     protected void shutDown() throws Exception
     {
-        overlayManager.remove(defaultOverlay);
-        overlayManager.remove(cycle2Overlay);
-        overlayManager.remove(cycle3Overlay);
-        overlayManager.remove(tileOverlay);
-        overlayManager.remove(numberOverlay);
-        overlayManager.remove(mouseFollowingOverlay);
+        setOverlaysShown(false);
 
         tickCounter = 0;
         tickCounter2 = 0;
@@ -306,6 +299,12 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
+        if (config.showHideHotkey().matches(e))
+        {
+            hidden = !hidden;
+            setOverlaysShown(!hidden);
+        }
+
         if (config.tickResetHotkey().matches(e))
         {
             int resetValue;
@@ -335,6 +334,21 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     @Override
     public void keyReleased(KeyEvent e)
     {
+    }
+
+    private void setOverlaysShown(boolean shown)
+    {
+        for (Overlay overlay : new Overlay[]{defaultOverlay, cycle2Overlay, cycle3Overlay, tileOverlay, numberOverlay, mouseFollowingOverlay})
+        {
+            if (shown)
+            {
+                overlayManager.add(overlay);
+            }
+            else
+            {
+                overlayManager.remove(overlay);
+            }
+        }
     }
 
     private void setCurrentColorByColorIndex(int currentColorIndex)

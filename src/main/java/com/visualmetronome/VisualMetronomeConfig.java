@@ -470,6 +470,18 @@ public interface VisualMetronomeConfig extends Config
 	{
 		return 0;
 	}
+
+	@ConfigItem(
+		position = 3,
+		keyName = "showHideHotkey",
+		name = "Show/Hide Hotkey",
+		description = "Hotkey to toggle whether the metronome is shown or hidden",
+		section = HotkeySettings
+	)
+	default Keybind showHideHotkey()
+	{
+		return Keybind.NOT_SET;
+	}
 	@ConfigSection(
 			name = "Mouse Following Settings",
 			description = "Settings for mouse-following tick counter",
