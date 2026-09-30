@@ -482,6 +482,17 @@ public interface VisualMetronomeConfig extends Config
 	{
 		return Keybind.NOT_SET;
 	}
+
+	@ConfigItem(
+		keyName = "metronomeHidden",
+		name = "",
+		description = "",
+		hidden = true
+	)
+	default boolean metronomeHidden()
+	{
+		return false;
+	}
 	@ConfigSection(
 			name = "Mouse Following Settings",
 			description = "Settings for mouse-following tick counter",

@@ -80,7 +80,6 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
 
     List<PartyMember> members = Collections.emptyList();
     private boolean hasRespondedThisTick = false;
-    private boolean hidden = false;
 
     private static final String CONFIG_GROUP = "visualmetronome";
     protected int currentColorIndex = 0;
@@ -265,8 +264,7 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         cycle2Overlay.setPreferredSize(defaultSize);
         cycle3Overlay.setPreferredSize(defaultSize);
 
-        hidden = false;
-        setOverlaysShown(true);
+        setOverlaysShown(!config.metronomeHidden());
 
         keyManager.registerKeyListener(this);
         wsClient.registerMessage(TickSyncMessage.class);
@@ -301,7 +299,8 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
     {
         if (config.showHideHotkey().matches(e))
         {
-            hidden = !hidden;
+            boolean hidden = !config.metronomeHidden();
+            configManager.setConfiguration(CONFIG_GROUP, "metronomeHidden", hidden);
             setOverlaysShown(!hidden);
         }
 
