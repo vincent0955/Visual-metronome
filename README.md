@@ -124,6 +124,9 @@ Tick Counts will be sync'd to the target player
     - Reorganized Config settings slightly
 - **V1.5.4**
     - Fixed bug where Cycle 2 and Cycle 3 overlay positions were not saved correctly between sessions 
+- **V1.5.5** *(Thanks [Lyelt](https://github.com/Lyelt))*
+  - Added hotkey to show/hide all metronome overlays
+  - Added hotkeys to increase/decrease Tick Count
 
 # Feedback & Contributing
 I'm open to all feedback on bugs or features you want to see in this plugin. Give feedback here on this github page or message me on discord, vincent58. 
