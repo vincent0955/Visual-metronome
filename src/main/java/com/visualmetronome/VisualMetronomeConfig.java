@@ -474,7 +474,7 @@ public interface VisualMetronomeConfig extends Config
 	@ConfigItem(
 		position = 3,
 		keyName = "showHideHotkey",
-		name = "Show/Hide Hotkey",
+		name = "Show/Hide Metronome Hotkey",
 		description = "Hotkey to toggle whether the metronome is shown or hidden",
 		section = HotkeySettings
 	)
