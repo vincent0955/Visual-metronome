@@ -2,10 +2,13 @@ package com.visualmetronome;
 
 import com.google.inject.Provides;
 import net.runelite.api.Client;
+import net.runelite.api.Player;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.events.PluginMessage;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.Overlay;
@@ -29,6 +32,7 @@ import net.runelite.client.party.PartyMember;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 @PluginDescriptor(
@@ -254,6 +258,62 @@ public class VisualMetronomePlugin extends Plugin implements KeyListener
         {
             tickCounter3 = 0;
         }
+    }
+
+    // True Tile Movement Animations hides the player and draws its own model that follows the true tile.
+    // It publishes where that model is so overhead overlays can follow it instead of the hidden player.
+    private static final String TRUE_TILE_MOVEMENT_NAMESPACE = "true-tile-movement-animation";
+    private static final String TRUE_TILE_MOVEMENT_MODEL_LOCATION = "local-player-model-location";
+    private LocalPoint trueTileModelLocation = null;
+    private int trueTileModelTick = -1;
+
+    @Subscribe
+    public void onPluginMessage(PluginMessage message)
+    {
+        if (!TRUE_TILE_MOVEMENT_NAMESPACE.equals(message.getNamespace())
+                || !TRUE_TILE_MOVEMENT_MODEL_LOCATION.equals(message.getName()))
+        {
+            return;
+        }
+
+        final Map<String, Object> data = message.getData();
+        final Object x = data.get("x");
+        final Object y = data.get("y");
+        final Object worldView = data.get("worldView");
+        if (Boolean.TRUE.equals(data.get("active"))
+                && x instanceof Integer && y instanceof Integer && worldView instanceof Integer)
+        {
+            trueTileModelLocation = new LocalPoint((Integer) x, (Integer) y, (Integer) worldView);
+            trueTileModelTick = client.getTickCount();
+        }
+        else
+        {
+            trueTileModelLocation = null;
+        }
+    }
+
+    /**
+     * Where overlays attached to the local player should be drawn: the True Tile Movement Animations
+     * model while that plugin is drawing one, otherwise the player itself.
+     */
+    public LocalPoint getLocalPlayerOverlayLocation()
+    {
+        final Player player = client.getLocalPlayer();
+        if (player == null)
+        {
+            return null;
+        }
+
+        final LocalPoint playerLocation = player.getLocalLocation();
+        final LocalPoint modelLocation = trueTileModelLocation;
+        // The location is re-sent at least once per game tick, anything older is stale.
+        if (modelLocation != null && playerLocation != null
+                && client.getTickCount() - trueTileModelTick <= 2
+                && modelLocation.getWorldView() == playerLocation.getWorldView())
+        {
+            return modelLocation;
+        }
+        return playerLocation;
     }
 
     @Override
