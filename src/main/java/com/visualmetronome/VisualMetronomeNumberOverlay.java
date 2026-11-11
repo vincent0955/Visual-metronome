@@ -63,8 +63,16 @@ public class VisualMetronomeNumberOverlay extends Overlay
             }
 
             final int height = client.getLocalPlayer().getLogicalHeight() + config.overheadHeight();
-            final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
+            final LocalPoint localLocation = plugin.getLocalPlayerOverlayLocation();
+            if (localLocation == null)
+            {
+                return null;
+            }
             final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getPlane(), height);
+            if (playerPoint == null)
+            {
+                return null;
+            }
             final int valueX = playerPoint.getX() + config.overheadXCenterOffset();
             final int valueY = playerPoint.getY();
             final Point tickPoint = new Point(valueX,valueY);
